@@ -4,6 +4,7 @@ import numpy as np
 from keras.datasets import cifar10, cifar100, mnist
 import keras
 from datetime import datetime
+import settings
 
 def color_preprocessing(x_train, x_test):
     x_train = x_train.astype('float32')
