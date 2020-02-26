@@ -1,6 +1,7 @@
 from model import *
 from settings import *
 from sklearn.model_selection import train_test_split
+from keras.layers import Input
 
 
 def train_model(model_name, num_classes=10, dataset='cifar10', ver=1, num_submodels=20, train_sub=False, save_path=None):
