@@ -1,6 +1,6 @@
-from .utils import *
+from utils import *
 from Apricot import *
-from .model import *
+from model import *
 
 import argparse
 
