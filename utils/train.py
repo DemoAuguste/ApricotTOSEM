@@ -34,7 +34,7 @@ def train_model(model_name, num_classes=10, dataset='cifar10', ver=1, num_submod
         model = build_densenet(input_tensor, num_classes, k=top_k)
 
     x_train, x_test, y_train, y_test = load_dataset(dataset)
-    x_train_val, x_val, y_train_val, y_val = train_test_split(x_train, y_train, test_size=VAL_RATE, random_state=random_seed)
+    x_train_val, x_val, y_train_val, y_val = train_test_split(x_train, y_train, test_size=VAL_RATE, random_state=RANDOM_SEED)
 
     model_weights_save_dir = os.path.join(WORKING_DIR, 'weights')
     model_weights_save_dir = os.path.join(model_weights_save_dir, model_name)
