@@ -4,7 +4,7 @@ from sklearn.model_selection import train_test_split
 from keras.layers import Input
 
 
-def train_model(model_name, num_classes=10, dataset='cifar10', ver=1, num_submodels=20, train_sub=False, save_path=None):
+def train_model(model_name, num_classes=10, dataset='cifar10', ver=1, num_submodels=20, train_sub=False, save_path=None, top_k=1):
     if 'cifar' in dataset:
         img_rows, img_cols = 32, 32
         img_channels = 3
