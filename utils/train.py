@@ -39,7 +39,7 @@ def train_model(model_name, num_classes=10, dataset='cifar10', ver=1, num_submod
     # endregion
 
     x_train, x_test, y_train, y_test = load_dataset(dataset)
-    x_train_val, x_val, y_train_val, y_val = train_test_split(x_train, y_train, test_size=VAL_RATE, random_state=RANDOM_SEED)
+    x_train_val, x_val, y_train_val, y_val = split_validation_dataset(x_train, y_train)
 
     model_weights_save_dir = os.path.join(WORKING_DIR, 'weights')
     model_weights_save_dir = os.path.join(model_weights_save_dir, model_name)

@@ -5,9 +5,6 @@ realized functions:
 * 
 
 """
-
-
-
 import os
 import settings
 import numpy as np
@@ -15,6 +12,8 @@ from keras.datasets import cifar10, cifar100, mnist
 import keras
 from datetime import datetime
 import settings
+from sklearn.model_selection import train_test_split
+from model import *
 
 def color_preprocessing(x_train, x_test):
     x_train = x_train.astype('float32')
@@ -94,8 +93,14 @@ def load_dataset(dataset='cifar10', preprocessing=True, shuffle=True):
 
     return x_train, x_test, y_train, y_test
 
+def split_validation_dataset(xs, ys, val_rate=settings.VAL_RATE, random_seed=settings.RANDOM_SEED):
+    x_train_val, x_val, y_train_val, y_val = train_test_split(x_train, y_train, test_size=val_rate, random_state=random_seed)
+    return x_train_val, x_val, y_train_val, y_val
+
+
 def build_networks(model_name, num_classes, input_size):
     input_tensor = Input(shape=input_size)
+    top_k = 1 # default: only use top-1 accuracy.
     if model_name == 'resnet20':
         model = build_resnet(input_size[0], input_size[1], input_size[2], num_classes=num_classes, stack_n=3, k=top_k)
     elif model_name == 'resnet32':
@@ -111,7 +116,7 @@ def build_networks(model_name, num_classes, input_size):
 def logger(msg, path):
     now = datetime.now()
     str_now = now.strftime("%Y-%m-%d %H:%M:%S.%f")
-    f = open(path)
+    f = open(path, 'w+')
     w_msg = "[{}] {}\n".format(str_now, msg)
     f.write(w_msg)
     f.close()
