@@ -14,7 +14,7 @@ adjustment strategy
 
 from .Apricot_utils import *
 from settings import *
-from general import *
+# from general import *
 import os
 import numpy as np
 import copy
@@ -27,86 +27,6 @@ from datetime import datetime
 
 from model import *
 
-
-def train_model(model, model_name, num_submodels, subset_size, dataset='cifar10', ver=1, train_sub=False, random_seed=42):
-    model_dir_path = None
-    if 'cifar' in dataset or 'imagenet' in dataset:
-        model_dir_path = os.path.join(WEIGHTS_DIR, 'CNN')
-        model_dir_path = os.path.join(model_dir_path, model_name)
-        model_dir_path = os.path.join(model_dir_path, '{}'.format(ver))
-
-        if not os.path.exists(model_dir_path):
-            os.makedirs(model_dir_path)
-    else:
-        # TODO: RNN model or else
-        pass
-
-    if not os.path.exists(os.path.join(model_dir_path, 'initialized.h5')):
-        model.save_weights(os.path.join(model_dir_path, 'initialized.h5'))
-    else:
-        model.load_weights(os.path.join(model_dir_path, 'initialized.h5'))
-
-    # load dataset
-    x_train, x_test, y_train, y_test = load_dataset(dataset)
-    x_train_val, x_val, y_train_val, y_val = train_test_split(x_train, y_train, test_size=VAL_RATE, random_state=random_seed)
-
-    f = open(os.path.join(model_dir_path, 'seed.txt'),'w')
-    f.write(str(random_seed))
-    f.close()
-
-    # pre-training step
-    if not os.path.exists(os.path.join(model_dir_path, 'pretrained.h5')):
-        datagen = ImageDataGenerator(horizontal_flip=True,
-                                width_shift_range=0.125,
-                                height_shift_range=0.125,
-                                fill_mode='constant', cval=0.)
-        datagen.fit(x_train_val)
-        
-        model.fit_generator(datagen.flow(x_train_val, y_train_val, batch_size=BATCH_SIZE), 
-                                        steps_per_epoch=len(x_train_val) // BATCH_SIZE + 1, 
-                                        validation_data=(x_val, y_val), 
-                                        epochs=PRE_EPOCHS)
-        model.save_weights(os.path.join(model_dir_path, 'pretrained.h5'))
-    else:
-        model.load_weights(os.path.join(model_dir_path, 'pretrained.h5'))
-
-
-    if not os.path.exists(os.path.join(model_dir_path, 'submodels')):
-        os.makedirs(os.path.join(model_dir_path, 'submodels'))
-    datagen = ImageDataGenerator(horizontal_flip=True,
-                                width_shift_range=0.125,
-                                height_shift_range=0.125,
-                                fill_mode='constant', cval=0.)
-    datagen.fit(x_train_val)
-
-
-    # submodel training step
-    if train_sub:  # whether train the submodels
-        step = int((x_train.shape[0] - subset_size) / num_submodels)
-        for i in range(num_submodels):
-            # subset
-            sub_weights_path = os.path.join(os.path.join(model_dir_path, 'submodels'))
-            sub_weights_path = os.path.join(sub_weights_path, 'sub_{}.h5'.format(i))
-
-            sub_x_train_val = x_train_val[step*i : subset_size + step*i]
-            sub_y_train_val = y_train_val[step*i : subset_size + step*i]
-
-            model.load_weights(os.path.join(model_dir_path, 'pretrained.h5'))
-            model.fit_generator(datagen.flow(sub_x_train_val, sub_y_train_val, batch_size=BATCH_SIZE), 
-                                            steps_per_epoch=len(sub_x_train_val) // BATCH_SIZE + 1, 
-                                            validation_data=(x_val, y_val), 
-                                            epochs=SUB_EPOCHS)
-            model.save_weights(sub_weights_path)
-
-    # original DL model training step
-    if not os.path.exists(os.path.join(model_dir_path, 'trained.h5')):
-        model.load_weights(os.path.join(model_dir_path, 'pretrained.h5'))
-        model.fit_generator(datagen.flow(x_train_val, y_train_val, batch_size=BATCH_SIZE), 
-                                            steps_per_epoch=len(x_train_val) // BATCH_SIZE + 1, 
-                                            validation_data=(x_val, y_val), 
-                                            epochs=AFTER_EPOCHS)
-        model.save_weights(os.path.join(model_dir_path, 'trained.h5'))
-  
 
 def get_adjustment_weights(corr_mat, weights_list, adjustment_strategy):
     """

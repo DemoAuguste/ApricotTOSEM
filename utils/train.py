@@ -2,7 +2,7 @@ from model import *
 from settings import *
 from sklearn.model_selection import train_test_split
 from keras.layers import Input
-from .utils import load_dataset
+from .utils import *
 from keras.preprocessing.image import ImageDataGenerator
 
 
@@ -13,26 +13,30 @@ def train_model(model_name, num_classes=10, dataset='cifar10', ver=1, num_submod
     else: # TODO
         pass
 
-    input_tensor = Input(shape=(img_rows, img_cols, img_channels))
+    model = build_networks(model_name, num_classes=num_classes, input_size=(img_rows, img_cols, img_channels))
+    AFTER_EPOCHS = 190 # NOTE: in previous experiment, different models have different AFTER_EPOCHS.
 
-    if model_name == 'resnet20':
-        AFTER_EPOCHS = 190
-        model = build_resnet(img_rows, img_cols, img_channels, num_classes=num_classes, stack_n=3, k=top_k)
-    elif model_name == 'resnet32':
-        AFTER_EPOCHS = 190
-        model = build_resnet(img_rows, img_cols, img_channels, num_classes=num_classes, stack_n=5, k=top_k)
-    elif model_name == 'mobilenet':
-        AFTER_EPOCHS = 190
-        model = build_mobilenet(input_tensor, num_classes, k=top_k)
-    elif model_name == 'mobilenet_v2':
-        AFTER_EPOCHS = 190
-        model = build_mobilenet_v2(input_tensor, num_classes, k=top_k)
-    elif model_name == 'densenet':
-        if dataset == 'cifar10':
-            AFTER_EPOCHS = 190
-        else:
-            AFTER_EPOCHS = 100
-        model = build_densenet(input_tensor, num_classes, k=top_k)
+    # region previous codes
+    # input_tensor = Input(shape=(img_rows, img_cols, img_channels))
+    # if model_name == 'resnet20':
+    #     AFTER_EPOCHS = 190
+    #     model = build_resnet(img_rows, img_cols, img_channels, num_classes=num_classes, stack_n=3, k=top_k)
+    # elif model_name == 'resnet32':
+    #     AFTER_EPOCHS = 190
+    #     model = build_resnet(img_rows, img_cols, img_channels, num_classes=num_classes, stack_n=5, k=top_k)
+    # elif model_name == 'mobilenet':
+    #     AFTER_EPOCHS = 190
+    #     model = build_mobilenet(input_tensor, num_classes, k=top_k)
+    # elif model_name == 'mobilenet_v2':
+    #     AFTER_EPOCHS = 190
+    #     model = build_mobilenet_v2(input_tensor, num_classes, k=top_k)
+    # elif model_name == 'densenet':
+    #     if dataset == 'cifar10':
+    #         AFTER_EPOCHS = 190
+    #     else:
+    #         AFTER_EPOCHS = 100
+    #     model = build_densenet(input_tensor, num_classes, k=top_k)
+    # endregion
 
     x_train, x_test, y_train, y_test = load_dataset(dataset)
     x_train_val, x_val, y_train_val, y_val = train_test_split(x_train, y_train, test_size=VAL_RATE, random_state=RANDOM_SEED)

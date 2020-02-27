@@ -1,3 +1,13 @@
+"""
+realized functions:
+* load_dataset(dataset='cifar10', preprocessing=True, shuffle=True)
+* build_networks(model_name, num_classes, input_size)
+* 
+
+"""
+
+
+
 import os
 import settings
 import numpy as np
@@ -83,3 +93,30 @@ def load_dataset(dataset='cifar10', preprocessing=True, shuffle=True):
         np.random.shuffle(y_train)
 
     return x_train, x_test, y_train, y_test
+
+def build_networks(model_name, num_classes, input_size):
+    input_tensor = Input(shape=input_size)
+    if model_name == 'resnet20':
+        model = build_resnet(input_size[0], input_size[1], input_size[2], num_classes=num_classes, stack_n=3, k=top_k)
+    elif model_name == 'resnet32':
+        model = build_resnet(input_size[0], input_size[1], input_size[2], num_classes=num_classes, stack_n=5, k=top_k)
+    elif model_name == 'mobilenet':
+        model = build_mobilenet(input_tensor, num_classes, k=top_k)
+    elif model_name == 'mobilenet_v2':
+        model = build_mobilenet_v2(input_tensor, num_classes, k=top_k)
+    elif model_name == 'densenet':
+        model = build_densenet(input_tensor, num_classes, k=top_k)
+    return model
+
+def logger(msg, path):
+    now = datetime.now()
+    str_now = now.strftime("%Y-%m-%d %H:%M:%S.%f")
+    f = open(path)
+    w_msg = "[{}] {}\n".format(str_now, msg)
+    f.write(w_msg)
+    f.close()
+
+def load_submodels(path, num_submodels):
+    pass # no need to load models (consuming too many memories)
+        
+
