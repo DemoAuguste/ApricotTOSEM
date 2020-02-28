@@ -21,6 +21,7 @@ import copy
 import os
 from keras.layers import Input
 from model import *
+import settings
 
 
 def cal_avg(weights_list):
@@ -118,4 +119,58 @@ def get_adjustment_weights(corr_mat, weights_list, adjustment_strategy):
         incorr_w = None
     
     return corr_w, incorr_w
+
+
+def adjust_weights_func(curr_weights, corr_w, incorr_w, adjustment_strategy, activation='binary'):
+    """
+    -------------------
+    adjustment strategy
+    -------------------
+    1: calculate the means of corr_set and incorr_set
+    2: calculate the means of corr_set
+    3: calculate the means of incorr_set
+    4: randomly choose one from corr_set and one from incorr_set
+    5: randomly choose one from corr_set
+    6: randomly choose one from incorr_set
+    """
+    adjust_weights = None
+    if adjustment_strategy == 1:
+        if corr_w is None or incorr_w is None:
+            return -1
+        else:
+            adjust_weights = [item[0] - settings.learning_rate * (item[0] - item[1]) + settings.learning_rate * (item[0] - item[2]) for item in zip(curr_weights, corr_w, incorr_w)]
+    if adjustment_strategy == 2:
+        if corr_w is None:
+            return -1
+        else:
+            adjust_weights = [item[0] - settings.learning_rate * (item[0] - item[1]) for item in zip(curr_weights, corr_w)]
+    if adjustment_strategy == 3:
+        if incorr_w is None:
+            return -1
+        else:
+            adjust_weights = [item[0] + settings.learning_rate * (item[0] - item[1]) for item in zip(curr_weights, incorr_w)]
+            
+    if adjustment_strategy == 4:
+        if corr_w is None or incorr_w is None:
+            return -1
+        else:
+            diff_corr_w = get_difference_func(curr_weights, corr_w, activation=activation)
+            diff_incorr_w = get_difference_func(curr_weights, incorr_w, activation=activation)
+            adjust_weights = [item[0] - settings.learning_rate * np.multiply(item[0], item[1]) + settings.learning_rate * np.multiply(item[0], item[2]) for item in zip(curr_weights, diff_corr_w, diff_incorr_w)]            
+    
+    if adjustment_strategy == 5:
+        if corr_w is None:
+            return -1
+        else:
+            diff_corr_w = get_difference_func(curr_weights, corr_w, activation=activation)
+            adjust_weights = [item[0] - settings.learning_rate * np.multiply(item[0], item[1]) for item in zip(curr_weights, diff_corr_w)]
+    
+    if adjustment_strategy == 6:
+        if incorr_w is None:
+            return -1
+        else:
+            diff_incorr_w = get_difference_func(curr_weights, incorr_w, activation=activation)
+            adjust_weights = [item[0] + settings.learning_rate * np.multiply(item[0], item[1]) for item in zip(curr_weights, diff_incorr_w)]
+    
+    return adjust_weights
 

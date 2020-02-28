@@ -13,6 +13,7 @@ from utils.utils import logger
 import numpy as np
 from utils import *
 from .Apricot_utils import *
+import settings
 
 
 def cal_sub_corr_matrix(model, corr_path, submodels_path, fail_xs, fail_ys_label, fail_num):
@@ -38,7 +39,6 @@ def cal_sub_corr_matrix(model, corr_path, submodels_path, fail_xs, fail_ys_label
     return sub_correct_matrix
 
             
-
 def get_failing_cases(model, xs, ys):
     y_preds = model.predict(xs)
     y_pred_label = np.argmax(y_preds, axis=1)
@@ -54,8 +54,9 @@ def get_failing_cases(model, xs, ys):
     return fail_xs, fail_ys, fail_ys_label, fail_num
 
 
-def apricot(model, model_weights_dir, dataset, adjustment_strategy):
+def apricot(model, model_weights_dir, dataset, adjustment_strategy, activation='binary'):
     """
+    including Apricot and Apricot lite
     input:
         * dataset: [x_train_val, y_train_val, x_val, y_val, x_test, y_test]
     """
@@ -67,7 +68,7 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy):
 
     submodel_dir = os.path.join(model_weights_dir, 'submodels')
     trained_weights_path = os.path.join(model_weights_dir, 'trained.h5')  
-    fixed_weights_path = os.path.join(model_weights_dir, 'fixed.h5')
+    fixed_weights_path = os.path.join(model_weights_dir, 'fixed_{}_{}.h5'.format(adjustment_strategy, activation))
     log_path = os.path.join(model_weights_dir, 'log.txt')
 
     if not os.path.exists(fixed_weights_path):
@@ -110,10 +111,36 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy):
             corr_w, incorr_w = get_adjustment_weights(corr_mat, sub_weights_list, adjustment_strategy)
             adjust_w = adjust_weights_func(curr_weights, corr_w, incorr_w, adjustment_strategy, activation=activation)
             
+            if adjust_w == -1:
+                continue
+            fixed_model.set_weights(adjust_w)
+
+            _, curr_acc = fixed_model.evaluate(x_val, y_val)
+            print('After adjustment, the validation accuracy: {:.4f}'.format(curr_acc))
+
+            if curr_acc > best_acc:
+                best_acc = curr_acc
+                fixed_model.save_weights(fixed_weights_path)
+
+                # further training epochs.
+                checkpoint = ModelCheckpoint(weights_after_dir, monitor='val_acc', verbose=1, save_best_only=True, mode='max') 
+                checkpoint.best = best_acc
+                fixed_model.fit_generator(datagen.flow(x_train_val, y_train_val, batch_size=settings.BATCH_SIZE), 
+                                            steps_per_epoch=len(x_train_val) // BATCH_SIZE + 1, 
+                                            validation_data=(x_val, y_val), 
+                                            epochs=settings.FURTHER_ADJUSTMENT_EPOCHS, 
+                                            callbacks=[checkpoint])
+
+                fixed_model.load_weights(fixed_weights_path)
+
+                # eval the model
+                _, test_acc = fixed_model.evaluate(x_train_val, y_train_val, verbose=0)
+
+                print('test accuracy after further training: {:.4f}'.format(test_acc))
 
     
     
 
 
-def apricot_lite():
-    pass
+# def apricot_lite():
+#     pass
