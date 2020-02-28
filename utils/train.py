@@ -79,20 +79,21 @@ def train_model(model_name, num_classes=10, dataset='cifar10', ver=1, num_submod
         submodel_dir = os.path.join(model_weights_save_dir, 'submodels')
         if not os.path.exists(submodel_dir):
             os.makedirs(submodel_dir)
-            step = int((x_train_val.shape[0] - subset_size) / num_submodels)
-            for i in range(num_submodels):
-                submodel_save_path = os.path.join(submodel_dir, 'sub_{}.h5'.format(i))
+            
+        step = int((x_train_val.shape[0] - subset_size) / num_submodels)
+        for i in range(num_submodels):
+            submodel_save_path = os.path.join(submodel_dir, 'sub_{}.h5'.format(i))
 
-                sub_x_train_val = x_train_val[step*i : subset_size + step*i]
-                sub_y_train_val = y_train_val[step*i : subset_size + step*i]
-                
-                # load the pretrained model
-                model.load_weights(pretrained_path)
-                model.fit_generator(datagen.flow(sub_x_train_val, sub_y_train_val, batch_size=BATCH_SIZE), 
-                                            steps_per_epoch=len(sub_x_train_val) // BATCH_SIZE + 1, 
-                                            validation_data=(x_val, y_val), 
-                                            epochs=SUB_EPOCHS)
-                model.save_weights(sub_weights_path)
+            sub_x_train_val = x_train_val[step*i : subset_size + step*i]
+            sub_y_train_val = y_train_val[step*i : subset_size + step*i]
+            
+            # load the pretrained model
+            model.load_weights(pretrained_path)
+            model.fit_generator(datagen.flow(sub_x_train_val, sub_y_train_val, batch_size=BATCH_SIZE), 
+                                        steps_per_epoch=len(sub_x_train_val) // BATCH_SIZE + 1, 
+                                        validation_data=(x_val, y_val), 
+                                        epochs=SUB_EPOCHS)
+            model.save_weights(sub_weights_path)
         
 
 
