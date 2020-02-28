@@ -12,6 +12,7 @@ from keras.datasets import cifar10, cifar100, mnist
 import keras
 from datetime import datetime
 import settings
+from keras.layers import Input
 from sklearn.model_selection import train_test_split
 from model import *
 
@@ -93,6 +94,7 @@ def load_dataset(dataset='cifar10', preprocessing=True, shuffle=True):
 
     return x_train, x_test, y_train, y_test
 
+
 def split_validation_dataset(xs, ys, val_rate=settings.VAL_RATE, random_seed=settings.RANDOM_SEED):
     x_train_val, x_val, y_train_val, y_val = train_test_split(x_train, y_train, test_size=val_rate, random_state=random_seed)
     return x_train_val, x_val, y_train_val, y_val
@@ -114,6 +116,7 @@ def build_networks(model_name, num_classes, input_size):
     return model
 
 def logger(msg, path):
+    print(msg)
     now = datetime.now()
     str_now = now.strftime("%Y-%m-%d %H:%M:%S.%f")
     f = open(path, 'w+')
@@ -121,7 +124,18 @@ def logger(msg, path):
     f.write(w_msg)
     f.close()
 
+
 def load_submodels(path, num_submodels):
     pass # no need to load models (consuming too many memories)
+
+
+def get_submodels_weights(model, path):
+    weights_list = []
+    for root, dirs, files in os.walk(path):  # os.path.join(original_dir_path, 'submodels')
+        for name in files:
+            file_path = os.path.join(root, name)
+            model.load_weights(file_path)
+            weights_list.append(model.get_weights())
+    return weights_list
         
 

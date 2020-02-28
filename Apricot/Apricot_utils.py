@@ -78,43 +78,44 @@ def get_difference_func(w1, w2, activation='binary'):
     return ret_w
 
 
-def get_submodels_weights(model, model_name, dataset, path):
+def get_adjustment_weights(corr_mat, weights_list, adjustment_strategy):
     """
-    model: the model to be loaded.
-    path: the dir path to the submodel weights.
-
-    return: weights list
+    return corr_w, incorr_w
+    TODO: some bugs here. Don't know why.
     """
-    if dataset == 'cifar10':
-        img_rows, img_cols = 32, 32
-        img_channels = 3
-        num_classes = 10
-        top_k = 1
-    elif dataset == 'cifar100':
-        img_rows, img_cols = 32, 32
-        img_channels = 3
-        num_classes = 100
-        top_k = 5
-    else:
-        pass
+    try:
+        corr_sets = np.nonzero(corr_mat)[0].tolist()
+        if corr_sets is None or  len(corr_sets) == 0:
+            corr_sets = []
+            corr_weights = []
+        else:
+            corr_weights = [weights_list[i] for i in corr_sets]
+        temp_incorr_matrix = np.ones(shape=corr_mat.shape) - corr_mat
+        incorr_sets = np.nonzero(temp_incorr_matrix)[0].tolist()
+        if incorr_sets is None or len(incorr_sets) == 0:
+            incorr_sets = []
+            incorr_weights = []
+        else:
+            incorr_weights = [weights_list[i] for i in incorr_sets]
+        
+        corr_w = None
+        incorr_w = None
+        
+        if adjustment_strategy == 1 or adjustment_strategy == 2 or adjustment_strategy == 3:
+            if len(corr_sets) != 0:
+                corr_w = cal_avg(corr_weights)
+            if len(incorr_sets) != 0:
+                incorr_w = cal_avg(incorr_weights)    
+        else: # lite version
+            if len(corr_sets) != 0:
+                corr_id = random.randint(0, len(corr_sets) - 1)
+                corr_w = corr_weights[corr_id]
+            if len(incorr_sets) != 0:
+                incorr_id = random.randint(0, len(incorr_sets) - 1)
+                incorr_w = incorr_weights[incorr_id]
+    except:
+        corr_w = None
+        incorr_w = None
     
-    input_tensor = Input(shape=(img_rows, img_cols, img_channels))
+    return corr_w, incorr_w
 
-    if model_name == 'resnet20':
-        fixed_model = build_resnet(img_rows, img_cols, img_channels, num_classes=num_classes, stack_n=3, k=top_k)
-    elif model_name == 'resnet32':
-        fixed_model = build_resnet(img_rows, img_cols, img_channels, num_classes=num_classes, stack_n=5, k=top_k)
-    elif model_name == 'mobilenet':
-        fixed_model = build_mobilenet(input_tensor, num_classses=num_classes, k=top_k)
-    elif model_name == 'mobilenet_v2':
-        fixed_model = build_mobilenet_v2(input_tensor, num_classses=num_classes, k=top_k)
-    elif model_name == 'densenet':
-        fixed_model = build_densenet(input_tensor, num_classses=num_classes, k=top_k)
-
-    weights_list = []
-    for root, dirs, files in os.walk(path):  # os.path.join(original_dir_path, 'submodels')
-        for name in files:
-            file_path = os.path.join(root, name)
-            fixed_model.load_weights(file_path)
-            weights_list.append(fixed_model.get_weights())
-    return weights_list
