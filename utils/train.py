@@ -6,7 +6,7 @@ from .utils import *
 from keras.preprocessing.image import ImageDataGenerator
 
 
-def train_model(model_name, num_classes=10, dataset='cifar10', ver=1, num_submodels=20, train_sub=False, save_path=None, top_k=1):
+def train_model(model_name, num_classes=10, dataset='cifar10', ver=1, num_submodels=20, train_sub=True, save_path=None, top_k=1, subset_size=10000):
     if 'cifar' in dataset:
         img_rows, img_cols = 32, 32
         img_channels = 3
