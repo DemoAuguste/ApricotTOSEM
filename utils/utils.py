@@ -96,7 +96,7 @@ def load_dataset(dataset='cifar10', preprocessing=True, shuffle=True):
 
 
 def split_validation_dataset(xs, ys, val_rate=settings.VAL_RATE, random_seed=settings.RANDOM_SEED):
-    x_train_val, x_val, y_train_val, y_val = train_test_split(x_train, y_train, test_size=val_rate, random_state=random_seed)
+    x_train_val, x_val, y_train_val, y_val = train_test_split(xs, ys, test_size=val_rate, random_state=random_seed)
     return x_train_val, x_val, y_train_val, y_val
 
 
