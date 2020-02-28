@@ -95,7 +95,7 @@ def train_model(model_name, num_classes=10, dataset='cifar10', ver=1, num_submod
                                         steps_per_epoch=len(sub_x_train_val) // BATCH_SIZE + 1, 
                                         validation_data=(x_val, y_val), 
                                         epochs=SUB_EPOCHS)
-            model.save_weights(sub_weights_path)
+            model.save_weights(submodel_save_path)
         
 
 
