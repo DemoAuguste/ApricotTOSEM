@@ -37,6 +37,7 @@ if __name__ == '__main__':
     model = build_networks(model_name, num_classes, input_size)
     model_weights_dir = os.path.join(WORKING_DIR, 'weights')
     model_weights_dir = os.path.join(model_weights_dir, model_name)
+    model_weights_dir = os.path.join(model_weights_dir, dataset)
     model_weights_dir = os.path.join(model_weights_dir, str(ver))
     
 
