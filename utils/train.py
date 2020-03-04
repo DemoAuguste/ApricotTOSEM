@@ -12,8 +12,17 @@ def train_model(model_name, num_classes=10, dataset='cifar10', ver=1, num_submod
         img_channels = 3
     else: # TODO
         pass
+    print("########################")
+    print("model name: {}".format(model_name))
+    print("dataset: {}".format(dataset))
+    print("version: {}".format(ver))
+    print("num of classes: {}".format(num_classes))
+    print("num of submodels: {}".format(num_submodels))
+    print("########################")
 
     model = build_networks(model_name, num_classes=num_classes, input_size=(img_rows, img_cols, img_channels))
+    model.summary()
+
     AFTER_EPOCHS = 190 # NOTE: in previous experiment, different models have different AFTER_EPOCHS.
 
     # region previous codes
