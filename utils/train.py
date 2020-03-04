@@ -43,6 +43,7 @@ def train_model(model_name, num_classes=10, dataset='cifar10', ver=1, num_submod
 
     model_weights_save_dir = os.path.join(WORKING_DIR, 'weights')
     model_weights_save_dir = os.path.join(model_weights_save_dir, model_name)
+    model_weights_save_dir = os.path.join(model_weights_save_dir, dataset)
     model_weights_save_dir = os.path.join(model_weights_save_dir, str(ver))
 
     if not os.path.exists(model_weights_save_dir):
