@@ -119,7 +119,7 @@ def logger(msg, path):
     print(msg)
     now = datetime.now()
     str_now = now.strftime("%Y-%m-%d %H:%M:%S.%f")
-    f = open(path, 'w+')
+    f = open(path, 'a+')
     w_msg = "[{}] {}\n".format(str_now, msg)
     f.write(w_msg)
     f.close()
