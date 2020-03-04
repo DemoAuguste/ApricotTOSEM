@@ -17,7 +17,7 @@ def training_process(model_name, dataset, ver):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Settings of Apricot+.')
     parser.add_argument('-m', '--model', help='model', type=str)
-    parser.add_argument('-d', '--dataset', help='dataset for training the model.', type=str, default='cifar10')
+    parser.add_argument('-d', '--dataset', help='dataset for training the model.', type=str, default='cifar100')
     parser.add_argument('-v','--version', help='version number.', type=int, default=2)
     args = parser.parse_args()
 
