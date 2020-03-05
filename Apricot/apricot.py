@@ -90,6 +90,7 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy, activation='
 
     sub_correct_matrix_path = os.path.join(model_weights_dir, 'corr_matrix_{}.npy'.format(settings.RANDOM_SEED))
     sub_correct_matrix = None # 1: predicts correctly, 0: predicts incorrectly.
+    print('obtaining sub correct matrix...')
 
     if not os.path.exists(sub_correct_matrix_path):
         # obtain submodel correctness matrix
@@ -98,9 +99,10 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy, activation='
         sub_correct_matrix = np.load(sub_correct_matrix_path)
 
     sub_weights_list = get_submodels_weights(fixed_model, submodel_dir)
+    print('collected.')
+    fixed_model.load_weights(trained_weights_path)
 
-    fixed_model.load_weights()
-
+    print('start fixing process...')
     for _ in range(settings.LOOP_COUNT):
         np.random.shuffle(sub_correct_matrix)
 

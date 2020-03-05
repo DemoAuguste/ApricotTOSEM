@@ -39,7 +39,7 @@ if __name__ == '__main__':
     model_weights_dir = os.path.join(model_weights_dir, model_name)
     model_weights_dir = os.path.join(model_weights_dir, dataset)
     model_weights_dir = os.path.join(model_weights_dir, str(ver))
-    model.summary()
+    # model.summary()
     model.load_weights(os.path.join(model_weights_dir, 'trained.h5'))
     
 
