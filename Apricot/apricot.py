@@ -78,7 +78,7 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy, activation='
     logger('----------original model----------', log_path)
 
     # submodels 
-    _, base_val_acc = fixed_model.evaluate(x_train_val, y_train_val)
+    _, base_val_acc = fixed_model.evaluate(x_val, y_val)
     print('The validation accuracy: {:.4f}'.format(base_val_acc))
     _, base_test_acc = fixed_model.evaluate(x_test, y_test)
     print('The test accuracy: {:.4f}'.format(base_test_acc))
