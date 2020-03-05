@@ -75,6 +75,13 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy, activation='
     if not os.path.exists(fixed_weights_path):
         fixed_model.save_weights(fixed_weights_path)
 
+    datagen = ImageDataGenerator(horizontal_flip=True,
+                             width_shift_range=0.125,
+                             height_shift_range=0.125,
+                             fill_mode='constant', cval=0.)
+
+    datagen.fit(x_train_val)
+
     logger('----------original model----------', log_path)
 
     # submodels 
