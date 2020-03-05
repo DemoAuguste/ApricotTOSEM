@@ -28,13 +28,14 @@ def cal_sub_corr_matrix(model, corr_path, submodels_path, fail_xs, fail_ys_label
             sub_col = np.argmax(sub_y_pred, axis=1) - fail_ys_label
             sub_col[sub_col != 0] = 1
 
-        if sub_correct_matrix is None:
-            sub_correct_matrix = sub_col.reshape(fail_num, 1)
-        else:
-            sub_correct_matrix = np.concatenate((sub_correct_matrix, sub_col.reshape(fail_num, 1)), axis=1)
+            if sub_correct_matrix is None:
+                sub_correct_matrix = sub_col.reshape(fail_num, 1)
+            else:
+                sub_correct_matrix = np.concatenate((sub_correct_matrix, sub_col.reshape(fail_num, 1)), axis=1)
+                # print(sub_correct_matrix.shape)
 
-        sub_correct_matrix = np.ones(shape=sub_correct_matrix.shape) - sub_correct_matrix  # here change 0 to 1 (for correctly predicted case)
-        np.save(corr_path, sub_correct_matrix)
+    sub_correct_matrix = np.ones(shape=sub_correct_matrix.shape) - sub_correct_matrix  # here change 0 to 1 (for correctly predicted case)
+    np.save(corr_path, sub_correct_matrix)
 
     return sub_correct_matrix
 
@@ -112,6 +113,7 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy, activation='
             
             print('obtaining correct and incorrect weights...')
             corr_w, incorr_w = get_adjustment_weights(corr_mat, sub_weights_list, adjustment_strategy)
+            print(corr_w, incorr_w)
             print('calculating adjust weights...')
             adjust_w = adjust_weights_func(curr_weights, corr_w, incorr_w, adjustment_strategy, activation=activation)
             
