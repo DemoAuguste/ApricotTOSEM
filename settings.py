@@ -22,7 +22,7 @@ else:
 LOGGER_DIR = os.path.join(WORKING_DIR, 'log')
 
 # hyperparameters
-learning_rate = 0.01
+learning_rate = 0.005
 
 # strategy = 1
 
