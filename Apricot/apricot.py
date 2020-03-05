@@ -110,7 +110,9 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy, activation='
             curr_weights = fixed_model.get_weights()
             corr_mat = sub_correct_matrix[index, :]
             
+            print('obtaining correct and incorrect weights...')
             corr_w, incorr_w = get_adjustment_weights(corr_mat, sub_weights_list, adjustment_strategy)
+            print('calculating adjust weights...')
             adjust_w = adjust_weights_func(curr_weights, corr_w, incorr_w, adjustment_strategy, activation=activation)
             
             if adjust_w == -1:
