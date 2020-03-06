@@ -150,7 +150,7 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy, activation='
                 fixed_model.load_weights(fixed_weights_path)
 
                 # eval the model
-                _, val_acc = fixed_model.evaluate(x_train_val, y_train_val, verbose=0)
+                _, val_acc = fixed_model.evaluate(x_val, y_val, verbose=0)
                 # _, test_acc = fixed_model.evaluate(x_test, y_test, verbose=0)
                 best_acc = val_acc
 
@@ -160,7 +160,7 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy, activation='
                 fixed_model.load_weights(fixed_weights_path)
 
     # final evaluation.
-    _, test_acc = fixed_model.evaluate(x_train_val, y_train_val, verbose=0)
+    _, test_acc = fixed_model.evaluate(x_test, y_test, verbose=0)
     logger('----------final evaluation----------', log_path)
     logger('test accuracy: {:.4f}'.format(test_acc), log_path)
 
