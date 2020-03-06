@@ -86,9 +86,11 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy, activation='
 
     # submodels 
     _, base_val_acc = fixed_model.evaluate(x_val, y_val)
-    print('The validation accuracy: {:.4f}'.format(base_val_acc))
+    # print('The validation accuracy: {:.4f}'.format(base_val_acc))
+    logger('The validation accuracy: {:.4f}'.format(base_val_acc), log_path)
     _, base_test_acc = fixed_model.evaluate(x_test, y_test)
-    print('The test accuracy: {:.4f}'.format(base_test_acc))
+    # print('The test accuracy: {:.4f}'.format(base_test_acc))
+    logger('The test accuracy: {:.4f}'.format(base_test_acc), log_path)
     
     best_weights = fixed_model.get_weights()
     best_acc = base_val_acc
@@ -110,7 +112,8 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy, activation='
     print('collected.')
     fixed_model.load_weights(trained_weights_path)
 
-    print('start fixing process...')
+    # print('start fixing process...')
+    logger('----------start fixing process----------', log_path)
     for _ in range(settings.LOOP_COUNT):
         np.random.shuffle(sub_correct_matrix)
 
@@ -148,13 +151,18 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy, activation='
 
                 # eval the model
                 _, val_acc = fixed_model.evaluate(x_train_val, y_train_val, verbose=0)
-                _, test_acc = fixed_model.evaluate(x_test, y_test, verbose=0)
+                # _, test_acc = fixed_model.evaluate(x_test, y_test, verbose=0)
                 best_acc = val_acc
 
-                print('validation accuracy after further training: {:.4f}'.format(test_acc))
+                # print('validation accuracy after further training: {:.4f}'.format(test_acc))
+                logger('validation accuracy improved, after further training: {:.4f}'.format(val_acc), log_path)
+            else:
+                fixed_model.load_weights(fixed_weights_path)
 
     # final evaluation.
     _, test_acc = fixed_model.evaluate(x_train_val, y_train_val, verbose=0)
+    logger('----------final evaluation----------', log_path)
+    logger('test accuracy: {:.4f}'.format(test_acc), log_path)
 
     
     
