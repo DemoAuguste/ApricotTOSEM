@@ -9,8 +9,9 @@ script_name="main_train.py"
 train_path=$working_dir"/"$script_name
 
 echo $train_path
-read
-
 
 # script for training models
-# CUDA_VISIDBLE_DEVICES=0,1 python 
+for i in {2..5}
+do
+    CUDA_VISIDBLE_DEVICES=0 python $train_path -m resnet20 -d cifar100 -v $k
+done
