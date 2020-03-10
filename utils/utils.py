@@ -109,7 +109,7 @@ def build_networks(model_name, num_classes, input_size):
         model = build_resnet(input_size[0], input_size[1], input_size[2], num_classes=num_classes, stack_n=5, k=top_k)
     elif model_name == 'mobilenet':
         model = build_mobilenet(input_tensor, num_classes, k=top_k)
-    elif model_name == 'mobilenet_v2':
+    elif model_name == 'mobilenetv2':
         model = build_mobilenet_v2(input_tensor, num_classes, k=top_k)
     elif model_name == 'densenet':
         model = build_densenet(input_tensor, num_classes, k=top_k)
