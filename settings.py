@@ -43,6 +43,8 @@ SUB_EPOCHS = 40  # 20% of pre + after
 MAX_COUNT = 50
 LOOP_COUNT = 5
 
+NUM_SUBMODELS = 20
+
 FURTHER_ADJUSTMENT_EPOCHS = 10
 
 # parameters for validation dataset
