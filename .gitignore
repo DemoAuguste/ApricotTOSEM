@@ -5,3 +5,4 @@
 *.txt
 model/CNN/ResNet.py
 model/CNN/ResNet.py
+weights/resnet20/cifar10/1/corr_matrix_42.npy

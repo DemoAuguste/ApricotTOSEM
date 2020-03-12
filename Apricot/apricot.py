@@ -70,7 +70,7 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy, activation='
     submodel_dir = os.path.join(model_weights_dir, 'submodels')
     trained_weights_path = os.path.join(model_weights_dir, 'trained.h5')  
     fixed_weights_path = os.path.join(model_weights_dir, 'fixed_{}_{}.h5'.format(adjustment_strategy, activation))
-    log_path = os.path.join(model_weights_dir, 'log.txt')
+    log_path = os.path.join(model_weights_dir, 'log_{}.txt'.format(adjustment_strategy))
 
     if not os.path.exists(fixed_weights_path):
         fixed_model.save_weights(fixed_weights_path)
@@ -122,10 +122,13 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy, activation='
             corr_mat = sub_correct_matrix[index, :]
             
             print('obtaining correct and incorrect weights...')
-            corr_w, incorr_w = get_adjustment_weights(corr_mat, sub_weights_list, adjustment_strategy)
-            # print(corr_w, incorr_w)
-            print('calculating adjust weights...')
-            adjust_w = adjust_weights_func(curr_weights, corr_w, incorr_w, adjustment_strategy, activation=activation)
+            if adjustment_strategy <= 3:
+                corr_w, incorr_w = get_adjustment_weights(corr_mat, sub_weights_list, adjustment_strategy)
+                print('calculating adjust weights...')
+                adjust_w = adjust_weights_func(curr_weights, corr_w, incorr_w, adjustment_strategy, activation=activation)
+            else: # lite version
+                print('calculating adjust weights...')
+                adjust_w = adjust_weights_func_lite(corr_mat, sub_weights_list, curr_weights)
             
             if adjust_w == -1:
                 continue
@@ -138,26 +141,45 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy, activation='
                 best_acc = curr_acc
                 fixed_model.save_weights(fixed_weights_path)
 
-                # further training epochs.
-                checkpoint = ModelCheckpoint(fixed_weights_path, monitor='val_acc', verbose=1, save_best_only=True, mode='max') 
-                checkpoint.best = best_acc
-                fixed_model.fit_generator(datagen.flow(x_train_val, y_train_val, batch_size=settings.BATCH_SIZE), 
-                                            steps_per_epoch=len(x_train_val) // BATCH_SIZE + 1, 
-                                            validation_data=(x_val, y_val), 
-                                            epochs=settings.FURTHER_ADJUSTMENT_EPOCHS, 
-                                            callbacks=[checkpoint])
+                if adjustment_strategy <=3:
+                    # further training epochs.
+                    checkpoint = ModelCheckpoint(fixed_weights_path, monitor='val_acc', verbose=1, save_best_only=True, mode='max') 
+                    checkpoint.best = best_acc
+                    fixed_model.fit_generator(datagen.flow(x_train_val, y_train_val, batch_size=settings.BATCH_SIZE), 
+                                                steps_per_epoch=len(x_train_val) // BATCH_SIZE + 1, 
+                                                validation_data=(x_val, y_val), 
+                                                epochs=settings.FURTHER_ADJUSTMENT_EPOCHS, 
+                                                callbacks=[checkpoint])
 
-                fixed_model.load_weights(fixed_weights_path)
+                    fixed_model.load_weights(fixed_weights_path)
 
-                # eval the model
-                _, val_acc = fixed_model.evaluate(x_val, y_val, verbose=0)
-                # _, test_acc = fixed_model.evaluate(x_test, y_test, verbose=0)
-                best_acc = val_acc
+                    # eval the model
+                    _, val_acc = fixed_model.evaluate(x_val, y_val, verbose=0)
+                    # _, test_acc = fixed_model.evaluate(x_test, y_test, verbose=0)
+                    best_acc = val_acc
 
-                # print('validation accuracy after further training: {:.4f}'.format(test_acc))
-                logger('validation accuracy improved, after further training: {:.4f}'.format(val_acc), log_path)
+                    # print('validation accuracy after further training: {:.4f}'.format(test_acc))
+                    logger('validation accuracy improved, after further training: {:.4f}'.format(val_acc), log_path)
+                else:
+                    logger('validation accuracy improved: {:.4f}'.format(best_acc), log_path)
             else:
                 fixed_model.load_weights(fixed_weights_path)
+
+
+    fixed_model.load_weights(fixed_weights_path)
+    if adjustment_strategy > 3:
+        # final training process.
+        _, val_acc =  fixed_model.evaluate(x_val, y_val)
+        checkpoint = ModelCheckpoint(fixed_weights_path, monitor='val_acc', verbose=1, save_best_only=True, mode='max') 
+        checkpoint.best = val_acc
+
+        fixed_model.fit_generator(datagen.flow(x_train_val, y_train_val, batch_size=settings.BATCH_SIZE), 
+                                                steps_per_epoch=len(x_train_val) // BATCH_SIZE + 1, 
+                                                validation_data=(x_val, y_val), 
+                                                epochs=settings.FURTHER_ADJUSTMENT_EPOCHS, 
+                                                callbacks=[checkpoint])
+        fixed_model.load_weights(fixed_weights_path)
+
 
     # final evaluation.
     _, test_acc = fixed_model.evaluate(x_test, y_test, verbose=0)

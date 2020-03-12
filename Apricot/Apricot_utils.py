@@ -107,7 +107,7 @@ def get_adjustment_weights(corr_mat, weights_list, adjustment_strategy):
                 corr_w = cal_avg(corr_weights)
             if len(incorr_sets) != 0:
                 incorr_w = cal_avg(incorr_weights)    
-        else: # lite version
+        else: # lite version NOT used
             if len(corr_sets) != 0:
                 corr_id = random.randint(0, len(corr_sets) - 1)
                 corr_w = corr_weights[corr_id]
@@ -174,3 +174,64 @@ def adjust_weights_func(curr_weights, corr_w, incorr_w, adjustment_strategy, act
     
     return adjust_weights
 
+
+
+def get_sign_matrix(weights_list, curr_w):
+    sign_matrices = []
+    for w in weights_list:
+        temp_sign = [(i[0] - i[1]) for i in zip(curr_w, w)]
+        sign_matrices.append(temp_sign)
+    
+    def add_sign_matrix(sum_w, w):
+        if sum_w is None:
+            sum_w = [np.sign(i) for i in w]
+        else:
+            sum_w = [np.sign(i[0]) + i[1] for i in zip(sum_w, w)]
+        return sum_w
+
+    sum_w = None
+    for w in sign_matrices:
+        sum_w = add_sign_matrix(sum_w, w)
+
+    return sum_w
+
+
+def adjust_weights_func_lite(corr_mat, weights_list, curr_weights):
+    adjust_w = -1
+    corr_sets = np.nonzero(corr_mat)[0].tolist()
+    if corr_sets is None or  len(corr_sets) == 0:
+        corr_sets = []
+        corr_weights = []
+    else:
+        corr_weights = [weights_list[i] for i in corr_sets]
+    temp_incorr_matrix = np.ones(shape=corr_mat.shape) - corr_mat
+    incorr_sets = np.nonzero(temp_incorr_matrix)[0].tolist()
+    if incorr_sets is None or len(incorr_sets) == 0:
+        incorr_sets = []
+        incorr_weights = []
+    else:
+        incorr_weights = [weights_list[i] for i in incorr_sets]
+
+    if len(corr_sets) != 0:
+        corr_sign = get_sign_matrix(corr_weights, curr_weights)
+    else:
+        corr_sign = None
+    if len(incorr_sets) != 0:
+        incorr_sign = get_sign_matrix(incorr_weights, curr_weights)
+    else:
+        corr_sign = None
+
+    if corr_sign is None and incorr_sign is None:
+        adjust_w = -1
+        return adjust_w
+
+    elif corr_sign is None:
+        sign_w = [np.sign(-i) for i in incorr_sign]
+    elif incorr_sign is None:
+        sign_w = [np.sign(i) for i in corr_sign]
+    else:
+        sign_w = [np.sign(i[0] - i[1]) for i in zip(corr_sign, incorr_sign)]
+
+    adjust_w = [item[0] - settings.learning_rate * item[0] * item[1] for item in zip(curr_weights, sign_w)]
+
+    return adjust_w
