@@ -110,5 +110,58 @@ def train_model(model_name, num_classes=10, dataset='cifar10', ver=1, num_submod
             model.save_weights(submodel_save_path)
         
 
+def rnn_train_model(model_name, num_classes, dataset='imdb', ver=1, num_submodels=20, train_sub=True, subset_size=5000):
+    print("########################")
+    print("model name: {}".format(model_name))
+    print("dataset: {}".format(dataset))
+    print("version: {}".format(ver))
+    print("num of classes: {}".format(num_classes))
+    print("num of submodels: {}".format(num_submodels))
+    print("########################")
 
+    x_train, x_test, y_train, y_test = load_dataset(dataset)
+    print("x_train shape: {}".format(x_train.shape))
+    print("y_train shape: {}".format(y_train.shape))
+    x_train_val, x_val, y_train_val, y_val = split_validation_dataset(x_train, y_train)
 
+    model = build_networks(model_name)
+
+    model_weights_save_dir = os.path.join(WORKING_DIR, 'weights')
+    model_weights_save_dir = os.path.join(model_weights_save_dir, model_name)
+    model_weights_save_dir = os.path.join(model_weights_save_dir, dataset)
+    model_weights_save_dir = os.path.join(model_weights_save_dir, str(ver))
+
+    if not os.path.exists(model_weights_save_dir):
+        os.makedirs(model_weights_save_dir)
+    
+    pretrained_path = os.path.join(model_weights_save_dir, 'pretrained.h5')
+    trained_path = os.path.join(model_weights_save_dir, 'trained.h5')
+
+    if not os.path.exists(pretrained_path):
+        # pretrain the model, using the x_train_val.
+        model.fit(x_train_val, y_train_val, batch_size=BATCH_SIZE, epochs=1, validation_data=[x_val, y_val])
+        model.save_weights(pretrained_path)
+    else:
+        model.load_weights(pretrained_path)
+
+    if not os.path.exists(trained_path):
+        # train the original model
+        model.fit(x_train, y_train, batch_size=BATCH_SIZE, epochs=5, validation_data=[x_val, y_val])
+        model.save_weights(trained_path)
+
+    if train_sub:
+        submodel_dir = os.path.join(model_weights_save_dir, 'submodels')
+        if not os.path.exists(submodel_dir):
+            os.makedirs(submodel_dir)
+
+        step = int((x_train_val.shape[0] - subset_size) / num_submodels)
+        for i in range(num_submodels):
+            submodel_save_path = os.path.join(submodel_dir, 'sub_{}.h5'.format(i))
+
+            sub_x_train_val = x_train_val[step*i : subset_size + step*i]
+            sub_y_train_val = y_train_val[step*i : subset_size + step*i]
+            
+            # load the pretrained model
+            model.load_weights(pretrained_path)
+            model.fit(x_train, y_train, batch_size=BATCH_SIZE, epochs=2)
+            model.save_weights(submodel_save_path)

@@ -187,8 +187,5 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy, activation='
     logger('test accuracy: {:.4f}'.format(test_acc), log_path)
 
     
-    
-
-
-# def apricot_lite():
-#     pass
+def apricot_rnn():
+    pass

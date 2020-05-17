@@ -11,8 +11,10 @@ def training_process(model_name, dataset, ver):
     elif dataset == 'cifar100':
         num_classes = 100
     train_sub = True
-    train_model(model_name, num_classes=num_classes, dataset=dataset, ver=ver, num_submodels=settings.NUM_SUBMODELS, train_sub=train_sub, save_path=None)
-    
+    if dataset != 'imdb':
+        train_model(model_name, num_classes=num_classes, dataset=dataset, ver=ver, num_submodels=settings.NUM_SUBMODELS, train_sub=train_sub, save_path=None)
+    else:
+        rnn_train_model(model_name, num_classes=2, dataset=dataset, ver=ver, num_submodels=settings.NUM_SUBMODELS, train_sub=train_sub)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Settings of Apricot+.')

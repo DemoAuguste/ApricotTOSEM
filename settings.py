@@ -13,6 +13,7 @@ import random
 
 WORKING_DIR = os.path.abspath(os.path.dirname(__file__))
 WEIGHTS_DIR = os.path.join(WORKING_DIR, 'weights')
+DATA_DIR = os.path.join(WORKING_DIR, 'data')
 
 if 'win' in sys.platform:
     IMAGENET_DATASET_DIR = 'D:\\imagenet'
@@ -52,3 +53,8 @@ RANDOM_SEED = 42
 VAL_RATE = 0.2
 
 MONITOR = 'val_acc'
+
+
+# RNN settings
+rnn_num_classes = 5
+word2vec_len = 100

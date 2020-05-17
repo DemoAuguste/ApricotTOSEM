@@ -8,13 +8,21 @@ realized functions:
 import os
 import settings
 import numpy as np
-from keras.datasets import cifar10, cifar100, mnist
+from keras.datasets import cifar10, cifar100, mnist, imdb
 import keras
 from datetime import datetime
-import settings
 from keras.layers import Input
 from sklearn.model_selection import train_test_split
+from keras.preprocessing import sequence
+
+from nltk.tokenize import word_tokenize, sent_tokenize
+# from nltk.corpus import stopwords
+from nltk.stem.porter import *
+import gensim
+from settings import *
+
 from model import *
+
 
 def color_preprocessing(x_train, x_test):
     x_train = x_train.astype('float32')
@@ -57,7 +65,6 @@ def load_dataset(dataset='cifar10', preprocessing=True, shuffle=True):
         y_train = None
         x_test = None
         y_test = None
-
         # load training dataset
         for i in range(10):
             temp_file_path = os.path.join(IMAGENET_DATASET_DIR, 'train_data_batch_{}'.format(i+1))
@@ -85,6 +92,30 @@ def load_dataset(dataset='cifar10', preprocessing=True, shuffle=True):
         y_test = np.array(test_data['labels']) -1
         y_test = keras.utils.to_categorical(y_test, num_classes)
 
+    elif dataset == 'treebank':
+        f = open(os.path.join(DATA_DIR, "sentence_labels.txt"))
+        # text = f.read().decode("utf-8")
+        sentences= []
+        for sentence in f:
+            sentence = sentence.split("\t")[0]
+            sentences.append(sentence)
+        # sentences = sent_tokenize(text)
+        sentences = preprocess(sentences)
+        max_len = max_length(sentences)
+        word_model = gensim.models.Word2Vec(sentences, min_count=1)
+        f.close()
+
+        X_train, y_train = get_file_data(os.path.join(DATA_DIR, 'train.txt'), word_model, max_len, word2vec_len, rnn_num_classes)
+        X_valid, y_valid = get_file_data(os.path.join(DATA_DIR, "valid.txt"), word_model, max_len, word2vec_len, rnn_num_classes)
+        X_test, y_test = get_file_data(os.path.join(DATA_DIR, "test.txt"), word_model, max_len, word2vec_len, rnn_num_classes)
+
+        return X_train, y_train, X_valid, y_valid, X_test, y_test, max_len
+    
+    elif dataset == 'imdb':
+        (x_train, y_train), (x_test, y_test) = imdb.load_data(num_words=20000)
+        x_train = sequence.pad_sequences(x_train, maxlen=100)
+        x_test = sequence.pad_sequences(x_test, maxlen=100)
+
     # shuffle training dataset
     if shuffle:
         np.random.seed(settings.RANDOM_SEED)
@@ -100,19 +131,30 @@ def split_validation_dataset(xs, ys, val_rate=settings.VAL_RATE, random_seed=set
     return x_train_val, x_val, y_train_val, y_val
 
 
-def build_networks(model_name, num_classes, input_size):
-    input_tensor = Input(shape=input_size)
+def build_networks(model_name, num_classes=None, input_size=None):
+    # input_tensor = Input(shape=input_size)
     top_k = 1 # default: only use top-1 accuracy.
     if model_name == 'resnet20':
+        input_tensor = Input(shape=input_size)
         model = build_resnet(input_size[0], input_size[1], input_size[2], num_classes=num_classes, stack_n=3, k=top_k)
     elif model_name == 'resnet32':
+        input_tensor = Input(shape=input_size)
         model = build_resnet(input_size[0], input_size[1], input_size[2], num_classes=num_classes, stack_n=5, k=top_k)
     elif model_name == 'mobilenet':
+        input_tensor = Input(shape=input_size)
         model = build_mobilenet(input_tensor, num_classes, k=top_k)
     elif model_name == 'mobilenetv2':
+        input_tensor = Input(shape=input_size)
         model = build_mobilenet_v2(input_tensor, num_classes, k=top_k)
     elif model_name == 'densenet':
+        input_tensor = Input(shape=input_size)
         model = build_densenet(input_tensor, num_classes, k=top_k)
+    elif model_name == 'lstm':
+        max_features = 20000
+        model = lstm(max_features)
+    elif model_name == 'bilstm':
+        max_features = 20000
+        model = bilistm(max_features)
     return model
 
 def logger(msg, path):
@@ -139,3 +181,40 @@ def get_submodels_weights(model, path):
     return weights_list
         
 
+# RNN use
+def get_file_data(filename, model, max_len, word2vec_len, num_classes):
+	sentences = []
+	labels = []
+	sentence_labels = open(filename)
+	for sentence_label in sentence_labels:
+		sentence = sentence_label.split("\t")[0]
+		sentences.append(sentence)
+		label = sentence_label.split("\t")[2]
+		labels.append(int(label))
+	sentences = preprocess(sentences)
+	sentence_labels.close
+
+	X = np.zeros((len(sentences),max_len, word2vec_len))
+	y = np.zeros((len(sentences),num_classes))
+
+	for i in range(len(sentences)):
+		for j in range(len(sentences[i])):
+			X[i,j,:] = model[sentences[i][j]]
+		# print labels[i],
+		y[i,labels[i]]=1
+
+	return X,y
+
+def preprocess(sentences):
+	for i in range(len(sentences)):
+		sentences[i] = word_tokenize(sentences[i])
+		# sentences[i] = [word for word in sentences[i] if word not in stop_words]
+		# sentences[i] = [stemmer.stem(word) for word in sentences[i]]
+	return sentences
+
+def max_length(sentences):
+	max_len=-1
+	for i in range(len(sentences)):
+		if len(sentences[i])>max_len:
+			max_len=len(sentences[i])
+	return max_len
