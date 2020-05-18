@@ -39,9 +39,9 @@ if __name__ == '__main__':
     x_train, x_test, y_train, y_test = load_dataset(dataset)
     x_train_val, x_val, y_train_val, y_val = split_validation_dataset(x_train, y_train)
 
-    _, val_acc = fixed_model.evaluate(x_train_val, y_train_val)
+    _, val_acc = model.evaluate(x_train_val, y_train_val)
     print('training acc: {:.4f}'.format(val_acc))
-    _, val_acc = fixed_model.evaluate(x_val, y_val)
+    _, val_acc = model.evaluate(x_val, y_val)
     print('validation acc: {:.4f}'.format(val_acc))
-    _, val_acc = fixed_model.evaluate(x_test, y_test)
+    _, val_acc = model.evaluate(x_test, y_test)
     print('test acc: {:.4f}'.format(val_acc))
