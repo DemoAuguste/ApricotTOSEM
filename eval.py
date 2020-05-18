@@ -8,7 +8,7 @@ if __name__ == '__main__':
     parser.add_argument('-m', '--model', help='model to be fixed.', type=str)
     parser.add_argument('-d', '--dataset', help='dataset for training the model.', type=str, default='cifar10')
     parser.add_argument('-v', '--version', help='number of version.', type=int)
-    parser.add_argument('-n', '--name', help='the name of the file', type=str default='trained.h5')
+    parser.add_argument('-n', '--name', help='the name of the file', type=str, default='trained.h5')
 
     args = parser.parse_args()
 
