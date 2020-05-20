@@ -98,7 +98,10 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy, activation='
     # find all indices of xs that original model fails on them.
     fail_xs, fail_ys, fail_ys_label, fail_num = get_failing_cases(fixed_model, x_train_val, y_train_val)
 
-    sub_correct_matrix_path = os.path.join(model_weights_dir, 'corr_matrix_{}.npy'.format(settings.RANDOM_SEED))
+    if settings.NUM_SUBMODELS == 20:
+        sub_correct_matrix_path = os.path.join(model_weights_dir, 'corr_matrix_{}.npy'.format(settings.RANDOM_SEED))
+    else:
+        sub_correct_matrix_path = os.path.join(model_weights_dir, 'corr_matrix_{}_{}.npy'.format(settings.RANDOM_SEED, settings.NUM_SUBMODELS))
     sub_correct_matrix = None # 1: predicts correctly, 0: predicts incorrectly.
     print('obtaining sub correct matrix...')
 

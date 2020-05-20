@@ -97,6 +97,8 @@ def train_model(model_name, num_classes=10, dataset='cifar10', ver=1, num_submod
         step = int((x_train_val.shape[0] - subset_size) / num_submodels)
         for i in range(num_submodels):
             submodel_save_path = os.path.join(submodel_dir, 'sub_{}.h5'.format(i))
+            if os.path.exists(submodel_save_path):
+                continue
 
             sub_x_train_val = x_train_val[step*i : subset_size + step*i]
             sub_y_train_val = y_train_val[step*i : subset_size + step*i]
