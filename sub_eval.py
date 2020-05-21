@@ -15,7 +15,7 @@ if __name__ == '__main__':
     model_name = args.model
     dataset = args.dataset
     ver = args.version
-    f_name = args.name
+    # f_name = args.name
     num = args.num
 
     # initialization.
