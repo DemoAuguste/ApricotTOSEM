@@ -60,5 +60,8 @@ if __name__ == '__main__':
         _, val_acc = model.evaluate(x_test, y_test)
         print('test acc: {:.4f}'.format(val_acc))
         total_test_acc += val_acc
-
+    f = open(os.path.join(WORKING_DIR, 'record.txt'), 'a+')
+    f.write('model: {}, ver: {}, dataset: {}\n'.format(model_name, ver, dataset))
+    f.write('avg train acc: {:.4f}, val acc: {:.4f}, test acc: {:4f}\n'.format(total_train_acc/num, total_val_acc/num, total_test_acc/num))
     print('avg train acc: {:.4f}, val acc: {:.4f}, test acc: {:4f}'.format(total_train_acc/num, total_val_acc/num, total_test_acc/num))
+    f.close()
