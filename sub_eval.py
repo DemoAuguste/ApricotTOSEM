@@ -46,7 +46,7 @@ if __name__ == '__main__':
     total_test_acc = 0.0
 
     for i in range(num):
-        sub_path = os.path.join(model_weights_dir)
+        sub_path = os.path.join(model_weights_dir, 'sub_{}.h5'.format(i))
         model.load_weights(sub_path)
 
         _, val_acc = model.evaluate(x_train_val, y_train_val)
