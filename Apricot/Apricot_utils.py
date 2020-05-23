@@ -219,7 +219,7 @@ def adjust_weights_func_lite(corr_mat, weights_list, curr_weights):
     if len(incorr_sets) != 0:
         incorr_sign = get_sign_matrix(incorr_weights, curr_weights)
     else:
-        corr_sign = None
+        incorr_sign = None
 
     if corr_sign is None and incorr_sign is None:
         adjust_w = -1
