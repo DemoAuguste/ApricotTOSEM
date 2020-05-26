@@ -70,11 +70,22 @@ echo $adaptation_path
 #     CUDA_VISIBLE_DEVICES=2 python $adaptation_path -m densenet -d cifar10 -v $i -s 3 -a binary
 # done
 
-for i in {1..5}
-do
-    CUDA_VISIBLE_DEVICES=2 python $adaptation_path -m resnet20 -d cifar10 -v $i -s 4 -a binary
-    CUDA_VISIBLE_DEVICES=2 python $adaptation_path -m mobilenet -d cifar10 -v $i -s 4 -a binary
-    CUDA_VISIBLE_DEVICES=2 python $adaptation_path -m resnet32 -d cifar10 -v $i -s 4 -a binary
-    CUDA_VISIBLE_DEVICES=2 python $adaptation_path -m mobilenetv2 -d cifar10 -v $i -s 4 -a binary
-    CUDA_VISIBLE_DEVICES=2 python $adaptation_path -m densenet -d cifar10 -v $i -s 4 -a binary
-done
+# for i in {1..5}
+# do
+#     CUDA_VISIBLE_DEVICES=2 python $adaptation_path -m resnet20 -d cifar10 -v $i -s 4 -a binary
+#     CUDA_VISIBLE_DEVICES=2 python $adaptation_path -m mobilenet -d cifar10 -v $i -s 4 -a binary
+#     CUDA_VISIBLE_DEVICES=2 python $adaptation_path -m resnet32 -d cifar10 -v $i -s 4 -a binary
+#     CUDA_VISIBLE_DEVICES=2 python $adaptation_path -m mobilenetv2 -d cifar10 -v $i -s 4 -a binary
+#     CUDA_VISIBLE_DEVICES=2 python $adaptation_path -m densenet -d cifar10 -v $i -s 4 -a binary
+# done
+
+CUDA_VISIBLE_DEVICES=2 python $adaptation_path -m resnet20 -d cifar10 -v 5 -s 4 -a binary
+CUDA_VISIBLE_DEVICES=2 python $adaptation_path -m resnet32 -d cifar10 -v 5 -s 4 -a binary
+
+CUDA_VISIBLE_DEVICES=2 python $adaptation_path -m mobilenet -d cifar10 -v 4 -s 4 -a binary
+CUDA_VISIBLE_DEVICES=2 python $adaptation_path -m mobilenet -d cifar10 -v 5 -s 4 -a binary
+
+CUDA_VISIBLE_DEVICES=2 python $adaptation_path -m mobilenetv2 -d cifar10 -v 5 -s 4 -a binary
+
+CUDA_VISIBLE_DEVICES=2 python $adaptation_path -m densenet -d cifar10 -v 4 -s 4 -a binary
+CUDA_VISIBLE_DEVICES=2 python $adaptation_path -m densenet -d cifar10 -v 5 -s 4 -a binary
