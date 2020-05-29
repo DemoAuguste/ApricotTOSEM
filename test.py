@@ -5,7 +5,7 @@ from settings import *
 
 if __name__ == '__main__':
     input_size = (32, 32, 3)
-    model = build_networks('mobilenetv2', num_classes=10, input_size=input_size) 
+    model = build_networks('densenet', num_classes=10, input_size=input_size) 
     model.summary()
-    model = build_networks('mobilenetv2', num_classes=100, input_size=input_size)
+    model = build_networks('densenet', num_classes=100, input_size=input_size)
     model.summary()
