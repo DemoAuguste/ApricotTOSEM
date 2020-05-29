@@ -4,6 +4,8 @@ import gensim
 from settings import *
 
 if __name__ == '__main__':
-    model = build_networks('resnet20', num_classes=100)
+    input_size = (32, 32, 3)
+    model = build_networks('resnet20', num_classes=100, input_size=input_size) 
     model.summary()
-    model = build_networks('resnet20', num_classes=100)
+    model = build_networks('resnet20', num_classes=100, input_size=input_size)
+    model.summary()
