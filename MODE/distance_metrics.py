@@ -22,7 +22,7 @@ def measure_distance(data, heatmap, distance_metric, **kwargs):
     # NOTE: np.argsort() orders from smallest to largest, which is good for dot products, but bad for every other kind of norm
 
     if distance_metric == 'dot':
-        scores = np.dot(data.reshape(-1, 784), np.ravel(heatmap))
+        scores = np.dot(data.reshape(-1, 1024), np.ravel(heatmap))
         scores = np.argsort(scores)
 
     elif distance_metric == 'cosine':
