@@ -28,17 +28,21 @@ def Forward_Layer_Select(model,
             print('Layer Number: {}'.format(layer_num))
 
         # create model container
-        feature_model = k.models.Sequential()  
+        feature_model = k.models.Sequential() 
+
+        flag = False
 
         # add "frozen" (trainable = False) layers incrementally to create submodels
         total = int(layer_num)
         for i in np.arange(layer_num):
             next_layer = model.layers[i]
             next_layer.trainable = False
-            print(next_layer)
+            if isinstance(next_layer, k.layers.merge.Add):
+                continue
             feature_model.add(next_layer)
             if i == total - 1:
                 feature_model.add(k.layers.Flatten()) 
+
 
         # add output layer
         feature_model.add(k.layers.Dense(10, activation=tf.nn.softmax))
