@@ -44,15 +44,15 @@ def select_next_inputs(bug_fix_data,
     # select targets
     if for_underfitting:  
         # these should look the most similar to the heatmaps
-        targets_x = candidate_samples_x[sorted_scores[-num_target_samples:]].reshape(-1, 28, 28) 
+        targets_x = candidate_samples_x[sorted_scores[-num_target_samples:]].reshape(-1, 32, 32) 
         targets_y = candidate_samples_y[sorted_scores[-num_target_samples:]]
-        remainder_x = candidate_samples_x[sorted_scores[:-num_target_samples]].reshape(-1, 28, 28) 
+        remainder_x = candidate_samples_x[sorted_scores[:-num_target_samples]].reshape(-1, 32, 32) 
         remainder_y = candidate_samples_y[sorted_scores[:-num_target_samples]]
     else: #for_overfitting        
         # these should look the least similar to the heatmaps
-        targets_x = candidate_samples_x[sorted_scores[:num_target_samples]].reshape(-1, 28, 28) 
+        targets_x = candidate_samples_x[sorted_scores[:num_target_samples]].reshape(-1, 32, 32) 
         targets_y = candidate_samples_y[sorted_scores[:num_target_samples]]
-        remainder_x = candidate_samples_x[sorted_scores[num_target_samples:]].reshape(-1, 28, 28) 
+        remainder_x = candidate_samples_x[sorted_scores[num_target_samples:]].reshape(-1, 32, 32) 
         remainder_y = candidate_samples_y[sorted_scores[num_target_samples:]]
       
     # ################## #  
