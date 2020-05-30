@@ -34,6 +34,7 @@ def Forward_Layer_Select(model,
 
         # add output layer
         feature_model.add(k.layers.Dense(10, activation=tf.nn.softmax))
+        feature_model.add(k.layers.Dense(10, activation=tf.nn.softmax))
         # feature_model.add(k.layers.Flatten())
 
         # compile
