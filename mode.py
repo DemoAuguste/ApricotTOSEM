@@ -89,8 +89,17 @@ if __name__ == '__main__':
     # model.summary()
     model.load_weights(os.path.join(model_weights_dir, 'trained.h5'))
 
+    model = replicate_model(model)
+    model.compile(optimizer='adam',
+                      loss='sparse_categorical_crossentropy',
+                      metrics=['accuracy'])
+
     # load dataset
     x_train, x_test, y_train, y_test = load_dataset(dataset)
+
+    y_train = np.argmax(y_train, axis=1)
+    y_test = np.argmax(y_test, axis=1)
+
     x_train, x_bug_fixes, y_train, y_bug_fixes = split_validation_dataset(x_train, y_train)
 
     # predict train (to get distributions)

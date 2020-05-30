@@ -17,8 +17,7 @@ def Forward_Layer_Select(model,
     bhattacharyyas = {}
     bit = (1 * verbose)
 
-    y_train = np.argmax(y_train, axis=1)
-    y_test = np.argmax(y_test, axis=1)
+    
 
     for layer_num, layer in zip(np.arange(1, len(model.layers)), model.layers): 
         try:
@@ -101,8 +100,6 @@ def Backward_Layer_Select(model,
                           similarity_threshold, 
                           verbose=False):
 
-    y_train = np.argmax(y_train, axis=1)
-    y_test = np.argmax(y_test, axis=1)
 
     feature_models= {}
     accuracies = {}
