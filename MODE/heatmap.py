@@ -33,6 +33,6 @@ def get_heatmaps(correct_data,
         else:
             raise ValueError('pass in valid type')
       
-        heat_maps.append(np.array(hm).reshape(28,28))
+        heat_maps.append(np.array(hm).reshape(32,32,3))
       
     return labels, np.array(heat_maps)
