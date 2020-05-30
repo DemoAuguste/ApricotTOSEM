@@ -129,6 +129,8 @@ if __name__ == '__main__':
 
         control_model = copy.deepcopy(model)
 
+        model.summary()
+
         i = 0
         while i < max_iter:
 
