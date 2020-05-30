@@ -29,6 +29,7 @@ def Forward_Layer_Select(model,
         for i in np.arange(layer_num):
             next_layer = model.layers[i]
             next_layer.trainable = False
+            print(next_layer)
             feature_model.add(next_layer) 
 
         # add output layer
