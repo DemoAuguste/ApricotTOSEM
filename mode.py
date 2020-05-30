@@ -136,7 +136,7 @@ if __name__ == '__main__':
                                                     y_test, 
                                                     epochs, 
                                                     similarity_threshold, 
-                                                    verbose=False)
+                                                    verbose=True)
 
             feature_models, accuracies, bhattacharyyas, layer_pred = cache
 
