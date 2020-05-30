@@ -39,7 +39,7 @@ def Forward_Layer_Select(model,
         # feature_model.add(k.layers.Flatten())
 
         # compile
-        feature_model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy']) 
+        feature_model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy']) 
         
         # get some nice summary data
         if verbose:
@@ -118,7 +118,7 @@ def Backward_Layer_Select(model,
             feature_model.add(next_layer) 
 
         # compile
-        feature_model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy']) 
+        feature_model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy']) 
         
         # get some nice summary data
         if verbose:
