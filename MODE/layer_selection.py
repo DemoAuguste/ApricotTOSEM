@@ -40,8 +40,8 @@ def Forward_Layer_Select(model,
             if isinstance(next_layer, k.layers.merge.Add):
                 continue
             feature_model.add(next_layer)
-            if i == total - 1:
-                feature_model.add(k.layers.Flatten()) 
+            
+        feature_model.add(k.layers.Flatten()) 
 
 
         # add output layer
