@@ -20,6 +20,7 @@ from Apricot import *
 from model import *
 from utils import *
 import argparse
+import copy
 
 
 # Underfitting Threshold
@@ -111,11 +112,13 @@ if __name__ == '__main__':
         test_loss, test_acc = model.evaluate(x_test, y_test, verbose=0)
         print('Initial Test Loss: {}, Initial Test Accuracy: {}'.format(test_loss, test_acc))
 
-        control_model = replicate_model(model)
+        # control_model = replicate_model(model)
 
-        control_model.compile(optimizer='adam',
-                            loss='sparse_categorical_crossentropy',
-                            metrics=['accuracy'])
+        # control_model.compile(optimizer='adam',
+        #                     loss='sparse_categorical_crossentropy',
+        #                     metrics=['accuracy'])
+
+        control_model = copy.deepcopy(model)
 
         i = 0
         while i < max_iter:
