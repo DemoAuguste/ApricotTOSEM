@@ -33,7 +33,7 @@ def Forward_Layer_Select(model,
 
         # add output layer
         feature_model.add(k.layers.Dense(10, activation=tf.nn.softmax))
-        feature_model.add(k.layers.Flatten())
+        # feature_model.add(k.layers.Flatten())
 
         # compile
         feature_model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy']) 
