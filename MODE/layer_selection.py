@@ -30,9 +30,9 @@ def Forward_Layer_Select(model,
         for i in np.arange(layer_num):
             next_layer = model.layers[i]
             next_layer.trainable = False
+            feature_model.add(next_layer)
             if i == total - 1:
-                feature_model.add(k.layers.Flatten())
-            feature_model.add(next_layer) 
+                feature_model.add(k.layers.Flatten()) 
 
         # add output layer
         feature_model.add(k.layers.Dense(10, activation=tf.nn.softmax))
