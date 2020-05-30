@@ -43,7 +43,7 @@ def Forward_Layer_Select(model,
         
         # get some nice summary data
         if verbose:
-            feature_model.build()
+            feature_model.build(input_shape=(None, 32, 32, 3))
             feature_model.summary()
             
         # train
