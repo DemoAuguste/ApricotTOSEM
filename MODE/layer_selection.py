@@ -53,8 +53,15 @@ def Forward_Layer_Select(model,
         x = k.layers.Dense(10, activation=tf.nn.softmax)(x)
         feature_model = Model(inputs=temp_model.layers[0].input, outputs=x)
 
-        feature_model.trainable = False
-        feature_model.layers[-1].trainable = True
+        # feature_model.trainable = False
+        # feature_model.layers[-1].trainable = True
+        total_layer_num = len(feature_model.layers)
+        for idx, layer in enumerate(feature_model.layers):
+            if idx == total_layer_num - 1:
+                layer.trainable = True
+            else:
+                layer.trainable = False
+            
         
         # feature_model.add(k.layers.Flatten()) 
 
