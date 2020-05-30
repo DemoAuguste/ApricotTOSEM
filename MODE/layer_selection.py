@@ -17,10 +17,13 @@ def Forward_Layer_Select(model,
     bhattacharyyas = {}
     bit = (1 * verbose)
 
-    
+    last_y_pred = None
 
     for layer_num, layer in zip(np.arange(1, len(model.layers)), model.layers): 
         try:
+            if isinstance(layer, k.layers.Conv2D) or isinstance(layer, k.layers.Activation):
+                continue
+
             if verbose:
                 print('Layer Number: {}'.format(layer_num))
 
@@ -69,7 +72,7 @@ def Forward_Layer_Select(model,
                 print('Test Acc: {}'.format(scores[1]))
 
             # measure similarity
-            if layer_num == 1:
+            if layer_num == 1 or last_y_pred is None:
                 last_y_pred = np.ones_like(y_pred)
 
             similarity = bhattacharyya(y_pred, last_y_pred)
