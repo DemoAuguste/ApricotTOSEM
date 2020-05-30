@@ -28,7 +28,8 @@ def measure_distance(data, heatmap, distance_metric, **kwargs):
     elif distance_metric == 'cosine':
         for i in np.arange(data.shape[0]):
             scores[i] = spatial.distance.cosine(np.ravel(data[i]), np.ravel(heatmap))
-        scores = np.flip(np.argsort(scores))
+        print(scores.shape())
+        scores = np.flip(np.argsort(scores), axis=0)
 
     elif distance_metric == 'manhattan' or distance_metric == 'l1':
         for i in np.arange(data.shape[0]):
