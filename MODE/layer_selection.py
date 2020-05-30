@@ -2,6 +2,7 @@ import numpy as np
 import tensorflow as tf
 import keras as k
 from .distance_metrics import bhattacharyya
+from keras.models import Model
 
 def Forward_Layer_Select(model, 
                          x_train, 
@@ -30,19 +31,23 @@ def Forward_Layer_Select(model,
             print('Layer Number: {}'.format(layer_num))
 
         # create model container
-        feature_model = k.models.Sequential() 
+        # feature_model = k.models.Sequential() 
 
-        flag = False
+        # flag = False
 
-        # add "frozen" (trainable = False) layers incrementally to create submodels
-        total = int(layer_num)
-        for i in np.arange(layer_num):
-            next_layer = model.layers[i]
-            next_layer.trainable = False
-            if isinstance(next_layer, k.layers.merge.Add):
-                continue
-            print(next_layer)
-            feature_model.add(next_layer)
+        # # add "frozen" (trainable = False) layers incrementally to create submodels
+        # total = int(layer_num)
+        # for i in np.arange(layer_num):
+        #     next_layer = model.layers[i]
+        #     next_layer.trainable = False
+        #     if isinstance(next_layer, k.layers.merge.Add):
+        #         continue
+        #     print(next_layer)
+        #     feature_model.add(next_layer)
+        feature_model = Model(inputs=model.layers[0].input,
+                                outputs=model.layers[int(layer_num) -1].output, trainable=False)
+        
+
 
         feature_model.add(k.layers.Flatten()) 
 
