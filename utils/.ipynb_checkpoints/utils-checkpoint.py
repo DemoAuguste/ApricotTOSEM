@@ -18,7 +18,7 @@ from keras.preprocessing import sequence
 from nltk.tokenize import word_tokenize, sent_tokenize
 # from nltk.corpus import stopwords
 from nltk.stem.porter import *
-# import gensim
+import gensim
 from settings import *
 
 from model import *
@@ -93,18 +93,17 @@ def load_dataset(dataset='cifar10', preprocessing=True, shuffle=True):
         y_test = keras.utils.to_categorical(y_test, num_classes)
 
     elif dataset == 'treebank':
-        # f = open(os.path.join(DATA_DIR, "sentence_labels.txt"))
-        # # text = f.read().decode("utf-8")
-        # sentences= []
-        # for sentence in f:
-        #     sentence = sentence.split("\t")[0]
-        #     sentences.append(sentence)
-        # # sentences = sent_tokenize(text)
-        # sentences = preprocess(sentences)
-        # max_len = max_length(sentences)
-        # word_model = gensim.models.Word2Vec(sentences, min_count=1)
-        # f.close()
-        pass
+        f = open(os.path.join(DATA_DIR, "sentence_labels.txt"))
+        # text = f.read().decode("utf-8")
+        sentences= []
+        for sentence in f:
+            sentence = sentence.split("\t")[0]
+            sentences.append(sentence)
+        # sentences = sent_tokenize(text)
+        sentences = preprocess(sentences)
+        max_len = max_length(sentences)
+        word_model = gensim.models.Word2Vec(sentences, min_count=1)
+        f.close()
 
         X_train, y_train = get_file_data(os.path.join(DATA_DIR, 'train.txt'), word_model, max_len, word2vec_len, rnn_num_classes)
         X_valid, y_valid = get_file_data(os.path.join(DATA_DIR, "valid.txt"), word_model, max_len, word2vec_len, rnn_num_classes)
