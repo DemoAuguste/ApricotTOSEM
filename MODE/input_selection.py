@@ -73,6 +73,10 @@ def select_next_inputs(bug_fix_data,
     # ####################### #
     # put together next batch #
     # ####################### #
+    print(targets_x.shape)
+    print(randos_x.shape)
+    print(targets_y.shape)
+    print(randos_y.shape)
     next_batch_x = np.vstack((targets_x, randos_x))
     next_batch_y = np.concatenate((targets_y, randos_y))
 
