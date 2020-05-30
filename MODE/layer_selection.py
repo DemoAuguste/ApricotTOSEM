@@ -44,14 +44,14 @@ def Forward_Layer_Select(model,
         #         continue
         #     print(next_layer)
         #     feature_model.add(next_layer)
-        feature_model = Model(inputs=model.layers[0].input,
+        temp_model = Model(inputs=model.layers[0].input,
                                 outputs=model.layers[int(layer_num) -1].output)
         # feature_model.trainable = False
 
-        x = feature_model.layers[-1].output
+        x = temp_model.layers[-1].output
         x = k.layers.Flatten()(x)
         x = k.layers.Dense(10, activation=tf.nn.softmax)(x)
-        feature_model = Model(inputs=model.layers[0].input, outputs=x)
+        feature_model = Model(inputs=temp_model.layers[0].input, outputs=x)
 
         feature_model.trainable = False
         feature_model.layers[-1].trainable = True
