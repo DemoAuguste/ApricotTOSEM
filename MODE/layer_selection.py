@@ -21,7 +21,9 @@ def Forward_Layer_Select(model,
 
     for layer_num, layer in zip(np.arange(1, len(model.layers)), model.layers): 
         
-        if isinstance(layer, k.layers.Conv2D) or isinstance(layer, k.layers.Activation):
+        # if isinstance(layer, k.layers.Conv2D):
+        #     continue
+        if layer_num != 31:
             continue
 
         if verbose:
@@ -39,6 +41,7 @@ def Forward_Layer_Select(model,
             next_layer.trainable = False
             if isinstance(next_layer, k.layers.merge.Add):
                 continue
+            print(next_layer)
             feature_model.add(next_layer)
 
         feature_model.add(k.layers.Flatten()) 
