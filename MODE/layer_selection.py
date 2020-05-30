@@ -20,9 +20,6 @@ def Forward_Layer_Select(model,
     
 
     for layer_num, layer in zip(np.arange(1, len(model.layers)), model.layers): 
-
-        if layer_num != 9:
-            continue
         
         if verbose:
             print('Layer Number: {}'.format(layer_num))
@@ -40,7 +37,7 @@ def Forward_Layer_Select(model,
             if isinstance(next_layer, k.layers.merge.Add):
                 continue
             feature_model.add(next_layer)
-            
+
         feature_model.add(k.layers.Flatten()) 
 
 
