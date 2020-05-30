@@ -46,15 +46,20 @@ def Forward_Layer_Select(model,
         #     feature_model.add(next_layer)
         feature_model = Model(inputs=model.layers[0].input,
                                 outputs=model.layers[int(layer_num) -1].output)
+        # feature_model.trainable = False
+
+        x = feature_model.layers[-1].output
+        x = k.layers.Flatten()(x)
+        x = k.layers.Dense(10, activation=tf.nn.softmax)(x)
+        feature_model = Model(inputs=model.layers[0].input, outputs=x)
+
         feature_model.trainable = False
+        feature_model.layers[-1].trainable = True
         
+        # feature_model.add(k.layers.Flatten()) 
 
-
-        feature_model.add(k.layers.Flatten()) 
-
-
-        # add output layer
-        feature_model.add(k.layers.Dense(10, activation=tf.nn.softmax))
+        # # add output layer
+        # feature_model.add(k.layers.Dense(10, activation=tf.nn.softmax))
 
         # compile
         feature_model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy']) 
