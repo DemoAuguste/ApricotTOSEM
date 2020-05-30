@@ -45,7 +45,8 @@ def Forward_Layer_Select(model,
         #     print(next_layer)
         #     feature_model.add(next_layer)
         feature_model = Model(inputs=model.layers[0].input,
-                                outputs=model.layers[int(layer_num) -1].output, trainable=False)
+                                outputs=model.layers[int(layer_num) -1].output)
+        feature_model.trainable = False
         
 
 
