@@ -112,7 +112,7 @@ if __name__ == '__main__':
     ######################################
     max_iter = 5
 
-    distance_metrics = ['dot', 'cosine', 'manhattan', 'euclidean', 'minkowski', 'earthmover', 'chebyshev', 'canberra', 'braycurtis']
+    distance_metrics = ['cosine', 'manhattan', 'euclidean', 'minkowski', 'earthmover', 'chebyshev', 'canberra', 'braycurtis']
     for distance_metric in distance_metrics:
         print('#####################################################################')
         print('Testing: {} similarity'.format(distance_metric))
