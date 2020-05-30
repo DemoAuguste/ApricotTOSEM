@@ -22,9 +22,7 @@ def Forward_Layer_Select(model,
 
     for layer_num, layer in zip(np.arange(1, len(model.layers)), model.layers): 
         
-        # if isinstance(layer, k.layers.Conv2D):
-        #     continue
-        if layer_num != 31:
+        if isinstance(layer, k.layers.Conv2D):
             continue
 
         if verbose:
