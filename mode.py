@@ -127,9 +127,11 @@ if __name__ == '__main__':
                             loss='sparse_categorical_crossentropy',
                             metrics=['accuracy'])
 
+        print('Control model performance to beat:')  
+        control_loss, control_acc = control_model.evaluate(x_test, y_test, verbose=0)
+        print('Control Test Loss: {}, Control Test Accuracy: {}'.format(control_loss, control_acc))
         # control_model = copy.deepcopy(model)
 
-        model.summary()
 
         i = 0
         while i < max_iter:
