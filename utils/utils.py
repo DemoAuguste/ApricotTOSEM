@@ -22,6 +22,16 @@ from nltk.stem.porter import *
 from settings import *
 
 from model import *
+from datetime import datetime
+
+def logger(path, msg):
+    print(msg)
+    str_now = now.strftime("%Y-%m-%d %H:%M:%S.%f")
+    f = open(path, 'a+')
+    w_msg = "[{}] {}\n".format(str_now, msg)
+    f.write(w_msg)
+    f.close()
+
 
 
 def color_preprocessing(x_train, x_test):

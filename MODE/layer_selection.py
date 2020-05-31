@@ -3,6 +3,8 @@ import tensorflow as tf
 import keras as k
 from .distance_metrics import bhattacharyya
 from keras.models import Model
+from utils import *
+
 
 def Forward_Layer_Select(model, 
                          x_train, 
@@ -22,9 +24,7 @@ def Forward_Layer_Select(model,
 
     for layer_num, layer in zip(np.arange(1, len(model.layers)), model.layers): 
         try:
-            # if isinstance(layer, k.layers.Conv2D):
-            #     continue
-            if layer_num != 71:
+            if isinstance(layer, k.layers.Conv2D):
                 continue
 
             if verbose:

@@ -21,6 +21,7 @@ from model import *
 from utils import *
 import argparse
 import copy
+from datetime import datetime
 
 
 # Underfitting Threshold
@@ -52,6 +53,10 @@ epochs = 3
 
 # Batch Size
 batch_size = 2000 # they used 2000 and 4000 in the paper
+
+
+
+
 
 
 
@@ -88,6 +93,8 @@ if __name__ == '__main__':
     model_weights_dir = os.path.join(model_weights_dir, str(ver))
     # model.summary()
     model.load_weights(os.path.join(model_weights_dir, 'trained.h5'))
+
+    log_path = os.path.join(model_weights_dir, 'mode.txt')
 
     model = replicate_model(model)
     model.compile(optimizer='adam',
@@ -127,10 +134,10 @@ if __name__ == '__main__':
                             loss='sparse_categorical_crossentropy',
                             metrics=['accuracy'])
 
-        print('Control model performance to beat:')  
-        control_loss, control_acc = control_model.evaluate(x_test, y_test, verbose=0)
-        print('Control Test Loss: {}, Control Test Accuracy: {}'.format(control_loss, control_acc))
-        # control_model = copy.deepcopy(model)
+        # print('Control model performance to beat:')  
+        # control_loss, control_acc = control_model.evaluate(x_test, y_test, verbose=0)
+        # print('Control Test Loss: {}, Control Test Accuracy: {}'.format(control_loss, control_acc))
+        # # control_model = copy.deepcopy(model)
 
 
         i = 0
@@ -209,6 +216,8 @@ if __name__ == '__main__':
             test_loss, test_acc = model.evaluate(x_test, y_test, verbose=0)
             print('Test Loss: {}, Test Accuracy: {}'.format(test_loss, test_acc))
 
+            logger(log_path, '{} iteration: test loss: {}, test accuracy: {}'.format(max_iter - i, test_loss, test_acc))
+
             # repeat until there are no more faulty underfitting labels
             i += 1
 
@@ -217,4 +226,6 @@ if __name__ == '__main__':
         print('Control model performance to beat:')  
         control_loss, control_acc = control_model.evaluate(x_test, y_test, verbose=0)
         print('Control Test Loss: {}, Control Test Accuracy: {}'.format(control_loss, control_acc))
+
+        logger(log_path, 'Control Test Loss: {}, Control Test Accuracy: {}'.format(control_loss, control_acc))
 
