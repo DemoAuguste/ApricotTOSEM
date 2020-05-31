@@ -147,6 +147,11 @@ if __name__ == '__main__':
             control_batch_x, control_batch_y = x_bug_fixes[:batch_size], y_bug_fixes[:batch_size]
             control_model.fit(control_batch_x, control_batch_y, epochs=epochs, verbose=0)
 
+            control_loss, control_acc = control_model.evaluate(x_test, y_test, verbose=0)
+            print('Control Test Loss: {}, Control Test Accuracy: {}'.format(control_loss, control_acc))
+
+            logger(log_path, 'Control Test Loss: {}, Control Test Accuracy: {}'.format(control_loss, control_acc))
+
             # identify target layer
             print('Identifying target layer...')
             target_layer, cache = Forward_Layer_Select(model, 
