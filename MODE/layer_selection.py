@@ -21,99 +21,103 @@ def Forward_Layer_Select(model,
     last_y_pred = None
 
     for layer_num, layer in zip(np.arange(1, len(model.layers)), model.layers): 
-        
-        # if isinstance(layer, k.layers.Conv2D):
-        #     continue
-        if layer_num != 71:
-            continue
+        try:
+            # if isinstance(layer, k.layers.Conv2D):
+            #     continue
+            if layer_num != 71:
+                continue
 
-        if verbose:
-            print('Layer Number: {}'.format(layer_num))
+            if verbose:
+                print('Layer Number: {}'.format(layer_num))
 
-        # create model container
-        # feature_model = k.models.Sequential() 
+            # create model container
+            # feature_model = k.models.Sequential() 
 
-        # flag = False
+            # flag = False
 
-        # # add "frozen" (trainable = False) layers incrementally to create submodels
-        # total = int(layer_num)
-        # for i in np.arange(layer_num):
-        #     next_layer = model.layers[i]
-        #     next_layer.trainable = False
-        #     if isinstance(next_layer, k.layers.merge.Add):
-        #         continue
-        #     print(next_layer)
-        #     feature_model.add(next_layer)
-        temp_model = Model(inputs=model.layers[0].input,
-                                outputs=model.layers[int(layer_num) -1].output)
-        # feature_model.trainable = False
+            # # add "frozen" (trainable = False) layers incrementally to create submodels
+            # total = int(layer_num)
+            # for i in np.arange(layer_num):
+            #     next_layer = model.layers[i]
+            #     next_layer.trainable = False
+            #     if isinstance(next_layer, k.layers.merge.Add):
+            #         continue
+            #     print(next_layer)
+            #     feature_model.add(next_layer)
+            temp_model = Model(inputs=model.layers[0].input,
+                                    outputs=model.layers[int(layer_num) -1].output)
+            # feature_model.trainable = False
 
-        x = temp_model.layers[-1].output
-        x = k.layers.Flatten()(x)
-        x = k.layers.Dense(10, activation=tf.nn.softmax)(x)
-        feature_model = Model(inputs=temp_model.layers[0].input, outputs=x)
+            x = temp_model.layers[-1].output
+            x = k.layers.Flatten()(x)
+            x = k.layers.Dense(10, activation=tf.nn.softmax)(x)
+            feature_model = Model(inputs=temp_model.layers[0].input, outputs=x)
 
-        # feature_model.trainable = False
-        # feature_model.layers[-1].trainable = True
-        total_layer_num = len(feature_model.layers)
-        for idx, layer in enumerate(feature_model.layers):
-            if idx == total_layer_num - 1:
-                layer.trainable = True
+            # feature_model.trainable = False
+            # feature_model.layers[-1].trainable = True
+            total_layer_num = len(feature_model.layers)
+            for idx, layer in enumerate(feature_model.layers):
+                if idx == total_layer_num - 1:
+                    layer.trainable = True
+                else:
+                    layer.trainable = False
+                
+            
+            # feature_model.add(k.layers.Flatten()) 
+
+            # # add output layer
+            # feature_model.add(k.layers.Dense(10, activation=tf.nn.softmax))
+
+            # compile
+            feature_model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy']) 
+            
+            # get some nice summary data
+            if verbose:
+                feature_model.build(input_shape=(None, 32, 32, 3))
+                feature_model.summary()
+                
+            # train
+            feature_model.fit(x_train, y_train, epochs=epochs, verbose=bit)
+            feature_models['model_upto_' + str(layer_num)] = feature_model
+
+            # predict (to get predictions)
+            y_pred = feature_model.predict(x_test)
+
+            # test (just to know how we did overall)
+            if verbose:
+                print('Getting Scores...')
+                
+            scores = feature_model.evaluate(x_test, y_test, verbose=bit)
+            accuracies[layer_num] = scores[1]
+            if verbose:
+                print('Test Acc: {}'.format(scores[1]))
+
+            # measure similarity
+            if layer_num == 1 or last_y_pred is None:
+                last_y_pred = np.ones_like(y_pred)
+
+            similarity = bhattacharyya(y_pred, last_y_pred)
+            bhattacharyyas[layer_num] = similarity
+            
+            if verbose:
+                print('Bhattacharyya Similarity: {}'.format(similarity)) 
+
+            cache = (feature_models, accuracies, bhattacharyyas, y_pred)    
+                
+            if similarity <= similarity_threshold:
+                target_layer = layer
+                print('Target Layer # {}: {}'.format(layer_num, target_layer))            
+                return target_layer, cache
             else:
-                layer.trainable = False
-            
-        
-        # feature_model.add(k.layers.Flatten()) 
+                last_y_pred = y_pred
 
-        # # add output layer
-        # feature_model.add(k.layers.Dense(10, activation=tf.nn.softmax))
-
-        # compile
-        feature_model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy']) 
-        
-        # get some nice summary data
-        if verbose:
-            feature_model.build(input_shape=(None, 32, 32, 3))
-            feature_model.summary()
-            
-        # train
-        feature_model.fit(x_train, y_train, epochs=epochs, verbose=bit)
-        feature_models['model_upto_' + str(layer_num)] = feature_model
-
-        # predict (to get predictions)
-        y_pred = feature_model.predict(x_test)
-
-        # test (just to know how we did overall)
-        if verbose:
-            print('Getting Scores...')
-            
-        scores = feature_model.evaluate(x_test, y_test, verbose=bit)
-        accuracies[layer_num] = scores[1]
-        if verbose:
-            print('Test Acc: {}'.format(scores[1]))
-
-        # measure similarity
-        if layer_num == 1 or last_y_pred is None:
-            last_y_pred = np.ones_like(y_pred)
-
-        similarity = bhattacharyya(y_pred, last_y_pred)
-        bhattacharyyas[layer_num] = similarity
-        
-        if verbose:
-            print('Bhattacharyya Similarity: {}'.format(similarity)) 
-
-        cache = (feature_models, accuracies, bhattacharyyas, y_pred)    
-            
-        if similarity <= similarity_threshold:
-            target_layer = layer
-            print('Target Layer # {}: {}'.format(layer_num, target_layer))            
-            return target_layer, cache
-        else:
-            last_y_pred = y_pred
-        
+        except:
+            pass
         
     # if every hidden layer continually improves performance, then target layer is the output layer
     target_layer = model.layers[-1]
+    y_pred = model.predict(x_test)
+    cache = (model, None, None, y_pred)
     print('Target Layer is the Output Layer: {}. \n Consider additional training because performance has not yet plateued.'.format(target_layer))  
     return target_layer, cache
 
