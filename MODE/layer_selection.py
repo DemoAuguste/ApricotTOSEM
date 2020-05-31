@@ -24,7 +24,7 @@ def Forward_Layer_Select(model,
         
         # if isinstance(layer, k.layers.Conv2D):
         #     continue
-        if layer_num != 70:
+        if layer_num != 71:
             continue
 
         if verbose:
