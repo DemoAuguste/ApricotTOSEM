@@ -1,7 +1,7 @@
 import tensorflow as tf
 import keras as k
 import numpy as np
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 # personal modules
 from MODE.distance_metrics import bhattacharyya
