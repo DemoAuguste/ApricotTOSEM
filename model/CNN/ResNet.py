@@ -30,7 +30,7 @@ if ('tensorflow' == K.backend()):
     import tensorflow as tf
     from keras.backend.tensorflow_backend import set_session
 
-    if tf.__version__ == '2.2.0':
+    if tf.__version__ == '2.2.0' or tf.__version__ == '2.0.0':
         config = tf.compat.v1.ConfigProto()
         config.gpu_options.allow_growth = True
         sess = tf.compat.v1.Session(config=config)
