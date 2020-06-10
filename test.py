@@ -1,6 +1,6 @@
 from model import *
 from utils import *
-import gensim
+# import gensim
 from settings import *
 from Apricot import *
 
