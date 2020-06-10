@@ -15,9 +15,9 @@ from keras.layers import Input
 from sklearn.model_selection import train_test_split
 from keras.preprocessing import sequence
 
-from nltk.tokenize import word_tokenize, sent_tokenize
+# from nltk.tokenize import word_tokenize, sent_tokenize
 # from nltk.corpus import stopwords
-from nltk.stem.porter import *
+# from nltk.stem.porter import *
 # import gensim
 from settings import *
 
@@ -217,8 +217,8 @@ def get_file_data(filename, model, max_len, word2vec_len, num_classes):
 	return X,y
 
 def preprocess(sentences):
-	for i in range(len(sentences)):
-		sentences[i] = word_tokenize(sentences[i])
+	# for i in range(len(sentences)):
+	# 	sentences[i] = word_tokenize(sentences[i])
 		# sentences[i] = [word for word in sentences[i] if word not in stop_words]
 		# sentences[i] = [stemmer.stem(word) for word in sentences[i]]
 	return sentences
