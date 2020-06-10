@@ -15,10 +15,10 @@ echo $train_path
 # CIFAR-100
 for i in {1..5}
 do
-    CUDA_VISIBLE_DEVICES=3 python $train_path -m resnet20 -d cifar100 -v $i -n 20
-    CUDA_VISIBLE_DEVICES=3 python $train_path -m mobilenet -d cifar100 -v $i -n 20
-    CUDA_VISIBLE_DEVICES=3 python $train_path -m resnet32 -d cifar100 -v $i -n 20
-    CUDA_VISIBLE_DEVICES=3 python $train_path -m mobilenetv2 -d cifar100 -v $i -n 20
-    CUDA_VISIBLE_DEVICES=3 python $train_path -m densenet -d cifar100 -v $i -n 20
+    CUDA_VISIBLE_DEVICES=3 python3 $train_path -m resnet20 -d cifar100 -v $i -n 20
+    CUDA_VISIBLE_DEVICES=3 python3 $train_path -m mobilenet -d cifar100 -v $i -n 20
+    CUDA_VISIBLE_DEVICES=3 python3 $train_path -m resnet32 -d cifar100 -v $i -n 20
+    CUDA_VISIBLE_DEVICES=3 python3 $train_path -m mobilenetv2 -d cifar100 -v $i -n 20
+    CUDA_VISIBLE_DEVICES=3 python3 $train_path -m densenet -d cifar100 -v $i -n 20
 done
 
