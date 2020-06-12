@@ -103,9 +103,9 @@ def batch_adjust_weights_func(curr_weights, corr_w_list, incorr_w_list, adjustme
     5: randomly choose one from corr_set
     6: randomly choose one from incorr_set
     """    
-    adjust_weights = curr_weights
+    adjust_weights = None
     for corr_w, incorr_w in zip(corr_w_list, incorr_w_list):
-        # adjust_weights = None
+        adjust_weights = None
         if adjustment_strategy == 1:
             if corr_w is None or incorr_w is None:
                 continue
@@ -145,4 +145,4 @@ def batch_adjust_weights_func(curr_weights, corr_w_list, incorr_w_list, adjustme
                 adjust_weights = [item[0] + settings.learning_rate * np.multiply(item[0], item[1]) for item in zip(curr_weights, diff_incorr_w)]
 
         curr_weights = adjust_weights
-    return adjust_weights
+    return curr_weights
