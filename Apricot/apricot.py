@@ -13,6 +13,7 @@ from utils.utils import logger
 import numpy as np
 from utils import *
 from .Apricot_utils import *
+from .Apricot_utils2 import *
 import settings
 
 
@@ -35,6 +36,7 @@ def cal_sub_corr_matrix(model, corr_path, submodels_path, fail_xs, fail_ys_label
                 # print(sub_correct_matrix.shape)
 
     sub_correct_matrix = np.ones(shape=sub_correct_matrix.shape) - sub_correct_matrix  # here change 0 to 1 (for correctly predicted case)
+    sub_correct_matrix[sub_correct_matrix == 0] = -1
     np.save(corr_path, sub_correct_matrix)
 
     return sub_correct_matrix
@@ -99,10 +101,10 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy, activation='
     fail_xs, fail_ys, fail_ys_label, fail_num = get_failing_cases(fixed_model, x_train_val, y_train_val)
 
     if settings.NUM_SUBMODELS == 20:
-        sub_correct_matrix_path = os.path.join(model_weights_dir, 'corr_matrix_{}.npy'.format(settings.RANDOM_SEED))
+        sub_correct_matrix_path = os.path.join(model_weights_dir, 'corr_matrix_{}_{}.npy'.format(settings.RANDOM_SEED, settings.NUM_SUBMODELS))
     else:
         sub_correct_matrix_path = os.path.join(model_weights_dir, 'corr_matrix_{}_{}.npy'.format(settings.RANDOM_SEED, settings.NUM_SUBMODELS))
-    sub_correct_matrix = None # 1: predicts correctly, 0: predicts incorrectly.
+    sub_correct_matrix = None # 1: predicts correctly, -1: predicts incorrectly.
     print('obtaining sub correct matrix...')
 
     if not os.path.exists(sub_correct_matrix_path):
@@ -120,22 +122,38 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy, activation='
     for _ in range(settings.LOOP_COUNT):
         np.random.shuffle(sub_correct_matrix)
 
-        for index in range(sub_correct_matrix.shape[0]):
+        # load batches rather than single input.
+        iter_num, rest = divmod(sub_correct_matrix.shape[0], settings.FIX_BATCH_SIZE)
+        if rest != 0:
+            iter_num += 1
+        
+        # batch version
+        for i in range(iter_num):
             curr_weights = fixed_model.get_weights()
-            corr_mat = sub_correct_matrix[index, :]
-            
-            print('obtaining correct and incorrect weights...')
-            if adjustment_strategy <= 3:
-                corr_w, incorr_w = get_adjustment_weights(corr_mat, sub_weights_list, adjustment_strategy)
-                print('calculating adjust weights...')
-                adjust_w = adjust_weights_func(curr_weights, corr_w, incorr_w, adjustment_strategy, activation=activation)
-            else: # lite version
-                print('calculating adjust weights...')
-                adjust_w = adjust_weights_func_lite(corr_mat, sub_weights_list, curr_weights)
-            
-            if adjust_w == -1:
-                continue
+            batch_corr_matrix = sub_correct_matrix[settings.FIX_BATCH_SIZE*i:settings.FIX_BATCH_SIZE*i, :]
+            corr_w, incorr_w = batch_get_adjustment_weights(batch_corr_mat, sub_weights_list, adjustment_strategy)
+            print('calculating adjust weights...')
+            adjust_w = batch_adjust_weights_func(curr_weights, corr_w, incorr_w, adjustment_strategy, activation=activation)
+
             fixed_model.set_weights(adjust_w)
+
+
+        # for index in range(sub_correct_matrix.shape[0]):
+        #     curr_weights = fixed_model.get_weights()
+        #     corr_mat = sub_correct_matrix[index, :]
+            
+        #     print('obtaining correct and incorrect weights...')
+        #     if adjustment_strategy <= 3:
+        #         corr_w, incorr_w = get_adjustment_weights(corr_mat, sub_weights_list, adjustment_strategy)
+        #         print('calculating adjust weights...')
+        #         adjust_w = adjust_weights_func(curr_weights, corr_w, incorr_w, adjustment_strategy, activation=activation)
+        #     else: # lite version
+        #         print('calculating adjust weights...')
+        #         adjust_w = adjust_weights_func_lite(corr_mat, sub_weights_list, curr_weights)
+            
+        #     if adjust_w == -1:
+        #         continue
+        #     fixed_model.set_weights(adjust_w)
 
             _, curr_acc = fixed_model.evaluate(x_val, y_val)
             print('After adjustment, the validation accuracy: {:.4f}'.format(curr_acc))
