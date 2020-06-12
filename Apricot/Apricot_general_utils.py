@@ -5,5 +5,6 @@ def get_class_acc(model, xs, ys):
     y_pred = model.predict(xs)
     print(y_pred.shape)
     y_pred = np.argmax(y_pred, axis=1)
+    print(y_pred.shape)
     print(classification_report(ys, y_pred))
     
