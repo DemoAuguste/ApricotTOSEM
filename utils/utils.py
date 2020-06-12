@@ -168,7 +168,7 @@ def build_networks(model_name, num_classes=None, input_size=None):
         model = bilistm(max_features)
     return model
 
-def logger(path, msg):
+def logger(msg, path):
     print(msg)
     now = datetime.now()
     str_now = now.strftime("%Y-%m-%d %H:%M:%S.%f")
