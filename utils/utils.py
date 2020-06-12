@@ -32,6 +32,9 @@ def logger(path, msg):
     f.write(w_msg)
     f.close()
 
+def print_msg(msg):
+    print(msg)
+
 
 
 def color_preprocessing(x_train, x_test):

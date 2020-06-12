@@ -22,6 +22,7 @@ import os
 from keras.layers import Input
 from model import *
 import settings
+from utils import print_msg
 
 
 def batch_get_adjustment_weights(batch_corr_mat, weights_list, adjustment_strategy):
@@ -80,9 +81,9 @@ def batch_get_adjustment_weights(batch_corr_mat, weights_list, adjustment_strate
             incorr_w = None
 
         if corr_w is None:
-            print('curr w is none.')
+            print_msg('curr w is none.')
         if incorr_w is None:
-            print('incorr w is none.')
+            print_msg('incorr w is none.')
         
 
         corr_w_list.append(corr_w)
@@ -105,10 +106,10 @@ def batch_adjust_weights_func(curr_weights, corr_w_list, incorr_w_list, adjustme
     """    
     adjust_weights = curr_weights
     for corr_w, incorr_w in zip(corr_w_list, incorr_w_list):
-        print('here', flush=True)
+        print_msg('here', flush=True)
         if adjustment_strategy == 1:
             if corr_w is None or incorr_w is None:
-                print('skip', flush=True)
+                print_msg('skip', flush=True)
             else:
                 adjust_weights = [item[0] - settings.learning_rate * (item[0] - item[1]) + settings.learning_rate * (item[0] - item[2]) for item in zip(adjust_weights, corr_w, incorr_w)]
 
