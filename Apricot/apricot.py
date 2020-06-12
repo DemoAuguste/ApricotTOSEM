@@ -16,12 +16,12 @@ from .Apricot_utils import *
 import settings
 
 
-def cal_sub_corr_matrix(model, corr_path, submodels_path, fail_xs, fail_ys_label, fail_num):
+def cal_sub_corr_matrix(model, corr_path, submodels_path, fail_xs, fail_ys_label, fail_num, num_submodels=20):
     sub_correct_matrix = None
 
     for root, dirs, files in os.walk(submodels_path):
-        for f in files:
-            temp_w_path = os.path.join(root, f)
+        for i in range(num_submodels):
+            temp_w_path = os.path.join(root, 'sub_{}.h5'.format(i))
             model.load_weights(temp_w_path)
             sub_y_pred = model.predict(fail_xs)
 
@@ -107,7 +107,7 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy, activation='
 
     if not os.path.exists(sub_correct_matrix_path):
         # obtain submodel correctness matrix
-        sub_correct_matrix = cal_sub_corr_matrix(fixed_model, sub_correct_matrix_path, submodel_dir, fail_xs, fail_ys_label, fail_num)
+        sub_correct_matrix = cal_sub_corr_matrix(fixed_model, sub_correct_matrix_path, submodel_dir, fail_xs, fail_ys_label, fail_num, num_submodels=20)
     else:
         sub_correct_matrix = np.load(sub_correct_matrix_path)
 

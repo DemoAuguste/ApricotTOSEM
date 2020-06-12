@@ -182,11 +182,11 @@ def load_submodels(path, num_submodels):
     pass # no need to load models (consuming too many memories)
 
 
-def get_submodels_weights(model, path):
+def get_submodels_weights(model, path, num_submodels=20):
     weights_list = []
     for root, dirs, files in os.walk(path):  # os.path.join(original_dir_path, 'submodels')
-        for name in files:
-            file_path = os.path.join(root, name)
+        for i in range(num_submodels):
+            file_path = os.path.join(root, 'sub_{}.h5'.format(i))
             model.load_weights(file_path)
             weights_list.append(model.get_weights())
     return weights_list
