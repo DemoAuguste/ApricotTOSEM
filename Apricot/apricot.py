@@ -172,8 +172,8 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy, activation='
                                                 epochs=settings.FURTHER_ADJUSTMENT_EPOCHS, 
                                                 callbacks=[checkpoint])
 
-                    for key in hist.history:
-                        print(key)
+                    # for key in hist.history:
+                    #     print(key)
 
                     fixed_model.load_weights(fixed_weights_path)
 
