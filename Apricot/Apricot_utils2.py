@@ -46,39 +46,37 @@ def batch_get_adjustment_weights(batch_corr_mat, weights_list, adjustment_strate
 
     for i in range(batch_corr_mat.shape[0]):
         corr_mat = batch_corr_mat[i, :]
-        try:
-            corr_sets = np.nonzero(corr_mat)[0].tolist()
-            if corr_sets is None or  len(corr_sets) == 0:
-                corr_sets = []
-                corr_weights = []
-            else:
-                corr_weights = [weights_list[i] for i in corr_sets]
-            temp_incorr_matrix = np.ones(shape=corr_mat.shape) - corr_mat
-            incorr_sets = np.nonzero(temp_incorr_matrix)[0].tolist()
-            if incorr_sets is None or len(incorr_sets) == 0:
-                incorr_sets = []
-                incorr_weights = []
-            else:
-                incorr_weights = [weights_list[i] for i in incorr_sets]
-            
-            corr_w = None
-            incorr_w = None
-            
-            if adjustment_strategy == 1 or adjustment_strategy == 2 or adjustment_strategy == 3:
-                if len(corr_sets) != 0:
-                    corr_w = cal_avg(corr_weights)
-                if len(incorr_sets) != 0:
-                    incorr_w = cal_avg(incorr_weights)    
-            else: # lite version NOT used
-                if len(corr_sets) != 0:
-                    corr_id = random.randint(0, len(corr_sets) - 1)
-                    corr_w = corr_weights[corr_id]
-                if len(incorr_sets) != 0:
-                    incorr_id = random.randint(0, len(incorr_sets) - 1)
-                    incorr_w = incorr_weights[incorr_id]
-        except:
-            corr_w = None
-            incorr_w = None
+        
+        corr_sets = np.nonzero(corr_mat)[0].tolist()
+        if corr_sets is None or  len(corr_sets) == 0:
+            corr_sets = []
+            corr_weights = []
+        else:
+            corr_weights = [weights_list[i] for i in corr_sets]
+        temp_incorr_matrix = np.ones(shape=corr_mat.shape) - corr_mat
+        incorr_sets = np.nonzero(temp_incorr_matrix)[0].tolist()
+        if incorr_sets is None or len(incorr_sets) == 0:
+            incorr_sets = []
+            incorr_weights = []
+        else:
+            incorr_weights = [weights_list[i] for i in incorr_sets]
+        
+        corr_w = None
+        incorr_w = None
+        
+        if adjustment_strategy == 1 or adjustment_strategy == 2 or adjustment_strategy == 3:
+            if len(corr_sets) != 0:
+                corr_w = cal_avg(corr_weights)
+            if len(incorr_sets) != 0:
+                incorr_w = cal_avg(incorr_weights)    
+        else: # lite version NOT used
+            if len(corr_sets) != 0:
+                corr_id = random.randint(0, len(corr_sets) - 1)
+                corr_w = corr_weights[corr_id]
+            if len(incorr_sets) != 0:
+                incorr_id = random.randint(0, len(incorr_sets) - 1)
+                incorr_w = incorr_weights[incorr_id]
+        
 
         if corr_w is None:
             logger('curr w is none.', 'temp.txt')
