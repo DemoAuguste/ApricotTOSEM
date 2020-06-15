@@ -23,6 +23,7 @@ from keras.layers import Input
 from model import *
 import settings
 from utils import print_msg, logger
+from .Apricot_utils import cal_avg
 
 
 def batch_get_adjustment_weights(batch_corr_mat, weights_list, adjustment_strategy):
