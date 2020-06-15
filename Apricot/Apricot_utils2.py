@@ -106,6 +106,8 @@ def batch_adjust_weights_func(curr_weights, corr_w_list, incorr_w_list, adjustme
     """    
     # print('somethings.')
     adjust_weights = curr_weights
+    print(len(corr_w_list))
+    print(len(incorr_w_list))
     for corr_w, incorr_w in zip(corr_w_list, incorr_w_list):
         if adjustment_strategy == 1:
             print('adjust here.')
