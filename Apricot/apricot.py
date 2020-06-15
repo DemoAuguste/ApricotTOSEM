@@ -67,6 +67,10 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy, activation='
     x_train, x_test, y_train, y_test = load_dataset(dataset)
     x_train_val, x_val, y_train_val, y_val = split_validation_dataset(x_train, y_train)
 
+    print(x_train_val.shape, type(x_train_val))
+    print(y_train_val.shape, type(y_train_val))
+    return
+
     fixed_model = model
 
     submodel_dir = os.path.join(model_weights_dir, 'submodels')
