@@ -102,6 +102,7 @@ def batch_adjust_weights_func(curr_weights, corr_w_list, incorr_w_list, adjustme
     5: randomly choose one from corr_set
     6: randomly choose one from incorr_set
     """    
+    print('somethings/')
     adjust_weights = curr_weights
     for corr_w, incorr_w in zip(corr_w_list, incorr_w_list):
         logger('here', 'temp.txt')
