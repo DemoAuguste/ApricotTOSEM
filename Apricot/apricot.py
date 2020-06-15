@@ -116,6 +116,8 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy, activation='
     sub_weights_list = get_submodels_weights(fixed_model, submodel_dir)
     print('collected.')
     fixed_model.load_weights(trained_weights_path)
+    print(sub_correct_matrix.shape)
+    print(sub_correct_matrix[0])
 
     # print('start fixing process...')
     logger('----------start fixing process----------', log_path)

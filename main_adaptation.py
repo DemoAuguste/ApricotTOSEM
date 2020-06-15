@@ -13,7 +13,7 @@ if __name__ == '__main__':
     parser.add_argument('-m', '--model', help='model to be fixed.', type=str)
     parser.add_argument('-d', '--dataset', help='dataset for training the model.', type=str, default='cifar10')
     parser.add_argument('-v', '--version', help='number of version.', type=int)
-    parser.add_argument('-s', '--strategy', help='adjustment strategy.', type=int)
+    parser.add_argument('-s', '--strategy', help='adjustment strategy.', type=int, default=1)
     parser.add_argument('-a', '--activation', help='activation function.', type=str, default='binary')
 
     args = parser.parse_args()
