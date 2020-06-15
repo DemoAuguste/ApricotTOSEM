@@ -46,6 +46,7 @@ def batch_get_adjustment_weights(batch_corr_mat, weights_list, adjustment_strate
 
     for i in range(batch_corr_mat.shape[0]):
         corr_mat = batch_corr_mat[i, :]
+        print(corr_mat)
         
         corr_sets = np.nonzero(corr_mat)[0].tolist()
         if corr_sets is None or  len(corr_sets) == 0:
