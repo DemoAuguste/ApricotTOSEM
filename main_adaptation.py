@@ -21,7 +21,7 @@ if __name__ == '__main__':
     model_name = args.model
     dataset = args.dataset
     ver = args.version
-         = args.strategy
+    adjustment_strategy = args.strategy
     activation = args.activation
 
     # initialization.
