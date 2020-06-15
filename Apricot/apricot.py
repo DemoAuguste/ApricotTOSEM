@@ -117,7 +117,7 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy, activation='
     print('collected.')
     fixed_model.load_weights(trained_weights_path)
     print(sub_correct_matrix.shape)
-    print(sub_correct_matrix[0])
+    print(sub_correct_matrix[0:20, :])
 
     # print('start fixing process...')
     logger('----------start fixing process----------', log_path)
@@ -129,10 +129,11 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy, activation='
         if rest != 0:
             iter_num += 1
         
+        print('iter num: {}'.format(iter_num))
         # batch version
         for i in range(iter_num):
             curr_weights = fixed_model.get_weights()
-            batch_corr_matrix = sub_correct_matrix[settings.FIX_BATCH_SIZE*i:settings.FIX_BATCH_SIZE*i, :]
+            batch_corr_matrix = sub_correct_matrix[settings.FIX_BATCH_SIZE*i : settings.FIX_BATCH_SIZE*i, :]
             print('---------------------------------')
             print(batch_corr_matrix)
             print('---------------------------------')
