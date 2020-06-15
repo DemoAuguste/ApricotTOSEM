@@ -47,7 +47,7 @@ def batch_get_adjustment_weights(batch_corr_mat, weights_list, adjustment_strate
 
     for i in range(batch_corr_mat.shape[0]):
         corr_mat = batch_corr_mat[i, :]
-        print(corr_mat)
+        # print(corr_mat)
         
         corr_sets = np.nonzero(corr_mat)[0].tolist()
         if corr_sets is None or  len(corr_sets) == 0:
@@ -108,11 +108,11 @@ def batch_adjust_weights_func(curr_weights, corr_w_list, incorr_w_list, adjustme
     """    
     # print('somethings.')
     adjust_weights = curr_weights
-    print(len(corr_w_list))
-    print(len(incorr_w_list))
+    # print(len(corr_w_list))
+    # print(len(incorr_w_list))
     for corr_w, incorr_w in zip(corr_w_list, incorr_w_list):
         if adjustment_strategy == 1:
-            print('adjust here.')
+            # print('adjust here.')
             if corr_w is None or incorr_w is None:
                 print('skip.')
             else:
