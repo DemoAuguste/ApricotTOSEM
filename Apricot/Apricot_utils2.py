@@ -108,6 +108,7 @@ def batch_adjust_weights_func(curr_weights, corr_w_list, incorr_w_list, adjustme
     adjust_weights = curr_weights
     for corr_w, incorr_w in zip(corr_w_list, incorr_w_list):
         if adjustment_strategy == 1:
+            print('adjust here.')
             if corr_w is None or incorr_w is None:
                 print('skip.')
             else:
