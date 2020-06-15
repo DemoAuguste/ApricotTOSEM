@@ -21,7 +21,7 @@ if __name__ == '__main__':
     model_name = args.model
     dataset = args.dataset
     ver = args.version
-    adjustment_strategy = args.strategy
+         = args.strategy
     activation = args.activation
 
     # initialization.
@@ -44,6 +44,7 @@ if __name__ == '__main__':
     
 
     # the main process of Apricot
+    print('adjustment strategy: {}, type: {}'.format(adjustment_strategy, type(adjustment_strategy)))
     apricot(model, model_weights_dir, dataset, adjustment_strategy, activation)
     
 
