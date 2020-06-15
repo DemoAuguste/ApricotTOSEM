@@ -79,9 +79,11 @@ def batch_get_adjustment_weights(batch_corr_mat, weights_list, adjustment_strate
         
 
         if corr_w is None:
-            logger('curr w is none.', 'temp.txt')
+            print('curr w is none.')
+            # logger('curr w is none.', 'temp.txt')
         if incorr_w is None:
-            logger('incorr w is none.', 'temp.txt')
+            print('incorr w is none.')
+            # logger('incorr w is none.', 'temp.txt')
         
 
         corr_w_list.append(corr_w)
@@ -102,13 +104,12 @@ def batch_adjust_weights_func(curr_weights, corr_w_list, incorr_w_list, adjustme
     5: randomly choose one from corr_set
     6: randomly choose one from incorr_set
     """    
-    print('somethings.')
+    # print('somethings.')
     adjust_weights = curr_weights
     for corr_w, incorr_w in zip(corr_w_list, incorr_w_list):
-        logger('here', 'temp.txt')
         if adjustment_strategy == 1:
             if corr_w is None or incorr_w is None:
-                logger('skip', 'temp.txt')
+                print('skip.')
             else:
                 adjust_weights = [item[0] - settings.learning_rate * (item[0] - item[1]) + settings.learning_rate * (item[0] - item[2]) for item in zip(adjust_weights, corr_w, incorr_w)]
 
