@@ -131,6 +131,9 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy, activation='
         for i in range(iter_num):
             curr_weights = fixed_model.get_weights()
             batch_corr_matrix = sub_correct_matrix[settings.FIX_BATCH_SIZE*i:settings.FIX_BATCH_SIZE*i, :]
+            print('---------------------------------')
+            print(batch_corr_matrix)
+            print('---------------------------------')
             corr_w, incorr_w = batch_get_adjustment_weights(batch_corr_matrix, sub_weights_list, adjustment_strategy)
             print('calculating batch adjust weights...')
             adjust_w = batch_adjust_weights_func(curr_weights, corr_w, incorr_w, adjustment_strategy, activation=activation)
