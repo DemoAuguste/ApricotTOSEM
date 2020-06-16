@@ -179,8 +179,8 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy, activation='
                     # further training epochs.
                     checkpoint = ModelCheckpoint(fixed_weights_path, monitor='val_accuracy', verbose=1, save_best_only=True, mode='max') 
                     checkpoint.best = best_acc
-                    hist = fixed_model.fit_generator(datagen.flow(x_train, y_train, batch_size=settings.BATCH_SIZE), 
-                                                steps_per_epoch=len(x_train) // BATCH_SIZE + 1, 
+                    hist = fixed_model.fit_generator(datagen.flow(x_train_val, y_train_val, batch_size=settings.BATCH_SIZE), 
+                                                steps_per_epoch=len(x_train_val) // BATCH_SIZE + 1, 
                                                 validation_data=(x_val, y_val), 
                                                 epochs=settings.FURTHER_ADJUSTMENT_EPOCHS, 
                                                 callbacks=[checkpoint])
