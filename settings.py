@@ -49,7 +49,7 @@ FIX_BATCH_SIZE = 20
 
 NUM_SUBMODELS = 20
 
-FURTHER_ADJUSTMENT_EPOCHS = 1 # test -> 10
+FURTHER_ADJUSTMENT_EPOCHS = 3 # test -> 10
 
 # parameters for validation dataset
 RANDOM_SEED = 42
