@@ -130,6 +130,7 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy, activation='
 
     # print('start fixing process...')
     logger('----------start fixing process----------', log_path)
+    logger('number of cases to be adjusted: {}'.format(sub_correct_matrix.shape[0]), log_path)
     for _ in range(settings.LOOP_COUNT):
         np.random.shuffle(sub_correct_matrix)
 
