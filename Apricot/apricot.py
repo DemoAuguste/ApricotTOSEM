@@ -15,9 +15,10 @@ from utils import *
 from .Apricot_utils import *
 from .Apricot_utils2 import *
 import settings
+from .Apricot_general_utils import *
 
 
-def cal_sub_corr_matrix(model, corr_path, submodels_path, fail_xs, fail_ys_label, fail_num, num_submodels=20):
+def cal_sub_corr_matrix(model, corr_path, submodels_path, fail_xs, fail_ys, fail_ys_label, fail_num, num_submodels=20):
     # add threshold
     sub_correct_matrix = None
 
@@ -25,10 +26,12 @@ def cal_sub_corr_matrix(model, corr_path, submodels_path, fail_xs, fail_ys_label
         for i in range(num_submodels):
             temp_w_path = os.path.join(root, 'sub_{}.h5'.format(i))
             model.load_weights(temp_w_path)
-            sub_y_pred = model.predict(fail_xs)
 
-            sub_col = np.argmax(sub_y_pred, axis=1) - fail_ys_label
-            sub_col[sub_col != 0] = 1
+            sub_col = get_model_correct_mat(model, fail_xs, fail_ys)
+
+            # sub_y_pred = model.predict(fail_xs)
+            # sub_col = np.argmax(sub_y_pred, axis=1) - fail_ys_label
+            # sub_col[sub_col != 0] = 1
 
             if sub_correct_matrix is None:
                 sub_correct_matrix = sub_col.reshape(fail_num, 1)
@@ -36,7 +39,9 @@ def cal_sub_corr_matrix(model, corr_path, submodels_path, fail_xs, fail_ys_label
                 sub_correct_matrix = np.concatenate((sub_correct_matrix, sub_col.reshape(fail_num, 1)), axis=1)
                 # print(sub_correct_matrix.shape)
 
-    sub_correct_matrix = np.ones(shape=sub_correct_matrix.shape) - sub_correct_matrix  # here change 0 to 1 (for correctly predicted case)
+    # original code, no need to change now
+    # sub_correct_matrix = np.ones(shape=sub_correct_matrix.shape) - sub_correct_matrix  # here change 0 to 1 (for correctly predicted case)
+    
     sub_correct_matrix[sub_correct_matrix == 0] = -1
     np.save(corr_path, sub_correct_matrix)
 
@@ -119,7 +124,7 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy, activation='
 
     if not os.path.exists(sub_correct_matrix_path):
         # obtain submodel correctness matrix
-        sub_correct_matrix = cal_sub_corr_matrix(fixed_model, sub_correct_matrix_path, submodel_dir, fail_xs, fail_ys_label, fail_num, num_submodels=20)
+        sub_correct_matrix = cal_sub_corr_matrix(fixed_model, sub_correct_matrix_path, submodel_dir, fail_xs, fail_ys, fail_ys_label, fail_num, num_submodels=20)
     else:
         sub_correct_matrix = np.load(sub_correct_matrix_path)
 
@@ -145,9 +150,9 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy, activation='
         for i in range(iter_num):
             curr_weights = fixed_model.get_weights()
             batch_corr_matrix = sub_correct_matrix[settings.FIX_BATCH_SIZE*i : settings.FIX_BATCH_SIZE*(i+1), :]
-            # print('---------------------------------')
-            # print(batch_corr_matrix)
-            # print('---------------------------------')
+            print('---------------------------------')
+            print(batch_corr_matrix)
+            print('---------------------------------')
             corr_w, incorr_w = batch_get_adjustment_weights(batch_corr_matrix, sub_weights_list, adjustment_strategy)
             print('calculating batch adjust weights...')
             adjust_w = batch_adjust_weights_func(curr_weights, corr_w, incorr_w, adjustment_strategy, activation=activation)
