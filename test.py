@@ -30,3 +30,4 @@ if __name__ == '__main__':
     
     print(class_prob_mat)
     print(np.sum(max_ind_mat * y_train) / len(x_train))
+    print(model.evaluate(x_train, y_train))
