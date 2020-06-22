@@ -26,7 +26,7 @@ def get_class_prob_mat(model, xs, ys):
     class_sum_mat = np.sum(max_ind_mat, axis=0)
     class_prob_mat = sum_prob_mat / class_sum_mat
     
-    print(class_prob_mat)
+    # print(class_prob_mat)
     return class_prob_mat
 
     # print(np.sum(max_ind_mat * ys) / len(xs))
