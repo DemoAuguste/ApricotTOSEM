@@ -25,5 +25,7 @@ if __name__ == '__main__':
     max_ind_mat = list(map(lambda x: x==max(x), pred_prob_mat)) * np.ones(shape=pred_prob_mat.shape)
     max_prob_mat = pred_prob_mat * max_ind_mat
     sum_prob_mat = np.sum(max_prob_mat, axis=0)
-    class_prob_mat = sum_prob_mat / len(x_train)
+    class_sum_mat = np.sum(max_ind_mat, axis=0)
+    class_prob_mat = sum_prob_mat / class_sum_mat
+    
     print(class_prob_mat)
