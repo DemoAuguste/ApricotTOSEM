@@ -32,7 +32,7 @@ def get_weights_diff_sign(w1, w2):
 def get_sum_sign_weights(sign_weights_list):
     sum_weights = None
     for w in sign_weights_list:
-        if sum_sign_weights is None:
+        if sum_weights is None:
             sum_weights = w
         else:
             sum_weights = [item[0] + item[1] for item in zip(sum_weights, w)]
