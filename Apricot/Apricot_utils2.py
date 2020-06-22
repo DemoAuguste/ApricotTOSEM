@@ -24,6 +24,7 @@ from model import *
 import settings
 from utils import print_msg, logger
 from .Apricot_utils import cal_avg
+import random
 
 def get_weights_diff_sign(w1, w2):
     # calculate w1 - w2
@@ -85,12 +86,19 @@ def batch_get_adjustment_weights(batch_corr_mat, weights_list, adjustment_strate
             if len(incorr_sets) != 0:
                 incorr_w = cal_avg(incorr_weights)    
         else: # lite version TODO
+            # if len(corr_sets) != 0:
+            #     corr_diff_sign_list = [get_weights_diff_sign(curr_weights, w) for w in corr_weights]
+            #     corr_w = get_sum_sign_weights(corr_diff_sign_list)
+            # if len(incorr_sets) != 0:
+            #     incorr_diff_sign_list = [get_weights_diff_sign(curr_weights, w) for w in incorr_weights]
+            #     incorr_w = get_sum_sign_weights(incorr_diff_sign_list)
+
             if len(corr_sets) != 0:
-                corr_diff_sign_list = [get_weights_diff_sign(curr_weights, w) for w in corr_weights]
-                corr_w = get_sum_sign_weights(corr_diff_sign_list)
+                corr_id = random.randint(0, len(corr_sets) - 1)
+                corr_w = corr_weights[corr_id]
             if len(incorr_sets) != 0:
-                incorr_diff_sign_list = [get_weights_diff_sign(curr_weights, w) for w in incorr_weights]
-                incorr_w = get_sum_sign_weights(incorr_diff_sign_list)
+                incorr_id = random.randint(0, len(incorr_sets) - 1)
+                incorr_w = incorr_weights[incorr_id]
 
         # if corr_w is None:
         #     print('curr w is none.')
@@ -142,24 +150,24 @@ def batch_adjust_weights_func(curr_weights, corr_w_list, incorr_w_list, adjustme
             else:
                 adjust_weights = [item[0] + settings.learning_rate * (item[0] - item[1]) for item in zip(curr_weights, incorr_w)]
                 
-        else: # lite version.
-            if corr_w is None and incorr_w is None:
-                continue
-
-            if corr_w is None:
-                adjust_weights = [item[0] + settings.learning_rate * item[1] for item in zip(curr_weights, incorr_w)]
-            elif incorr_w is None:
-                adjust_weights = [item[0] - settings.learning_rate * item[1] for item in zip(curr_weights, corr_w)]
-            else:
-                adjust_weights = [item[0] - settings.learning_rate * item[1] + settings.learning_rate * item[2] for item in zip(curr_weights, corr_w, incorr_w)]
-
-        # if adjustment_strategy == 4:
-        #     if corr_w is None or incorr_w is None:
+        # else: # lite version.
+        #     if corr_w is None and incorr_w is None:
         #         continue
+
+        #     if corr_w is None:
+        #         adjust_weights = [item[0] + settings.learning_rate * item[1] for item in zip(curr_weights, incorr_w)]
+        #     elif incorr_w is None:
+        #         adjust_weights = [item[0] - settings.learning_rate * item[1] for item in zip(curr_weights, corr_w)]
         #     else:
-        #         diff_corr_w = get_difference_func(curr_weights, corr_w, activation=activation)
-        #         diff_incorr_w = get_difference_func(curr_weights, incorr_w, activation=activation)
-        #         adjust_weights = [item[0] - settings.learning_rate * np.multiply(item[0], item[1]) + settings.learning_rate * np.multiply(item[0], item[2]) for item in zip(curr_weights, diff_corr_w, diff_incorr_w)]            
+        #         adjust_weights = [item[0] - settings.learning_rate * item[1] + settings.learning_rate * item[2] for item in zip(curr_weights, corr_w, incorr_w)]
+
+        if adjustment_strategy == 4:
+            if corr_w is None or incorr_w is None:
+                continue
+            else:
+                diff_corr_w = get_difference_func(curr_weights, corr_w, activation=activation)
+                diff_incorr_w = get_difference_func(curr_weights, incorr_w, activation=activation)
+                adjust_weights = [item[0] - settings.learning_rate * np.multiply(item[0], item[1]) + settings.learning_rate * np.multiply(item[0], item[2]) for item in zip(curr_weights, diff_corr_w, diff_incorr_w)]            
         
         # if adjustment_strategy == 5:
         #     if corr_w is None:
