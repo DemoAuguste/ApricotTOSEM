@@ -14,4 +14,8 @@ def get_class_acc(model, xs, ys):
                 y_pred[i][j]=0
 
     print(classification_report(ys, y_pred, output_dict=True))
-    return classification_report(ys, y_pred, output_dict=True)  
+    return classification_report(ys, y_pred, output_dict=True)
+
+
+def get_class_prob_mat(model, xs, ys):
+    pass
