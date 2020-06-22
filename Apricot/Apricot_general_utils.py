@@ -33,10 +33,10 @@ def get_class_prob_mat(model, xs, ys):
     # print(model.evaluate(x_train, y_train))
 
 def _compare(x,y):
-    if x > y:
+    if max(x) > max(y):
         return x
     else:
-        return 0
+        return np.zeros(shape=x.shape)
 
 
 def get_model_correct_mat(model, xs, ys):
