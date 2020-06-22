@@ -14,7 +14,7 @@ if __name__ == '__main__':
 
     x_train, x_test, y_train, y_test = load_dataset('cifar10')
 
-    model.fit(x_train, y_train, batch_size=128, epochs=5)
+    model.fit(x_train, y_train, batch_size=128, epochs=2)
 
     # print(model.predict(x_train[:10]))
     
@@ -26,3 +26,4 @@ if __name__ == '__main__':
     max_prob_mat = pred_prob_mat * max_ind_mat
     sum_prob_mat = np.sum(max_prob_mat, axis=0)
     class_prob_mat = sum_prob_mat / len(x_train)
+    print(class_prob_mat)
