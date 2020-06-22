@@ -27,7 +27,9 @@ def cal_sub_corr_matrix(model, corr_path, submodels_path, fail_xs, fail_ys, fail
             temp_w_path = os.path.join(root, 'sub_{}.h5'.format(i))
             model.load_weights(temp_w_path)
 
-            sub_col = get_model_correct_mat(model, fail_xs, fail_ys)
+            class_prob_mat = get_class_prob_mat(model, fail_xs, fail_ys) # threshold
+
+            sub_col = get_model_correct_mat(model, fail_xs, fail_ys, class_prob_mat)
 
             # sub_y_pred = model.predict(fail_xs)
             # sub_col = np.argmax(sub_y_pred, axis=1) - fail_ys_label

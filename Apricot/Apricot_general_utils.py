@@ -39,9 +39,9 @@ def _compare(x,y):
         return np.zeros(shape=x.shape)
 
 
-def get_model_correct_mat(model, xs, ys):
+def get_model_correct_mat(model, xs, ys, class_prob_mat):
     pred_prob_mat = model.predict(xs)
-    class_prob_mat = get_class_prob_mat(model, xs, ys) # threshold
+    # class_prob_mat = get_class_prob_mat(model, xs, ys) # threshold
 
     max_ind_mat = list(map(lambda x: x==max(x), pred_prob_mat)) * np.ones(shape=pred_prob_mat.shape)
     correct_ind_mat = max_ind_mat * ys # if model predicts correctly, then one row should have one element equals to 1
