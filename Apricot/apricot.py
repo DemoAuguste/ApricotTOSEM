@@ -218,7 +218,7 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy, activation='
     if adjustment_strategy > 3:
         # final training process.
         _, val_acc =  fixed_model.evaluate(x_val, y_val)
-        checkpoint = ModelCheckpoint(fixed_weights_path, monitor='val_acc', verbose=1, save_best_only=True, mode='max') 
+        checkpoint = ModelCheckpoint(fixed_weights_path, monitor='val_accuracy', verbose=1, save_best_only=True, mode='max') 
         checkpoint.best = val_acc
 
         fixed_model.fit_generator(datagen.flow(x_train_val, y_train_val, batch_size=settings.BATCH_SIZE), 
