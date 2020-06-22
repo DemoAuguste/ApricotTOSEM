@@ -25,8 +25,21 @@ import settings
 from utils import print_msg, logger
 from .Apricot_utils import cal_avg
 
+def get_weights_diff_sign(w1, w2):
+    # calculate w1 - w2
+    return [np.sign(item[0] - item[1]) for item in zip(w1, w2)]
 
-def batch_get_adjustment_weights(batch_corr_mat, weights_list, adjustment_strategy):
+def get_sum_sign_weights(sign_weights_list):
+    sum_weights = None
+    for w in sign_weights_list:
+        if sum_sign_weights is None:
+            sum_weights = w
+        else:
+            sum_sign_weights = [item[0] + item[1] for item in zip(sum_weights, w)]
+    return sum_weights
+
+
+def batch_get_adjustment_weights(batch_corr_mat, weights_list, adjustment_strategy, curr_weights):
     """
     correct: 1 incorrect: -1
     return corr_w, incorr_w
@@ -71,21 +84,20 @@ def batch_get_adjustment_weights(batch_corr_mat, weights_list, adjustment_strate
                 corr_w = cal_avg(corr_weights)
             if len(incorr_sets) != 0:
                 incorr_w = cal_avg(incorr_weights)    
-        else: # lite version NOT used
+        else: # lite version TODO
             if len(corr_sets) != 0:
-                corr_id = random.randint(0, len(corr_sets) - 1)
-                corr_w = corr_weights[corr_id]
+                corr_diff_sign_list = [get_weights_diff_sign(curr_weights, w) for w in corr_weights]
+                corr_w = get_sum_sign_weights(corr_diff_sign_list)
             if len(incorr_sets) != 0:
-                incorr_id = random.randint(0, len(incorr_sets) - 1)
-                incorr_w = incorr_weights[incorr_id]
-        
+                incorr_diff_sign_list = [get_weights_diff_sign(curr_weights, w) for w in incorr_weights]
+                incorr_w = get_sum_sign_weights(incorr_diff_sign_list)
 
-        if corr_w is None:
-            print('curr w is none.')
-            # logger('curr w is none.', 'temp.txt')
-        if incorr_w is None:
-            print('incorr w is none.')
-            # logger('incorr w is none.', 'temp.txt')
+        # if corr_w is None:
+        #     print('curr w is none.')
+        #     # logger('curr w is none.', 'temp.txt')
+        # if incorr_w is None:
+        #     print('incorr w is none.')
+        #     # logger('incorr w is none.', 'temp.txt')
         
 
         corr_w_list.append(corr_w)
@@ -130,27 +142,38 @@ def batch_adjust_weights_func(curr_weights, corr_w_list, incorr_w_list, adjustme
             else:
                 adjust_weights = [item[0] + settings.learning_rate * (item[0] - item[1]) for item in zip(curr_weights, incorr_w)]
                 
-        if adjustment_strategy == 4:
-            if corr_w is None or incorr_w is None:
+        else: # lite version.
+            if corr_w is None and incorr_w is None:
                 continue
-            else:
-                diff_corr_w = get_difference_func(curr_weights, corr_w, activation=activation)
-                diff_incorr_w = get_difference_func(curr_weights, incorr_w, activation=activation)
-                adjust_weights = [item[0] - settings.learning_rate * np.multiply(item[0], item[1]) + settings.learning_rate * np.multiply(item[0], item[2]) for item in zip(curr_weights, diff_corr_w, diff_incorr_w)]            
-        
-        if adjustment_strategy == 5:
+
             if corr_w is None:
-                continue
+                adjust_weights = [item[0] + settings.learning_rate * item[1] for item in zip(curr_weights, incorr_w)]
+            elif incorr_w is None:
+                adjust_weights = [item[0] - settings.learning_rate * item[1] for item in zip(curr_weights, corr_w)]
             else:
-                diff_corr_w = get_difference_func(curr_weights, corr_w, activation=activation)
-                adjust_weights = [item[0] - settings.learning_rate * np.multiply(item[0], item[1]) for item in zip(curr_weights, diff_corr_w)]
+                adjust_weights = [item[0] - settings.learning_rate * item[1] + settings.learning_rate * item[2] for item in zip(curr_weights, corr_w, incorr_w)]
+
+        # if adjustment_strategy == 4:
+        #     if corr_w is None or incorr_w is None:
+        #         continue
+        #     else:
+        #         diff_corr_w = get_difference_func(curr_weights, corr_w, activation=activation)
+        #         diff_incorr_w = get_difference_func(curr_weights, incorr_w, activation=activation)
+        #         adjust_weights = [item[0] - settings.learning_rate * np.multiply(item[0], item[1]) + settings.learning_rate * np.multiply(item[0], item[2]) for item in zip(curr_weights, diff_corr_w, diff_incorr_w)]            
         
-        if adjustment_strategy == 6:
-            if incorr_w is None:
-                continue
-            else:
-                diff_incorr_w = get_difference_func(curr_weights, incorr_w, activation=activation)
-                adjust_weights = [item[0] + settings.learning_rate * np.multiply(item[0], item[1]) for item in zip(curr_weights, diff_incorr_w)]
+        # if adjustment_strategy == 5:
+        #     if corr_w is None:
+        #         continue
+        #     else:
+        #         diff_corr_w = get_difference_func(curr_weights, corr_w, activation=activation)
+        #         adjust_weights = [item[0] - settings.learning_rate * np.multiply(item[0], item[1]) for item in zip(curr_weights, diff_corr_w)]
+        
+        # if adjustment_strategy == 6:
+        #     if incorr_w is None:
+        #         continue
+        #     else:
+        #         diff_incorr_w = get_difference_func(curr_weights, incorr_w, activation=activation)
+        #         adjust_weights = [item[0] + settings.learning_rate * np.multiply(item[0], item[1]) for item in zip(curr_weights, diff_incorr_w)]
 
         # curr_weights = adjust_weights
     return adjust_weights
