@@ -15,5 +15,7 @@ if __name__ == '__main__':
     x_train, x_test, y_train, y_test = load_dataset('cifar100')
 
     model.fit(x_train, y_train, batch_size=128, epochs=1)
+
+    print(model.predict(x_train[:10]))
     
-    get_class_acc(model, x_test, y_test)
+    # get_class_acc(model, x_test, y_test)

@@ -18,6 +18,7 @@ import settings
 
 
 def cal_sub_corr_matrix(model, corr_path, submodels_path, fail_xs, fail_ys_label, fail_num, num_submodels=20):
+    # add threshold
     sub_correct_matrix = None
 
     for root, dirs, files in os.walk(submodels_path):
