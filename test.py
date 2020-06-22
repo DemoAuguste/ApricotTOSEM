@@ -29,3 +29,4 @@ if __name__ == '__main__':
     class_prob_mat = sum_prob_mat / class_sum_mat
     
     print(class_prob_mat)
+    print(np.sum(max_ind_mat * y_train) / len(x_train))
