@@ -23,7 +23,7 @@ from keras.layers import Input
 from model import *
 import settings
 from utils import print_msg, logger
-from .Apricot_utils import cal_avg
+from .Apricot_utils import cal_avg, get_difference_func
 import random
 
 def get_weights_diff_sign(w1, w2):
