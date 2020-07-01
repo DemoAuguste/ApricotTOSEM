@@ -46,7 +46,7 @@ if __name__ == '__main__':
 
     # the main process of Apricot
     print('adjustment strategy: {}, type: {}'.format(adjustment_strategy, type(adjustment_strategy)))
-    adjustment_strategy -= 1 # for s2
+    # adjustment_strategy -= 1 # for s2
     apricot(model, model_weights_dir, dataset, adjustment_strategy, activation)
     
 
