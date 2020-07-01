@@ -43,7 +43,7 @@ echo $adaptation_path
 
 
 # CIFAR-10
-for i in {1..5}
+for i in {2..5}
 do
     CUDA_VISIBLE_DEVICES=1 python3 $adaptation_path -m resnet20 -d cifar10 -v $i -s 1 -a binary
     CUDA_VISIBLE_DEVICES=1 python3 $adaptation_path -m mobilenet -d cifar10 -v $i -s 1 -a binary
