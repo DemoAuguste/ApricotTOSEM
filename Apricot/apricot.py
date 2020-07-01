@@ -225,7 +225,8 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy, activation='
                 else:
                     logger('validation accuracy improved: {:.4f}'.format(best_acc), log_path)
             else:
-                fixed_model.load_weights(fixed_weights_path)
+                # fixed_model.load_weights(fixed_weights_path)
+                pass
 
 
     fixed_model.load_weights(fixed_weights_path)
