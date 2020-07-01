@@ -375,7 +375,7 @@ def apricot2(model, model_weights_dir, dataset, adjustment_strategy, activation=
             fixed_model.set_weights(adjust_w)
             counter +=1
 
-            if counter != 20:
+            if counter != 1:
                 continue
             else:
                 counter = 0
