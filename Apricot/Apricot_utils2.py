@@ -128,6 +128,7 @@ def batch_adjust_weights_func(curr_weights, corr_w_list, incorr_w_list, adjustme
     """    
     # print('somethings.')
     adjust_weights = curr_weights
+    print(adjust_weights[0])
     # print(len(corr_w_list))
     # print(len(incorr_w_list))
     for corr_w, incorr_w in zip(corr_w_list, incorr_w_list):
@@ -187,4 +188,6 @@ def batch_adjust_weights_func(curr_weights, corr_w_list, incorr_w_list, adjustme
         #         adjust_weights = [item[0] + settings.learning_rate * np.multiply(item[0], item[1]) for item in zip(curr_weights, diff_incorr_w)]
 
         # curr_weights = adjust_weights
+
+    print(adjust_weights[0])
     return adjust_weights
