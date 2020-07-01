@@ -249,8 +249,45 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy, activation='
     logger('test accuracy: {:.4f}'.format(test_acc), log_path)
 
     
-def apricot_rnn():
-    pass
+
+
+# def cal_sub_corr_matrix(model, corr_path, submodels_path, fail_xs, fail_ys_label, fail_num):
+#     sub_correct_matrix = None
+
+#     for root, dirs, files in os.walk(submodels_path):
+#         for f in files:
+#             temp_w_path = os.path.join(root, f)
+#             model.load_weights(temp_w_path)
+#             sub_y_pred = model.predict(fail_xs)
+
+#             sub_col = np.argmax(sub_y_pred, axis=1) - fail_ys_label
+#             sub_col[sub_col != 0] = 1
+
+#             if sub_correct_matrix is None:
+#                 sub_correct_matrix = sub_col.reshape(fail_num, 1)
+#             else:
+#                 sub_correct_matrix = np.concatenate((sub_correct_matrix, sub_col.reshape(fail_num, 1)), axis=1)
+#                 # print(sub_correct_matrix.shape)
+
+#     sub_correct_matrix = np.ones(shape=sub_correct_matrix.shape) - sub_correct_matrix  # here change 0 to 1 (for correctly predicted case)
+#     np.save(corr_path, sub_correct_matrix)
+
+#     return sub_correct_matrix
+
+            
+# def get_failing_cases(model, xs, ys):
+#     y_preds = model.predict(xs)
+#     y_pred_label = np.argmax(y_preds, axis=1)
+#     y_true = np.argmax(ys, axis=1)
+
+#     index_diff = np.nonzero(y_pred_label - y_true)
+
+#     fail_xs = xs[index_diff]
+#     fail_ys = ys[index_diff]
+#     fail_ys_label = np.argmax(fail_ys, axis=1)
+#     fail_num = int(np.size(index_diff))
+
+#     return fail_xs, fail_ys, fail_ys_label, fail_num
 
 
 def apricot2(model, model_weights_dir, dataset, adjustment_strategy, activation='binary'):
@@ -262,12 +299,6 @@ def apricot2(model, model_weights_dir, dataset, adjustment_strategy, activation=
     # package the dataset
     x_train, x_test, y_train, y_test = load_dataset(dataset)
     x_train_val, x_val, y_train_val, y_val = split_validation_dataset(x_train, y_train)
-
-    # x_train_val = np.concatenate((x_train_val, x_val), axis=0)
-    # y_train_val = np.concatenate((y_train_val, y_val), axis=0)
-    # print(x_train_val.shape, type(x_train_val))
-    # print(y_train_val.shape, type(y_train_val))
-    # return
 
     fixed_model = model
 
@@ -284,13 +315,11 @@ def apricot2(model, model_weights_dir, dataset, adjustment_strategy, activation=
                              height_shift_range=0.125,
                              fill_mode='constant', cval=0.)
 
-    datagen.fit(x_train)
+    datagen.fit(x_train_val)
 
     logger('----------original model----------', log_path)
 
     # submodels 
-    _, base_train_acc = fixed_model.evaluate(x_train_val, y_train_val)
-    logger('The train accuracy: {:.4f}'.format(base_train_acc), log_path)
     _, base_val_acc = fixed_model.evaluate(x_val, y_val)
     # print('The validation accuracy: {:.4f}'.format(base_val_acc))
     logger('The validation accuracy: {:.4f}'.format(base_val_acc), log_path)
@@ -302,61 +331,30 @@ def apricot2(model, model_weights_dir, dataset, adjustment_strategy, activation=
     best_acc = base_val_acc
 
     # find all indices of xs that original model fails on them.
-    # fail_xs, fail_ys, fail_ys_label, fail_num = get_failing_cases(fixed_model, x_train_val, y_train_val)
-    fail_xs, fail_ys, fail_ys_label, fail_num = get_failing_cases(fixed_model, x_train, y_train) # use the whole training dataset
+    fail_xs, fail_ys, fail_ys_label, fail_num = get_failing_cases(fixed_model, x_train_val, y_train_val)
 
     if settings.NUM_SUBMODELS == 20:
-        sub_correct_matrix_path = os.path.join(model_weights_dir, 'corr_matrix_{}_{}.npy'.format(settings.RANDOM_SEED, settings.NUM_SUBMODELS))
+        sub_correct_matrix_path = os.path.join(model_weights_dir, 'corr_matrix_{}.npy'.format(settings.RANDOM_SEED))
     else:
         sub_correct_matrix_path = os.path.join(model_weights_dir, 'corr_matrix_{}_{}.npy'.format(settings.RANDOM_SEED, settings.NUM_SUBMODELS))
-    sub_correct_matrix = None # 1: predicts correctly, -1: predicts incorrectly.
+    sub_correct_matrix = None # 1: predicts correctly, 0: predicts incorrectly.
     print('obtaining sub correct matrix...')
 
     if not os.path.exists(sub_correct_matrix_path):
         # obtain submodel correctness matrix
-        sub_correct_matrix = cal_sub_corr_matrix(fixed_model, sub_correct_matrix_path, submodel_dir, fail_xs, fail_ys, fail_ys_label, fail_num, num_submodels=20)
+        sub_correct_matrix = cal_sub_corr_matrix(fixed_model, sub_correct_matrix_path, submodel_dir, fail_xs, fail_ys_label, fail_num)
     else:
         sub_correct_matrix = np.load(sub_correct_matrix_path)
 
     sub_weights_list = get_submodels_weights(fixed_model, submodel_dir)
     print('collected.')
     fixed_model.load_weights(trained_weights_path)
-    # print(sub_correct_matrix.shape)
-    # print(sub_correct_matrix[0:20, :])
 
     # print('start fixing process...')
     logger('----------start fixing process----------', log_path)
-    logger('number of cases to be adjusted: {}'.format(sub_correct_matrix.shape[0]), log_path)
     for _ in range(settings.LOOP_COUNT):
         np.random.shuffle(sub_correct_matrix)
 
-
-        # # load batches rather than single input.
-        # iter_num, rest = divmod(sub_correct_matrix.shape[0], settings.FIX_BATCH_SIZE)
-        # if rest != 0:
-        #     iter_num += 1
-        
-        # print('iter num: {}'.format(iter_num))
-        # # batch version
-        # for i in range(iter_num):
-        #     curr_weights = fixed_model.get_weights()
-        #     batch_corr_matrix = sub_correct_matrix[settings.FIX_BATCH_SIZE*i : settings.FIX_BATCH_SIZE*(i+1), :]
-        #     # print('---------------------------------')
-        #     # print(batch_corr_matrix)
-        #     # print('---------------------------------')
-        #     corr_w, incorr_w = batch_get_adjustment_weights(batch_corr_matrix, sub_weights_list, adjustment_strategy, curr_weights)
-        #     # print(len(corr_w),len(incorr_w))
-        #     print('calculating batch adjust weights...')
-        #     # adjust_w = None
-        #     # print(adjust_w)
-        #     adjust_w = batch_adjust_weights_func(curr_weights, corr_w, incorr_w, adjustment_strategy, activation=activation)
-        #     # print(curr_weights[0][0])
-        #     # print('----------')
-        #     # print(adjust_w[0][0])
-        #     fixed_model.set_weights(adjust_w)
-
-
-        counter = 0
         for index in range(sub_correct_matrix.shape[0]):
             curr_weights = fixed_model.get_weights()
             corr_mat = sub_correct_matrix[index, :]
@@ -373,13 +371,6 @@ def apricot2(model, model_weights_dir, dataset, adjustment_strategy, activation=
             if adjust_w == -1:
                 continue
             fixed_model.set_weights(adjust_w)
-            counter +=1
-
-            if counter != 1:
-                continue
-            else:
-                counter = 0
-
 
             _, curr_acc = fixed_model.evaluate(x_val, y_val)
             print('After adjustment, the validation accuracy: {:.4f}'.format(curr_acc))
@@ -390,16 +381,13 @@ def apricot2(model, model_weights_dir, dataset, adjustment_strategy, activation=
 
                 if adjustment_strategy <=3:
                     # further training epochs.
-                    checkpoint = ModelCheckpoint(fixed_weights_path, monitor='val_accuracy', verbose=1, save_best_only=True, mode='max') 
+                    checkpoint = ModelCheckpoint(fixed_weights_path, monitor='val_acc', verbose=1, save_best_only=True, mode='max') 
                     checkpoint.best = best_acc
-                    hist = fixed_model.fit_generator(datagen.flow(x_train_val, y_train_val, batch_size=settings.BATCH_SIZE), 
+                    fixed_model.fit_generator(datagen.flow(x_train_val, y_train_val, batch_size=settings.BATCH_SIZE), 
                                                 steps_per_epoch=len(x_train_val) // BATCH_SIZE + 1, 
                                                 validation_data=(x_val, y_val), 
                                                 epochs=settings.FURTHER_ADJUSTMENT_EPOCHS, 
                                                 callbacks=[checkpoint])
-
-                    # for key in hist.history:
-                    #     print(key)
 
                     fixed_model.load_weights(fixed_weights_path)
 
@@ -420,13 +408,13 @@ def apricot2(model, model_weights_dir, dataset, adjustment_strategy, activation=
     if adjustment_strategy > 3:
         # final training process.
         _, val_acc =  fixed_model.evaluate(x_val, y_val)
-        checkpoint = ModelCheckpoint(fixed_weights_path, monitor='val_accuracy', verbose=1, save_best_only=True, mode='max') 
+        checkpoint = ModelCheckpoint(fixed_weights_path, monitor='val_acc', verbose=1, save_best_only=True, mode='max') 
         checkpoint.best = val_acc
 
         fixed_model.fit_generator(datagen.flow(x_train_val, y_train_val, batch_size=settings.BATCH_SIZE), 
                                                 steps_per_epoch=len(x_train_val) // BATCH_SIZE + 1, 
                                                 validation_data=(x_val, y_val), 
-                                                epochs=20, 
+                                                epochs=settings.FURTHER_ADJUSTMENT_EPOCHS, 
                                                 callbacks=[checkpoint])
         fixed_model.load_weights(fixed_weights_path)
 
@@ -436,3 +424,6 @@ def apricot2(model, model_weights_dir, dataset, adjustment_strategy, activation=
     logger('----------final evaluation----------', log_path)
     logger('test accuracy: {:.4f}'.format(test_acc), log_path)
 
+    
+def apricot_rnn():
+    pass
