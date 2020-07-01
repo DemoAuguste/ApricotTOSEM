@@ -23,7 +23,7 @@ else:
 LOGGER_DIR = os.path.join(WORKING_DIR, 'log')
 
 # hyperparameters
-learning_rate = 0.01
+learning_rate = 0.005
 # learning_rate = 10
 
 # strategy = 1
@@ -45,7 +45,7 @@ SUB_EPOCHS = 40  # 20% of pre + after
 MAX_COUNT = 50
 LOOP_COUNT = 3
 
-FIX_BATCH_SIZE = 20
+FIX_BATCH_SIZE = 1
 
 NUM_SUBMODELS = 20
 
