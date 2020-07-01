@@ -342,7 +342,7 @@ def apricot2(model, model_weights_dir, dataset, adjustment_strategy, activation=
 
     if not os.path.exists(sub_correct_matrix_path):
         # obtain submodel correctness matrix
-        sub_correct_matrix = cal_sub_corr_matrix(fixed_model, sub_correct_matrix_path, submodel_dir, fail_xs, fail_ys_label, fail_num)
+        sub_correct_matrix = cal_sub_corr_matrix(fixed_model, sub_correct_matrix_path, submodel_dir, fail_xs, fail_ys, fail_ys_label, fail_num)
     else:
         sub_correct_matrix = np.load(sub_correct_matrix_path)
 
