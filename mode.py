@@ -117,7 +117,7 @@ if __name__ == '__main__':
 
 
     ######################################
-    max_iter = 5
+    max_iter = 1
 
     distance_metrics = ['dot']
     for distance_metric in distance_metrics:
@@ -150,7 +150,7 @@ if __name__ == '__main__':
             control_loss, control_acc = control_model.evaluate(x_test, y_test, verbose=0)
             print('Control Test Loss: {}, Control Test Accuracy: {}'.format(control_loss, control_acc))
 
-            logger(log_path, 'Control Test Loss: {}, Control Test Accuracy: {}'.format(control_loss, control_acc))
+            logger('Control Test Loss: {}, Control Test Accuracy: {}'.format(control_loss, control_acc), log_path)
 
             # identify target layer
             print('Identifying target layer...')
@@ -221,7 +221,7 @@ if __name__ == '__main__':
             test_loss, test_acc = model.evaluate(x_test, y_test, verbose=0)
             print('Test Loss: {}, Test Accuracy: {}'.format(test_loss, test_acc))
 
-            logger(log_path, '{} iteration: test loss: {}, test accuracy: {}'.format(max_iter - i, test_loss, test_acc))
+            logger('{} iteration: test loss: {}, test accuracy: {}'.format(max_iter - i, test_loss, test_acc), log_path)
 
             # repeat until there are no more faulty underfitting labels
             i += 1
@@ -232,5 +232,5 @@ if __name__ == '__main__':
         control_loss, control_acc = control_model.evaluate(x_test, y_test, verbose=0)
         print('Control Test Loss: {}, Control Test Accuracy: {}'.format(control_loss, control_acc))
 
-        logger(log_path, 'Control Test Loss: {}, Control Test Accuracy: {}'.format(control_loss, control_acc))
+        logger('Control Test Loss: {}, Control Test Accuracy: {}'.format(control_loss, control_acc), log_path)
 
