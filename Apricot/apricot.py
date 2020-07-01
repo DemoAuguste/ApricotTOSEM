@@ -142,6 +142,7 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy, activation='
     for _ in range(settings.LOOP_COUNT):
         np.random.shuffle(sub_correct_matrix)
 
+
         # load batches rather than single input.
         iter_num, rest = divmod(sub_correct_matrix.shape[0], settings.FIX_BATCH_SIZE)
         if rest != 0:
@@ -152,9 +153,9 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy, activation='
         for i in range(iter_num):
             curr_weights = fixed_model.get_weights()
             batch_corr_matrix = sub_correct_matrix[settings.FIX_BATCH_SIZE*i : settings.FIX_BATCH_SIZE*(i+1), :]
-            print('---------------------------------')
-            print(batch_corr_matrix)
-            print('---------------------------------')
+            # print('---------------------------------')
+            # print(batch_corr_matrix)
+            # print('---------------------------------')
             corr_w, incorr_w = batch_get_adjustment_weights(batch_corr_matrix, sub_weights_list, adjustment_strategy, curr_weights)
             # print(len(corr_w),len(incorr_w))
             print('calculating batch adjust weights...')
@@ -167,6 +168,7 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy, activation='
             fixed_model.set_weights(adjust_w)
 
 
+        # counter = 0
         # for index in range(sub_correct_matrix.shape[0]):
         #     curr_weights = fixed_model.get_weights()
         #     corr_mat = sub_correct_matrix[index, :]
@@ -183,6 +185,13 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy, activation='
         #     if adjust_w == -1:
         #         continue
         #     fixed_model.set_weights(adjust_w)
+        #     counter +=1
+
+        #     if counter != 20:
+        #         continue
+        #     else:
+        #         counter = 0
+
 
             _, curr_acc = fixed_model.evaluate(x_val, y_val)
             print('After adjustment, the validation accuracy: {:.4f}'.format(curr_acc))
