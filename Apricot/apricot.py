@@ -587,3 +587,167 @@ def apricot3(model, model_weights_dir, dataset, adjustment_strategy, activation=
     _, test_acc = fixed_model.evaluate(x_test, y_test, verbose=0)
     logger('----------final evaluation----------', log_path)
     logger('test accuracy: {:.4f}'.format(test_acc), log_path)
+
+
+def apricot4(model, model_weights_dir, dataset, adjustment_strategy, activation='binary'):
+    """
+    including Apricot and Apricot lite
+    input:
+        * dataset: [x_train_val, y_train_val, x_val, y_val, x_test, y_test]
+    """
+    # package the dataset
+    x_train, x_test, y_train, y_test = load_dataset(dataset)
+    x_train_val, x_val, y_train_val, y_val = split_validation_dataset(x_train, y_train)
+
+    # x_train_val = np.concatenate((x_train_val, x_val), axis=0)
+    # y_train_val = np.concatenate((y_train_val, y_val), axis=0)
+    # print(x_train_val.shape, type(x_train_val))
+    # print(y_train_val.shape, type(y_train_val))
+    # return
+
+    fixed_model = model
+
+    submodel_dir = os.path.join(model_weights_dir, 'submodels')
+    trained_weights_path = os.path.join(model_weights_dir, 'trained.h5')  
+    fixed_weights_path = os.path.join(model_weights_dir, 'compare_fixed_{}_{}.h5'.format(adjustment_strategy, activation))
+    log_path = os.path.join(model_weights_dir, 'compare_log_{}.txt'.format(adjustment_strategy))
+
+    if not os.path.exists(fixed_weights_path):
+        fixed_model.save_weights(fixed_weights_path)
+
+    datagen = ImageDataGenerator(horizontal_flip=True,
+                             width_shift_range=0.125,
+                             height_shift_range=0.125,
+                             fill_mode='constant', cval=0.)
+
+    datagen.fit(x_train)
+
+    logger('----------original model----------', log_path)
+
+    # submodels 
+    _, base_train_acc = fixed_model.evaluate(x_train_val, y_train_val)
+    logger('The train accuracy: {:.4f}'.format(base_train_acc), log_path)
+    _, base_val_acc = fixed_model.evaluate(x_val, y_val)
+    # print('The validation accuracy: {:.4f}'.format(base_val_acc))
+    logger('The validation accuracy: {:.4f}'.format(base_val_acc), log_path)
+    _, base_test_acc = fixed_model.evaluate(x_test, y_test)
+    # print('The test accuracy: {:.4f}'.format(base_test_acc))
+    logger('The test accuracy: {:.4f}'.format(base_test_acc), log_path)
+    
+    best_weights = fixed_model.get_weights()
+    best_acc = base_val_acc
+
+    # find all indices of xs that original model fails on them.
+    # fail_xs, fail_ys, fail_ys_label, fail_num = get_failing_cases(fixed_model, x_train_val, y_train_val)
+    fail_xs, fail_ys, fail_ys_label, fail_num = get_failing_cases(fixed_model, x_train, y_train) # use the whole training dataset
+
+    if settings.NUM_SUBMODELS == 20:
+        sub_correct_matrix_path = os.path.join(model_weights_dir, 'corr_matrix_{}_{}.npy'.format(settings.RANDOM_SEED, settings.NUM_SUBMODELS))
+    else:
+        sub_correct_matrix_path = os.path.join(model_weights_dir, 'corr_matrix_{}_{}.npy'.format(settings.RANDOM_SEED, settings.NUM_SUBMODELS))
+    sub_correct_matrix = None # 1: predicts correctly, -1: predicts incorrectly.
+    print('obtaining sub correct matrix...')
+
+    if not os.path.exists(sub_correct_matrix_path):
+        # obtain submodel correctness matrix
+        sub_correct_matrix = cal_sub_corr_matrix(fixed_model, sub_correct_matrix_path, submodel_dir, fail_xs, fail_ys, fail_ys_label, fail_num, num_submodels=20)
+    else:
+        sub_correct_matrix = np.load(sub_correct_matrix_path)
+
+    # generate random matrix for comparison.
+    # sub_correct_matrix = np.random.randint(0,2, sub_correct_matrix.shape)
+    # sub_correct_matrix[sub_correct_matrix == 0] = -1
+    sub_correct_matrix = np.ones(sub_correct_matrix.shape)
+
+    sub_weights_list = get_submodels_weights(fixed_model, submodel_dir)
+    print('collected.')
+    fixed_model.load_weights(trained_weights_path)
+    # print(sub_correct_matrix.shape)
+    # print(sub_correct_matrix[0:20, :])
+
+    # print('start fixing process...')
+    logger('----------start fixing process----------', log_path)
+    logger('number of cases to be adjusted: {}'.format(sub_correct_matrix.shape[0]), log_path)
+    for _ in range(settings.LOOP_COUNT):
+        np.random.shuffle(sub_correct_matrix)
+
+
+        # load batches rather than single input.
+        iter_num, rest = divmod(sub_correct_matrix.shape[0], settings.FIX_BATCH_SIZE)
+        if rest != 0:
+            iter_num += 1
+        
+        print('iter num: {}'.format(iter_num))
+        # batch version
+        for i in range(iter_num):
+            curr_weights = fixed_model.get_weights()
+            batch_corr_matrix = sub_correct_matrix[settings.FIX_BATCH_SIZE*i : settings.FIX_BATCH_SIZE*(i+1), :]
+            # print('---------------------------------')
+            # print(batch_corr_matrix)
+            # print('---------------------------------')
+            corr_w, incorr_w = batch_get_adjustment_weights(batch_corr_matrix, sub_weights_list, adjustment_strategy, curr_weights)
+            # print(len(corr_w),len(incorr_w))
+            print('calculating batch adjust weights...')
+            # adjust_w = None
+            # print(adjust_w)
+            adjust_w = batch_adjust_weights_func(curr_weights, corr_w, incorr_w, adjustment_strategy, activation=activation)
+            # print(curr_weights[0][0])
+            # print('----------')
+            # print(adjust_w[0][0])
+            fixed_model.set_weights(adjust_w)
+
+            _, curr_acc = fixed_model.evaluate(x_val, y_val)
+            print('After adjustment, the validation accuracy: {:.4f}'.format(curr_acc))
+
+            if curr_acc > best_acc:
+                best_acc = curr_acc
+                fixed_model.save_weights(fixed_weights_path)
+
+                if adjustment_strategy <=3:
+                    # further training epochs.
+                    checkpoint = ModelCheckpoint(fixed_weights_path, monitor='val_accuracy', verbose=1, save_best_only=True, mode='max') 
+                    checkpoint.best = best_acc
+                    hist = fixed_model.fit_generator(datagen.flow(x_train_val, y_train_val, batch_size=settings.BATCH_SIZE), 
+                                                steps_per_epoch=len(x_train_val) // BATCH_SIZE + 1, 
+                                                validation_data=(x_val, y_val), 
+                                                epochs=settings.FURTHER_ADJUSTMENT_EPOCHS, 
+                                                callbacks=[checkpoint])
+
+                    # for key in hist.history:
+                    #     print(key)
+
+                    fixed_model.load_weights(fixed_weights_path)
+
+                    # eval the model
+                    _, val_acc = fixed_model.evaluate(x_val, y_val, verbose=0)
+                    # _, test_acc = fixed_model.evaluate(x_test, y_test, verbose=0)
+                    best_acc = val_acc
+
+                    # print('validation accuracy after further training: {:.4f}'.format(test_acc))
+                    logger('validation accuracy improved, after further training: {:.4f}'.format(val_acc), log_path)
+                else:
+                    logger('validation accuracy improved: {:.4f}'.format(best_acc), log_path)
+            else:
+                fixed_model.load_weights(fixed_weights_path)
+                # pass
+
+
+    fixed_model.load_weights(fixed_weights_path)
+    if adjustment_strategy > 3:
+        # final training process.
+        _, val_acc =  fixed_model.evaluate(x_val, y_val)
+        checkpoint = ModelCheckpoint(fixed_weights_path, monitor='val_accuracy', verbose=1, save_best_only=True, mode='max') 
+        checkpoint.best = val_acc
+
+        fixed_model.fit_generator(datagen.flow(x_train_val, y_train_val, batch_size=settings.BATCH_SIZE), 
+                                                steps_per_epoch=len(x_train_val) // BATCH_SIZE + 1, 
+                                                validation_data=(x_val, y_val), 
+                                                epochs=20, 
+                                                callbacks=[checkpoint])
+        fixed_model.load_weights(fixed_weights_path)
+
+
+    # final evaluation.
+    _, test_acc = fixed_model.evaluate(x_test, y_test, verbose=0)
+    logger('----------final evaluation----------', log_path)
+    logger('test accuracy: {:.4f}'.format(test_acc), log_path)
