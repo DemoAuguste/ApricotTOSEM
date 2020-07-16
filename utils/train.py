@@ -248,3 +248,58 @@ def train_sub_time(model_name, num_classes=10, dataset='cifar10', ver=1, num_sub
             f.write('time for training rDLMs: {}'.format(str(end-start)))
             f.close()
             # model.save_weights(submodel_save_path)
+
+
+def train_main_time(model_name, num_classes=10, dataset='cifar10', ver=1, num_submodels=20, train_sub=True, save_path=None, top_k=1, subset_size=10000):
+    if 'cifar' in dataset:
+        img_rows, img_cols = 32, 32
+        img_channels = 3
+    else: # TODO
+        pass
+    print("########################")
+    print("model name: {}".format(model_name))
+    print("dataset: {}".format(dataset))
+    print("version: {}".format(ver))
+    print("num of classes: {}".format(num_classes))
+    print("num of submodels: {}".format(num_submodels))
+    print("########################")
+
+    model = build_networks(model_name, num_classes=num_classes, input_size=(img_rows, img_cols, img_channels))
+    model.summary()
+
+    AFTER_EPOCHS = 190 # NOTE: in previous experiment, different models have different AFTER_EPOCHS.
+
+
+    x_train, x_test, y_train, y_test = load_dataset(dataset)
+    print("x_train shape: {}".format(x_train.shape))
+    print("y_train shape: {}".format(y_train.shape))
+    x_train_val, x_val, y_train_val, y_val = split_validation_dataset(x_train, y_train)
+
+    model_weights_save_dir = os.path.join(WORKING_DIR, 'weights')
+    model_weights_save_dir = os.path.join(model_weights_save_dir, model_name)
+    model_weights_save_dir = os.path.join(model_weights_save_dir, dataset)
+    model_weights_save_dir = os.path.join(model_weights_save_dir, str(ver))
+
+    if not os.path.exists(model_weights_save_dir):
+        os.makedirs(model_weights_save_dir)
+
+    f = open(os.path.join(model_weights_save_dir, 'q_time.txt'), 'a+')
+    
+    pretrained_path = os.path.join(model_weights_save_dir, 'pretrained.h5')
+    trained_path = os.path.join(model_weights_save_dir, 'trained.h5')
+
+    datagen = ImageDataGenerator(horizontal_flip=True,
+                                width_shift_range=0.125,
+                                height_shift_range=0.125,
+                                fill_mode='constant', cval=0.)
+    datagen.fit(x_train_val)
+
+    start = datetime.now()
+    model.fit_generator(datagen.flow(x_train_val, y_train_val, batch_size=BATCH_SIZE), 
+                                        steps_per_epoch=len(x_train_val) // BATCH_SIZE + 1, 
+                                        validation_data=(x_val, y_val), 
+                                        epochs=200)
+
+    end = datetime.now()
+    f.write('time for training rDLMs: {}'.format(str(end-start)))
+    f.close()
