@@ -14,19 +14,19 @@ echo $train_path
 
 # CIFAR-100
 
-CUDA_VISIBLE_DEVICES=3 python3 $train_path -m resnet20 -d cifar100 -v $i
-CUDA_VISIBLE_DEVICES=3 python3 $train_path -m mobilenet -d cifar100 -v $i
-CUDA_VISIBLE_DEVICES=3 python3 $train_path -m resnet32 -d cifar100 -v $i
-CUDA_VISIBLE_DEVICES=3 python3 $train_path -m mobilenetv2 -d cifar100 -v $i
-CUDA_VISIBLE_DEVICES=3 python3 $train_path -m densenet -d cifar100 -v $i
+CUDA_VISIBLE_DEVICES=3 python3 $train_path -m resnet20 -d cifar100 -v 1
+CUDA_VISIBLE_DEVICES=3 python3 $train_path -m mobilenet -d cifar100 -v 1
+CUDA_VISIBLE_DEVICES=3 python3 $train_path -m resnet32 -d cifar100 -v 1
+CUDA_VISIBLE_DEVICES=3 python3 $train_path -m mobilenetv2 -d cifar100 -v 1
+CUDA_VISIBLE_DEVICES=3 python3 $train_path -m densenet -d cifar100 -v 1
 
 
 # CIFAR-10 
 
-CUDA_VISIBLE_DEVICES=3 python3 $train_path -m resnet20 -d cifar10 -v $i
-CUDA_VISIBLE_DEVICES=3 python3 $train_path -m mobilenet -d cifar10 -v $i
-CUDA_VISIBLE_DEVICES=3 python3 $train_path -m resnet32 -d cifar10 -v $i
-CUDA_VISIBLE_DEVICES=3 python3 $train_path -m mobilenetv2 -d cifar10 -v $i
-CUDA_VISIBLE_DEVICES=3 python3 $train_path -m densenet -d cifar10 -v $i
+CUDA_VISIBLE_DEVICES=3 python3 $train_path -m resnet20 -d cifar10 -v 1
+CUDA_VISIBLE_DEVICES=3 python3 $train_path -m mobilenet -d cifar10 -v 1
+CUDA_VISIBLE_DEVICES=3 python3 $train_path -m resnet32 -d cifar10 -v 1
+CUDA_VISIBLE_DEVICES=3 python3 $train_path -m mobilenetv2 -d cifar10 -v 1
+CUDA_VISIBLE_DEVICES=3 python3 $train_path -m densenet -d cifar10 -v 1
 
 
