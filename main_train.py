@@ -6,6 +6,7 @@ import argparse
 
 def training_process(model_name, dataset, ver):
     # cifar 10 training process.
+    num_classes = None
     if dataset == 'cifar10':
         num_classes = 10
     elif dataset == 'cifar100':
@@ -14,7 +15,9 @@ def training_process(model_name, dataset, ver):
     if dataset != 'imdb':
         train_model(model_name, num_classes=num_classes, dataset=dataset, ver=ver, num_submodels=20, train_sub=train_sub, save_path=None)
     else:
-        rnn_train_model(model_name, num_classes=2, dataset=dataset, ver=ver, num_submodels=40, train_sub=train_sub)
+        pass
+        # rnn_train_model(model_name, num_classes=2, dataset=dataset, ver=ver, num_submodels=40, train_sub=train_sub)
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Settings of Apricot+.')
@@ -28,4 +31,3 @@ if __name__ == '__main__':
     ver = args.version
 
     training_process(model, dataset, ver)
-    

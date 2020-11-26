@@ -8,11 +8,21 @@ from datetime import datetime
 
 
 def train_model(model_name, num_classes=10, dataset='cifar10', ver=1, num_submodels=20, train_sub=True, save_path=None, top_k=1, subset_size=10000):
+    img_rows = -1
+    img_cols = -1
+    img_channels = -1
     if 'cifar' in dataset:
         img_rows, img_cols = 32, 32
         img_channels = 3
-    else: # TODO
+    elif dataset == 'fashion-mnist':
+        img_rows, img_cols = 28, 28
+        img_channels = 1
+    elif dataset == 'svhn':
+        img_rows, img_cols = 64, 64
+        img_channels = 3
+    else:  # TODO
         pass
+
     print("########################")
     print("model name: {}".format(model_name))
     print("dataset: {}".format(dataset))
@@ -24,29 +34,7 @@ def train_model(model_name, num_classes=10, dataset='cifar10', ver=1, num_submod
     model = build_networks(model_name, num_classes=num_classes, input_size=(img_rows, img_cols, img_channels))
     model.summary()
 
-    AFTER_EPOCHS = 190 # NOTE: in previous experiment, different models have different AFTER_EPOCHS.
-
-    # region previous codes
-    # input_tensor = Input(shape=(img_rows, img_cols, img_channels))
-    # if model_name == 'resnet20':
-    #     AFTER_EPOCHS = 190
-    #     model = build_resnet(img_rows, img_cols, img_channels, num_classes=num_classes, stack_n=3, k=top_k)
-    # elif model_name == 'resnet32':
-    #     AFTER_EPOCHS = 190
-    #     model = build_resnet(img_rows, img_cols, img_channels, num_classes=num_classes, stack_n=5, k=top_k)
-    # elif model_name == 'mobilenet':
-    #     AFTER_EPOCHS = 190
-    #     model = build_mobilenet(input_tensor, num_classes, k=top_k)
-    # elif model_name == 'mobilenet_v2':
-    #     AFTER_EPOCHS = 190
-    #     model = build_mobilenet_v2(input_tensor, num_classes, k=top_k)
-    # elif model_name == 'densenet':
-    #     if dataset == 'cifar10':
-    #         AFTER_EPOCHS = 190
-    #     else:
-    #         AFTER_EPOCHS = 100
-    #     model = build_densenet(input_tensor, num_classes, k=top_k)
-    # endregion
+    AFTER_EPOCHS = 190  # NOTE: in previous experiment, different models have different AFTER_EPOCHS.
 
     x_train, x_test, y_train, y_test = load_dataset(dataset)
     print("x_train shape: {}".format(x_train.shape))
@@ -70,6 +58,7 @@ def train_model(model_name, num_classes=10, dataset='cifar10', ver=1, num_submod
                                 fill_mode='constant', cval=0.)
     datagen.fit(x_train_val)
 
+    start = datetime.now()
     if not os.path.exists(pretrained_path):
         # pretrain the model, using the x_train_val.
         
@@ -80,8 +69,7 @@ def train_model(model_name, num_classes=10, dataset='cifar10', ver=1, num_submod
         model.save_weights(pretrained_path)
     else:
         model.load_weights(pretrained_path)
-    
-    
+
     if not os.path.exists(trained_path):
         # train the original model
         model.fit_generator(datagen.flow(x_train_val, y_train_val, batch_size=BATCH_SIZE), 
@@ -89,6 +77,8 @@ def train_model(model_name, num_classes=10, dataset='cifar10', ver=1, num_submod
                                             validation_data=(x_val, y_val), 
                                             epochs=AFTER_EPOCHS)
         model.save_weights(trained_path)
+    end = datetime.now()
+    print('time for training the original DL model: {}'.format(end-start))
 
     if train_sub:
         submodel_dir = os.path.join(model_weights_save_dir, 'submodels')
