@@ -92,28 +92,6 @@ def load_dataset(dataset='cifar10', preprocessing=True, shuffle=True):
         x_test = x_test.astype('float32')
         x_train /= 255
         x_test /= 255
-    elif dataset == 'imagenet':  # imagenet64 dataset
-        num_classes = 1000
-        x_train = None
-        y_train = None
-        x_test = None
-        y_test = None
-        # load training dataset
-        for i in range(10):
-            temp_file_path = os.path.join(IMAGENET_DATASET_DIR, 'train_data_batch_{}'.format(i+1))
-            temp_data = np.load(temp_file_path)
-            temp = temp_data['data'].reshape(-1, 3, 64, 64)
-            temp_x = np.rollaxis(temp, 1, 4)
-
-            temp_y = np.array(temp_data['labels']) - 1
-            temp_y = keras.utils.to_categorical(temp_y, num_classes)
-
-            if x_train is None:
-                x_train = temp_x
-                y_train = temp_y
-            else:
-                x_train = np.concatenate(x_train, temp_x)
-                y_train = np.concatenate(y_train, temp_y)
 
         # load test dataset
         test_file_path = os.path.join(IMAGENET_DATASET_DIR, 'val_data')
@@ -140,6 +118,8 @@ def load_dataset(dataset='cifar10', preprocessing=True, shuffle=True):
         y_train = fixLabel(y_train)
         y_test = fixLabel(y_test)
         # ------------- Normalize ---------------#
+        x_train = x_train.astype('float32')
+        x_test = x_test.astype('float32')
         x_train /= 255.0
         x_test /= 255.0
 
