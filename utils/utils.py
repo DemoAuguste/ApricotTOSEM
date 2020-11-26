@@ -106,6 +106,7 @@ def load_dataset(dataset='cifar10', preprocessing=True, shuffle=True):
     elif dataset == 'svhn':
         # code from https://github.com/haseebtehsin/Neural-Network-using-Tensorflow-keras-and-SVHN-Dataset/blob/master/NN.py
         data_path = os.path.join(DATA_DIR, 'svhn')
+        num_classes = 10
         mat1 = spio.loadmat(os.path.join(data_path, 'train_32x32.mat'), squeeze_me=True)
         mat2 = spio.loadmat(os.path.join(data_path, 'test_32x32.mat'), squeeze_me=True)
         x_train = mat1['X']
@@ -120,6 +121,8 @@ def load_dataset(dataset='cifar10', preprocessing=True, shuffle=True):
         # ------------- Normalize ---------------#
         x_train = x_train.astype('float32')
         x_test = x_test.astype('float32')
+        y_train = keras.utils.to_categorical(y_train, num_classes)
+        y_test = keras.utils.to_categorical(y_test, num_classes)
         x_train /= 255.0
         x_test /= 255.0
 
