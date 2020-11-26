@@ -127,7 +127,7 @@ def load_dataset(dataset='cifar10', preprocessing=True, shuffle=True):
     elif dataset == 'svhn':
         # code from https://github.com/haseebtehsin/Neural-Network-using-Tensorflow-keras-and-SVHN-Dataset/blob/master/NN.py
         data_path = os.path.join(DATA_DIR, 'svhn')
-        mat1 = spio.loadmat(os.path.join(data_path, 'extra_32x32.mat'), squeeze_me=True)
+        mat1 = spio.loadmat(os.path.join(data_path, 'train_32x32.mat'), squeeze_me=True)
         mat2 = spio.loadmat(os.path.join(data_path, 'test_32x32.mat'), squeeze_me=True)
         x_train = mat1['X']
         y_train = mat1['y']
