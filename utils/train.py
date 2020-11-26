@@ -11,15 +11,12 @@ def train_model(model_name, num_classes=10, dataset='cifar10', ver=1, num_submod
     img_rows = -1
     img_cols = -1
     img_channels = -1
-    if 'cifar' in dataset:
+    if 'cifar' in dataset or dataset == 'svhn':
         img_rows, img_cols = 32, 32
         img_channels = 3
     elif dataset == 'fashion-mnist':
         img_rows, img_cols = 28, 28
         img_channels = 1
-    elif dataset == 'svhn':
-        img_rows, img_cols = 64, 64
-        img_channels = 3
     else:  # TODO
         pass
 
