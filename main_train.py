@@ -7,7 +7,7 @@ import argparse
 def training_process(model_name, dataset, ver):
     # cifar 10 training process.
     num_classes = None
-    if dataset == 'cifar10':
+    if dataset == 'cifar10' or dataset == 'svhn' or dataset == 'fashion-mnist':
         num_classes = 10
     elif dataset == 'cifar100':
         num_classes = 100
