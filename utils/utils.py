@@ -40,7 +40,8 @@ def rgb2gray(rgb):
 def formatArray(data):
     im = []
     for i in range(0, data.shape[3]):
-        im.append(rgb2gray(data[:, :, :, i]))
+        # im.append(rgb2gray(data[:, :, :, i]))
+        im.append(data[:, :, :, i])
     return np.asarray(im)
 
 
