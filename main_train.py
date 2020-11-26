@@ -4,6 +4,7 @@ from model import *
 
 import argparse
 
+
 def training_process(model_name, dataset, ver):
     # cifar 10 training process.
     num_classes = None
