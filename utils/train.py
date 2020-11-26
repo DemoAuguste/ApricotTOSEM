@@ -74,8 +74,9 @@ def train_model(model_name, num_classes=10, dataset='cifar10', ver=1, num_submod
                                             validation_data=(x_val, y_val), 
                                             epochs=kwargs['after_epochs'])
         model.save_weights(trained_path)
-    end = datetime.now()
-    logger('time for training the original DL model: {}'.format(end-start), log_path)
+        end = datetime.now()
+        logger('time for training the original DL model: {}'.format(end - start), log_path)
+
     # print('time for training the original DL model: {}'.format(end-start))
 
     if train_sub:
