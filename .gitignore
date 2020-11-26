@@ -8,3 +8,8 @@ model/CNN/ResNet.py
 weights/resnet20/cifar10/1/log.txt
 weights/resnet20/cifar10/1/log_4.txt
 *.json
+*.xml
+*.iml
+*.json
+*.mat
+*.json
