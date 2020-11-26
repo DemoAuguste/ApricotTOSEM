@@ -7,7 +7,7 @@ from keras.preprocessing.image import ImageDataGenerator
 from datetime import datetime
 
 
-def train_model(model_name, num_classes=10, dataset='cifar10', ver=1, num_submodels=20, train_sub=True, save_path=None, top_k=1, subset_size=10000):
+def train_model(model_name, num_classes=10, dataset='cifar10', ver=1, num_submodels=20, train_sub=True, save_path=None, top_k=1, subset_size=10000, **kwargs):
     img_rows = -1
     img_cols = -1
     img_channels = -1
@@ -62,7 +62,7 @@ def train_model(model_name, num_classes=10, dataset='cifar10', ver=1, num_submod
         model.fit_generator(datagen.flow(x_train_val, y_train_val, batch_size=BATCH_SIZE), 
                                         steps_per_epoch=len(x_train_val) // BATCH_SIZE + 1, 
                                         validation_data=(x_val, y_val), 
-                                        epochs=PRE_EPOCHS)
+                                        epochs=kwargs['pre_epochs'])
         model.save_weights(pretrained_path)
     else:
         model.load_weights(pretrained_path)
@@ -72,7 +72,7 @@ def train_model(model_name, num_classes=10, dataset='cifar10', ver=1, num_submod
         model.fit_generator(datagen.flow(x_train_val, y_train_val, batch_size=BATCH_SIZE), 
                                             steps_per_epoch=len(x_train_val) // BATCH_SIZE + 1, 
                                             validation_data=(x_val, y_val), 
-                                            epochs=AFTER_EPOCHS)
+                                            epochs=kwargs['after_epochs'])
         model.save_weights(trained_path)
     end = datetime.now()
     logger('time for training the original DL model: {}'.format(end-start), log_path)
@@ -98,7 +98,7 @@ def train_model(model_name, num_classes=10, dataset='cifar10', ver=1, num_submod
             model.fit_generator(datagen.flow(sub_x_train_val, sub_y_train_val, batch_size=BATCH_SIZE), 
                                         steps_per_epoch=len(sub_x_train_val) // BATCH_SIZE + 1, 
                                         validation_data=(x_val, y_val), 
-                                        epochs=SUB_EPOCHS)
+                                        epochs=kwargs['sub_epochs'])
             model.save_weights(submodel_save_path)
             end = datetime.now()
             logger('time for training sub-{}: {}'.format(i, end-start), log_path)
