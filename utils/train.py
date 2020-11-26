@@ -51,6 +51,7 @@ def train_model(model_name, num_classes=10, dataset='cifar10', ver=1, num_submod
     
     pretrained_path = os.path.join(model_weights_save_dir, 'pretrained.h5')
     trained_path = os.path.join(model_weights_save_dir, 'trained.h5')
+    log_path = os.path.join(model_weights_save_dir, 'log-train.txt')
 
     datagen = ImageDataGenerator(horizontal_flip=True,
                                 width_shift_range=0.125,
@@ -61,7 +62,6 @@ def train_model(model_name, num_classes=10, dataset='cifar10', ver=1, num_submod
     start = datetime.now()
     if not os.path.exists(pretrained_path):
         # pretrain the model, using the x_train_val.
-        
         model.fit_generator(datagen.flow(x_train_val, y_train_val, batch_size=BATCH_SIZE), 
                                         steps_per_epoch=len(x_train_val) // BATCH_SIZE + 1, 
                                         validation_data=(x_val, y_val), 
@@ -78,7 +78,8 @@ def train_model(model_name, num_classes=10, dataset='cifar10', ver=1, num_submod
                                             epochs=AFTER_EPOCHS)
         model.save_weights(trained_path)
     end = datetime.now()
-    print('time for training the original DL model: {}'.format(end-start))
+    logger('time for training the original DL model: {}'.format(end-start), log_path)
+    # print('time for training the original DL model: {}'.format(end-start))
 
     if train_sub:
         submodel_dir = os.path.join(model_weights_save_dir, 'submodels')
@@ -91,16 +92,19 @@ def train_model(model_name, num_classes=10, dataset='cifar10', ver=1, num_submod
             if os.path.exists(submodel_save_path):
                 continue
 
-            sub_x_train_val = x_train_val[step*i : subset_size + step*i]
-            sub_y_train_val = y_train_val[step*i : subset_size + step*i]
+            sub_x_train_val = x_train_val[step*i: subset_size + step*i]
+            sub_y_train_val = y_train_val[step*i: subset_size + step*i]
             
             # load the pretrained model
+            start = datetime.now()
             model.load_weights(pretrained_path)
             model.fit_generator(datagen.flow(sub_x_train_val, sub_y_train_val, batch_size=BATCH_SIZE), 
                                         steps_per_epoch=len(sub_x_train_val) // BATCH_SIZE + 1, 
                                         validation_data=(x_val, y_val), 
                                         epochs=SUB_EPOCHS)
             model.save_weights(submodel_save_path)
+            end = datetime.now()
+            logger('time for training sub-{}: {}'.format(i, end-start), log_path)
         
 
 def rnn_train_model(model_name, num_classes, dataset='imdb', ver=1, num_submodels=20, train_sub=True, subset_size=5000):
