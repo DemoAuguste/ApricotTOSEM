@@ -131,6 +131,9 @@ def load_dataset(dataset='cifar10', preprocessing=True, shuffle=True):
         (x_train, y_train), (x_test, y_test) = fashion_mnist.load_data()
         y_train = keras.utils.to_categorical(y_train, num_classes)
         y_test = keras.utils.to_categorical(y_test, num_classes)
+        if x_train.ndim <= 3:  # need to add a dimension.
+            x_train = np.expand_dims(x_train, axis=-1)
+            x_test = np.expand_dims(x_test, axis=-1)
         x_train = x_train.astype('float32')
         x_test = x_test.astype('float32')
         x_train /= 255
