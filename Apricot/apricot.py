@@ -121,7 +121,7 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy, activation='
         sub_correct_matrix_path = os.path.join(model_weights_dir, 'corr_matrix_{}_{}.npy'.format(settings.RANDOM_SEED, settings.NUM_SUBMODELS))
     else:
         sub_correct_matrix_path = os.path.join(model_weights_dir, 'corr_matrix_{}_{}.npy'.format(settings.RANDOM_SEED, settings.NUM_SUBMODELS))
-    sub_correct_matrix = None # 1: predicts correctly, -1: predicts incorrectly.
+    sub_correct_matrix = None  # 1: predicts correctly, -1: predicts incorrectly.
     print('obtaining sub correct matrix...')
 
     if not os.path.exists(sub_correct_matrix_path):

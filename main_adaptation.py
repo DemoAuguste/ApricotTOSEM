@@ -26,14 +26,22 @@ if __name__ == '__main__':
     activation = args.activation
 
     # initialization.
+    num_classes = 10
+    input_size = (32, 32, 3)
     if dataset == 'cifar10':
         num_classes = 10
         input_size = (32, 32, 3)
     elif dataset == 'cifar100':
         num_classes = 100
         input_size = (32, 32, 3)
+    elif dataset == 'svhn':
+        num_classes = 10
+        input_size = (32, 32, 3)
+    elif dataset == 'fashion-mnist' or dataset == 'mnist':
+        num_classes = 10
+        input_size = (28, 28, 1)
     else:
-        pass # TODO: extend other dataset
+        NotImplementedError('Not implemented.')  # TODO: extend other dataset
 
     model = build_networks(model_name, num_classes, input_size)
     model_weights_dir = os.path.join(WORKING_DIR, 'weights')

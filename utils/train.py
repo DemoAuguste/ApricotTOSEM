@@ -14,7 +14,7 @@ def train_model(model_name, num_classes=10, dataset='cifar10', ver=1, num_submod
     if 'cifar' in dataset or dataset == 'svhn':
         img_rows, img_cols = 32, 32
         img_channels = 3
-    elif dataset == 'fashion-mnist':
+    elif dataset == 'fashion-mnist' or dataset == 'mnist':
         img_rows, img_cols = 28, 28
         img_channels = 1
     else:  # TODO
