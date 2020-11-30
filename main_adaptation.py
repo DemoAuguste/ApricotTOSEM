@@ -50,7 +50,6 @@ if __name__ == '__main__':
     model_weights_dir = os.path.join(model_weights_dir, str(ver))
     # model.summary()
     model.load_weights(os.path.join(model_weights_dir, 'trained.h5'))
-    
 
     # the main process of Apricot
     print('adjustment strategy: {}, type: {}'.format(adjustment_strategy, type(adjustment_strategy)))
@@ -58,4 +57,3 @@ if __name__ == '__main__':
     apricot(model, model_weights_dir, dataset, adjustment_strategy, activation)
     
 
-    

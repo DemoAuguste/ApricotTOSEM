@@ -2,8 +2,7 @@
 realized functions:
 * load_dataset(dataset='cifar10', preprocessing=True, shuffle=True)
 * build_networks(model_name, num_classes, input_size)
-* 
-
+*
 """
 import os
 import settings

@@ -13,3 +13,4 @@ weights/resnet20/cifar10/1/log_4.txt
 *.json
 *.mat
 *.json
+*.json
