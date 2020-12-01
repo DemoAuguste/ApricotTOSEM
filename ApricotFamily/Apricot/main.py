@@ -45,24 +45,48 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy):
     fail_xs, fail_ys, fail_ys_label, fail_num, fail_index = get_indexed_failing_cases(fixed_model, x_train, y_train)
 
     sub_correct_matrix_path = os.path.join(model_weights_dir, 'corr_mat_{}.npy'.format(NUM_SUBMODELS))
-    sub_correct_mat = None
     if not os.path.exists(sub_correct_matrix_path):
-        sub_correct_mat = cal_sub_corr_matrix(fixed_model, sub_correct_matrix_path, submodel_dir, fail_xs, fail_ys, fail_ys_label, fail_num, num_submodels=NUM_SUBMODELS)
+        sub_correct_mat = apricot_cal_sub_corr_mat(fixed_model, submodel_dir, fail_xs, fail_ys, num_submodels=NUM_SUBMODELS)
+        np.save(sub_correct_matrix_path, sub_correct_mat)
     else:
         sub_correct_mat = np.load(sub_correct_matrix_path)
 
     # iterates all training dataset.
     iter_batch_size = 20  # TODO revise hard-coding
     iter_num, ret = divmod(train_size, iter_batch_size)
-    fail_idx_seq = get_formatted_batch_sequence(fail_index, total_num=train_size)
+    fail_idx_seq = get_formatted_batch_sequence(fail_index, total_num=train_size)  # binary indicator
+
     if ret != 0:
         iter_num += 1
+
+    # the main process
+    train_total_index = [i for i in range(train_size)]  # initialize indices for all training samples.
+    train_total_index = np.array(train_total_index)
+
+    sub_weights_list = get_weights_list(fixed_model, submodel_dir, num_submodels=NUM_SUBMODELS)
+
     for i in range(iter_num):  # iterates by batch.
         # check if the index is in the fail_index.
-        temp_train_index = [i for i in range(iter_batch_size*i, iter_batch_size*(i+1))]
-        temp_train_index = np.array(temp_train_index)
-        temp_fail_idx_seq = fail_idx_seq[temp_train_index]
-        
+        temp_train_index = train_total_index[i*iter_batch_size: (i+1)*iter_batch_size]
+        temp_fail_idx_seq = fail_idx_seq[temp_train_index]  # temp binary indicator
+
+        # retrieve sub_correct_mat
+        if np.sum(temp_fail_idx_seq) == 0:  # no failing cases.
+            continue
+        else:
+            # exists failing cases.
+            # get the failing case index
+            temp_fail_idx = temp_train_index[np.nonzero(temp_fail_idx_seq)]
+            for idx in temp_fail_idx:
+                sub_correct_mat_idx = np.sum(train_total_index[:idx]) - 1  # mapping the total idx back to sub mat idx.
+                temp_sub_corr_mat = sub_correct_mat[sub_correct_mat_idx]
+
+                # adjust weights
+                corr_avg, incorr_avg = get_avg_weights(temp_sub_corr_mat, weights_list=sub_weights_list)
+                adjust_w
+
+
+
 
 
 

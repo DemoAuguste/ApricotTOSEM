@@ -1,5 +1,7 @@
 import os
 import numpy as np
+import copy
+from settings import learning_rate
 
 def get_formatted_batch_sequence(fail_index, total_num):
     """
@@ -47,6 +49,101 @@ def _compare(x,y):
         return x
     else:
         return np.zeros(shape=x.shape)
+
+
+def apricot_cal_sub_corr_mat(model, submodels_path, fail_xs, fail_ys, num_submodels=20):
+    """
+    submodel binary indicator.
+    0 represents failing case, 1 represents correct case.
+    """
+    sub_corr_mat = None
+    for root, dirs, files in os.walk(submodels_path):
+        for i in range(num_submodels):
+            temp_w_path = os.path.join(root, 'sub_{}.h5'.format(i))
+            model.load_weights(temp_w_path)
+            pred_ys = model.predict(fail_xs)
+            pred_ys_label = np.argmax(pred_ys, axis=1)
+            fail_ys_label = np.argmax(fail_ys, axis=1)
+            temp_col = pred_ys_label == fail_ys_label
+            temp_col = np.array(temp_col, dtype=np.int)
+            temp_col = temp_col[:, np.newaxis]
+            if sub_corr_mat is None:
+                sub_corr_mat = temp_col
+            else:
+                sub_corr_mat = np.concatenate((sub_corr_mat, temp_col), axis=1)
+    # reverse the 1 and 0
+    ret = np.ones(sub_corr_mat.shape)
+    ret = ret - sub_corr_mat
+    return ret
+
+
+def get_weights_list(model, sub_path, num_submodels=20):
+    ret = []
+    temp_model = copy.deepcopy(model)
+    for i in range(num_submodels):
+        temp_weights_path = os.path.join(sub_path, 'sub_{}.h5'.format(i))
+        temp_model.load_weights(temp_weights_path)
+        ret.append(temp_model.get_weights())
+    return ret
+
+
+def cal_avg(weights_list):
+    """
+    ----------------------
+    calculate the average weights of a weights list.
+    ----------------------
+    return:
+    average weights of weights list. format: equals to model.get_weights()
+    """
+    sum_w = None
+    total_num = len(weights_list)
+
+    def weights_add(sum_w, w):
+        if sum_w is None:
+            sum_w = copy.deepcopy(w)
+        else:
+            sum_w = [sum(i) for i in zip(sum_w, w)]
+        return sum_w
+
+    for w in weights_list:
+        sum_w = weights_add(sum_w, w)
+    sum_w = [item / total_num for item in sum_w]
+
+    return sum_w
+
+
+def get_avg_weights(sub_corr_mat, weights_list):
+    corr_idx = np.nonzero(sub_corr_mat)  # incorrect index
+    corr_list = []
+    incorr_list = []
+    for i in range(len(weights_list)):
+        if i in corr_idx:
+            corr_list.append(weights_list[i])
+        else:
+            incorr_list.append(weights_list[i])
+    corr_avg = cal_avg(corr_list)
+    incorr_avg = cal_avg(incorr_list)
+    return corr_avg, incorr_avg
+
+
+def adjust_weight(curr_w, corr_avg, incorr_avg, strategy):
+    corr_w = None
+    incorr_w = None
+    if len(corr_avg) == 0:
+        corr_w = curr_w
+    else:
+        corr_w = corr_avg
+    if len(incorr_avg) == 0:
+        incorr_w = curr_w
+    else:
+        incorr_w = incorr_avg
+
+    diff_corr_w = [learning_rate * (item[0] - item[1]) for item in zip(curr_w, corr_w)]
+    diff_incorr_w = [learning_rate * (item[0] - item[1]) for item in zip(curr_w, incorr_w)]
+    if strategy == 1:
+        if len(curr_w) != 0:
+            pass #TODO
+
 
 
 def get_model_correct_mat(model, xs, ys, class_prob_mat):
