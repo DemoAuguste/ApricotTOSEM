@@ -17,11 +17,15 @@ def train_model(model_name, num_classes=10, dataset='cifar10', ver=1, num_submod
     else:  # TODO
         pass
 
+
     model_weights_save_dir = os.path.join(WORKING_DIR, 'weights')
     model_weights_save_dir = os.path.join(model_weights_save_dir, model_name)
     model_weights_save_dir = os.path.join(model_weights_save_dir, dataset)
     model_weights_save_dir = os.path.join(model_weights_save_dir, str(ver))
     log_path = os.path.join(model_weights_save_dir, 'train.log')
+
+    if not os.path.exists(model_weights_save_dir):
+        os.makedirs(model_weights_save_dir)
 
     logger("########################", log_path)
     logger("model name: {}".format(model_name), log_path)
