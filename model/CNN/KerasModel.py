@@ -25,7 +25,7 @@ def build_mobilenet(input_tensor, num_classses, k=1, weights=None, gpus=None):
     model = MobileNet(input_shape=None, alpha=1.0, depth_multiplier=1, dropout=1e-3, include_top=True, weights=weights, input_tensor=input_tensor, pooling=None, classes=num_classses)
     sgd = optimizers.SGD(lr=.01, momentum=0.9, nesterov=True)
     if gpus:
-        parallel_model = multi_gpu_model(model,gpus=gpus)
+        parallel_model = multi_gpu_model(model, gpus=gpus)
         parallel_model.compile(loss='categorical_crossentropy', optimizer=sgd, metrics=['accuracy'])
         return parallel_model
 
