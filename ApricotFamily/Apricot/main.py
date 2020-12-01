@@ -1,7 +1,4 @@
 # the main process of Apricot (conference version).
-import keras
-import os
-import numpy as np
 from keras.preprocessing.image import ImageDataGenerator
 from keras.callbacks import ModelCheckpoint
 from utils import load_dataset, split_validation_dataset
