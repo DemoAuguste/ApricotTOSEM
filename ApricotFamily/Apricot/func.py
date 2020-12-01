@@ -3,6 +3,7 @@ import numpy as np
 import copy
 from settings import learning_rate
 
+
 def get_formatted_batch_sequence(fail_index, total_num):
     """
     total_num: the total number of the training dataset.
@@ -126,9 +127,11 @@ def get_avg_weights(sub_corr_mat, weights_list):
     return corr_avg, incorr_avg
 
 
-def adjust_weight(curr_w, corr_avg, incorr_avg, strategy):
-    corr_w = None
-    incorr_w = None
+def get_adjust_weights(curr_w, corr_avg, incorr_avg, strategy):
+    """
+    adjust weights by a given strategy
+    """
+    adjust_w = None
     if len(corr_avg) == 0:
         corr_w = curr_w
     else:
@@ -141,9 +144,14 @@ def adjust_weight(curr_w, corr_avg, incorr_avg, strategy):
     diff_corr_w = [learning_rate * (item[0] - item[1]) for item in zip(curr_w, corr_w)]
     diff_incorr_w = [learning_rate * (item[0] - item[1]) for item in zip(curr_w, incorr_w)]
     if strategy == 1:
-        if len(curr_w) != 0:
-            pass #TODO
-
+        adjust_w = [item[0] - item[1] + item[2] for item in zip(curr_w, diff_corr_w, diff_incorr_w)]
+    elif strategy == 2:
+        adjust_w = [item[0] - item[1] for item in zip(curr_w, diff_corr_w)]
+    elif strategy == 3:
+        adjust_w = [item[0] + item[1] for item in zip(curr_w, diff_incorr_w)]
+    else:
+        NotImplementedError('Not implemented.')
+    return adjust_w
 
 
 def get_model_correct_mat(model, xs, ys, class_prob_mat):

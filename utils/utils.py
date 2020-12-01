@@ -181,7 +181,7 @@ def build_networks(model_name, num_classes=None, input_size=None):
     return model
 
 
-def logger(msg, path):
+def logger(msg: str, path: str):
     print(msg)
     now = datetime.now()
     str_now = now.strftime("%Y-%m-%d %H:%M:%S.%f")
