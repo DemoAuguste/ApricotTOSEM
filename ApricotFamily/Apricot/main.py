@@ -96,7 +96,7 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy):
             print('[iteration {}]'.format(i), temp_fail_idx)  # Absolute index in train dataset
             for idx in temp_fail_idx:
                 sub_correct_mat_idx = np.sum(fail_idx_seq[:idx])  # mapping the total idx back to sub mat idx.
-                # print(sub_correct_mat_idx)
+                print(sub_correct_mat_idx)
                 temp_sub_corr_mat = sub_correct_mat[sub_correct_mat_idx]
 
                 # adjust weights
