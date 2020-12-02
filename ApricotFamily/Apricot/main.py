@@ -77,6 +77,8 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy):
     # if not os.path.exists(fixed_weights_path):
     fixed_model.save_weights(fixed_weights_path)
 
+    print('iteration: {}, number of failing cases: {}'.format(iter_num, len(fail_xs)))
+
     print('start the main iteration process...')
     for i in range(iter_num):  # iterates by batch.
         # check if the index is in the fail_index.
