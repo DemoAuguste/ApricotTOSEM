@@ -75,11 +75,13 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy):
     best_weights = fixed_model.get_weights()  # used for keeping the best weights of the model.
     best_train_acc = base_train_acc
     best_val_acc = base_val_acc
+    best_test_acc = base_test_acc
 
     # if not os.path.exists(fixed_weights_path):
     fixed_model.save_weights(fixed_weights_path)
 
-    print('iteration: {}, number of failing cases: {}'.format(iter_num, len(fail_xs)))
+    # print('iteration: {}, number of failing cases: {}'.format(iter_num, len(fail_xs)))
+    logger('iteration: {}, number of failing cases: {}'.format(iter_num, len(fail_xs)), log_path)
 
     print('start the main iteration process...')
     for i in range(iter_num):  # iterates by batch.
@@ -120,12 +122,19 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy):
                 hist = fixed_model.fit_generator(datagen.flow(x_train_val, y_train_val, batch_size=BATCH_SIZE),
                                                  steps_per_epoch=len(x_train_val) // BATCH_SIZE + 1,
                                                  validation_data=(x_val, y_val),
-                                                 epochs=1,  # 3 epochs
+                                                 epochs=3,  # 3 epochs
                                                  callbacks=[checkpoint])
                 fixed_model.load_weights(fixed_weights_path)
-                best_train_acc = np.max(np.array(hist.history['accuracy']))
-                best_val_acc = np.max(np.array(hist.history['val_accuracy']))
-                print(best_train_acc, best_val_acc)
+
+                temp_val_acc = np.max(np.array(hist.history['val_accuracy']))
+                temp_train_acc = np.max(np.array(hist.history['accuracy']))
+                if temp_val_acc > best_val_acc:
+                    # val acc improved.
+                    best_val_acc = temp_val_acc
+                    best_train_acc = temp_train_acc
+                _, best_test_acc = fixed_model.evaluate(x_test, y_test)
+                # print(best_train_acc, best_val_acc)
+                logger('Improved. Train acc: {}, val acc: {}, test acc: {}'.format(best_train_acc, best_val_acc, best_test_acc), log_path)
             else:  # worse than the best, rollback to the best case.
                 fixed_model.load_weights(fixed_weights_path)
 
