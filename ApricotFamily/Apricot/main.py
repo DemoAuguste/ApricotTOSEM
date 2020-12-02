@@ -125,6 +125,7 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy):
                 fixed_model.load_weights(fixed_weights_path)
                 best_train_acc = np.max(np.array(hist.history['accuracy']))
                 best_val_acc = np.max(np.array(hist.history['val_accuracy']))
+                print(best_train_acc, best_val_acc)
             else:  # worse than the best, rollback to the best case.
                 fixed_model.load_weights(fixed_weights_path)
 
