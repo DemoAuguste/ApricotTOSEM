@@ -93,9 +93,9 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy):
             # get the failing case index
             print(np.nonzero(temp_fail_idx_seq)[0])
             temp_fail_idx = temp_train_index[np.nonzero(temp_fail_idx_seq)[0]]
-            print('[iteration {}]'.format(i), temp_fail_idx)
+            print('[iteration {}]'.format(i), temp_fail_idx)  # Absolute index in train dataset
             for idx in temp_fail_idx:
-                sub_correct_mat_idx = i*iter_batch_size + idx  # mapping the total idx back to sub mat idx.
+                sub_correct_mat_idx = fail_idx_seq[:idx]  # mapping the total idx back to sub mat idx.
                 print(sub_correct_mat_idx)
                 temp_sub_corr_mat = sub_correct_mat[sub_correct_mat_idx]
 
