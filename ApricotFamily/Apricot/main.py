@@ -91,6 +91,7 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy):
         else:
             # exists failing cases.
             # get the failing case index
+            print(np.nonzero(temp_fail_idx_seq)[0])
             temp_fail_idx = temp_train_index[np.nonzero(temp_fail_idx_seq)[0]]
             print('[iteration {}]'.format(i), temp_fail_idx)
             for idx in temp_fail_idx:
