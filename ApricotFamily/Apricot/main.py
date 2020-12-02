@@ -71,6 +71,7 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy):
     fixed_model.load_weights(trained_weights_path)  # load the trained model.
     best_weights = fixed_model.get_weights()  # used for keeping the best weights of the model.
     best_train_acc = base_train_acc
+    best_val_acc = base_val_acc
 
     # if not os.path.exists(fixed_weights_path):
     fixed_model.save_weights(fixed_weights_path)
@@ -103,8 +104,8 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy):
             _, curr_acc = fixed_model.evaluate(x_val, y_val)
             print('After adjustment, the val acc: {:.4f}'.format(curr_acc))
 
-            if curr_acc > best_train_acc:
-                best_train_acc = curr_acc
+            if curr_acc > best_val_acc:
+                best_val_acc = curr_acc
                 fixed_model.save_weights(fixed_weights_path)
                 best_weights = fixed_model.get_weights()
                 # further training process.
