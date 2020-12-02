@@ -37,8 +37,8 @@ def apricot_process(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Settings of Apricot+.')
-    parser.add_argument('-m', '--model', help='model', type=str)
-    parser.add_argument('-d', '--dataset', help='dataset for training the model.', type=str, default='cifar100')
+    parser.add_argument('-m', '--model', help='model', type=str, default='resnet20')
+    parser.add_argument('-d', '--dataset', help='dataset for training the model.', type=str, default='cifar10')
     parser.add_argument('-v', '--version', help='version number.', type=int, default=99)
     parser.add_argument('-s', '--strategy', help='strategy', type=int, default=2)  # chose 2 because 2 is the best in conference version.
     args = parser.parse_args()
