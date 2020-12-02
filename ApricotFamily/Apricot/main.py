@@ -7,6 +7,7 @@ from settings import NUM_SUBMODELS
 from .func import *
 from settings import BATCH_SIZE, FURTHER_ADJUSTMENT_EPOCHS
 from keras import backend as K
+from datetime import datetime
 
 
 def apricot(model, model_weights_dir, dataset, adjustment_strategy):
@@ -21,7 +22,7 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy):
     submodel_dir = os.path.join(model_weights_dir, 'submodels')
     trained_weights_path = os.path.join(model_weights_dir, 'trained.h5')
     fixed_weights_path = os.path.join(model_weights_dir, 'apricot_fixed_{}.h5'.format(adjustment_strategy))
-    log_path = os.path.join(model_weights_dir, 'apricot_log_{}.log'.format(adjustment_strategy))
+    log_path = os.path.join(model_weights_dir, 'apricot_{}.log'.format(adjustment_strategy))
 
     if not os.path.join(fixed_weights_path):
         fixed_model.save_weights(fixed_weights_path)
@@ -34,6 +35,7 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy):
 
     fixed_model.load_weights(trained_weights_path)
 
+    start = datetime.now()
     logger('---------------original model---------------', log_path)
     _, base_train_acc = fixed_model.evaluate(x_train_val, y_train_val)
     _, base_val_acc = fixed_model.evaluate(x_val, y_val)
@@ -137,6 +139,9 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy):
                 # fixed_model.save_weights(fixed_weights_path)
             else:  # worse than the best, rollback to the best case.
                 fixed_model.load_weights(fixed_weights_path)
+
+    end = datetime.now()
+    logger('Spend time: {}'.format(end - start), log_path)
 
 
 

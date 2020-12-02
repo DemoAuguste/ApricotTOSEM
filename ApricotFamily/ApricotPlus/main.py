@@ -9,6 +9,7 @@ import os
 import numpy as np
 from .func import *
 from ApricotFamily.Apricot.func import get_indexed_failing_cases, apricot_cal_sub_corr_mat, get_weights_list
+from datetime import datetime
 
 
 def apricot_plus(model, model_weights_dir, dataset, adjustment_strategy):
@@ -23,7 +24,7 @@ def apricot_plus(model, model_weights_dir, dataset, adjustment_strategy):
     submodel_dir = os.path.join(model_weights_dir, 'submodels')
     trained_weights_path = os.path.join(model_weights_dir, 'trained.h5')
     fixed_weights_path = os.path.join(model_weights_dir, 'apricot_plus_fixed_{}.h5'.format(adjustment_strategy))
-    log_path = os.path.join(model_weights_dir, 'apricot_plus_log_{}.h5')
+    log_path = os.path.join(model_weights_dir, 'apricot_plus_{}.log'.format(adjustment_strategy))
 
     if not os.path.join(fixed_weights_path):
         fixed_model.save_weights(fixed_weights_path)
@@ -34,6 +35,7 @@ def apricot_plus(model, model_weights_dir, dataset, adjustment_strategy):
                                  fill_mode='constant', cval=0.)
     datagen.fit(x_train)
 
+    start = datetime.now()
     logger('---------------original model---------------', log_path)
     _, base_train_acc = fixed_model.evaluate(x_train_val, y_train_val)
     _, base_val_acc = fixed_model.evaluate(x_val, y_val)
@@ -52,14 +54,50 @@ def apricot_plus(model, model_weights_dir, dataset, adjustment_strategy):
 
     fixed_model.load_weights(trained_weights_path)
 
+    weights_list = get_weights_list(fixed_model, submodel_dir, NUM_SUBMODELS)
+
+    best_train_acc = base_train_acc
+    best_val_acc = base_val_acc
+    best_test_acc = base_test_acc
+
     # Apricot Plus: iterates failing cases.
-    sub_weights_list = get_weights_list(fixed_model, submodel_dir, num_submodels=NUM_SUBMODELS)
     for _ in range(LOOP_COUNT):  # iterate 3 times.
         np.random.shuffle(sub_correct_mat)
         for i in range(sub_correct_mat.shape[0]):
             curr_w = fixed_model.get_weights()
             batch_corr_mat = sub_correct_mat[FIX_BATCH_SIZE*i: FIX_BATCH_SIZE*(i+1)]  # 20 samples in one batch
-            corr_w, incorr_w = batch_get_adjustment_weights(batch_corr_mat, sub_weights_list, adjustment_strategy,
-                                                            curr_w)
+            adjust_w = batch_get_adjust_w(curr_w, batch_corr_mat, weights_list, adjustment_strategy)
+
+            fixed_model.set_weights(adjust_w)
+            _, curr_acc = fixed_model.evaluate(x_val, y_val)
+
+            if curr_acc > best_val_acc:
+                best_val_acc = curr_acc
+                fixed_model.save_weights(fixed_weights_path)
+
+                checkpoint = ModelCheckpoint(fixed_weights_path, monitor='val_accuracy', verbose=1, save_best_only=True,
+                                             mode='max')
+                hist = fixed_model.fit_generator(datagen.flow(x_train_val, y_train_val, batch_size=BATCH_SIZE),
+                                                 steps_per_epoch=len(x_train_val) // BATCH_SIZE + 1,
+                                                 validation_data=(x_val, y_val),
+                                                 epochs=3,  # 3 epochs
+                                                 callbacks=[checkpoint])
+                fixed_model.load_weights(fixed_weights_path)
+
+                temp_val_acc = np.max(np.array(hist.history['val_accuracy']))
+                temp_train_acc = np.max(np.array(hist.history['accuracy']))
+                if temp_val_acc > best_val_acc:
+                    # val acc improved.
+                    best_val_acc = temp_val_acc
+                    best_train_acc = temp_train_acc
+                _, best_test_acc = fixed_model.evaluate(x_test, y_test)
+                # print(best_train_acc, best_val_acc)
+                logger('Improved. Train acc: {:.4f}, val acc: {:.4f}, test acc: {:.4f}'.format(best_train_acc,
+                                                                                               best_val_acc,
+                                                                                               best_test_acc), log_path)
+            else:
+                fixed_model.load_weights(fixed_weights_path)
+    end = datetime.now()
+    logger('Spend time: {}'.format(end - start), log_path)
 
 
