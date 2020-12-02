@@ -23,7 +23,7 @@ def get_indexed_failing_cases(model, xs, ys):
     y_pred_label = np.argmax(y_preds, axis=1)
     y_true = np.argmax(ys, axis=1)
 
-    fail_index = np.nonzero(y_pred_label - y_true)
+    fail_index = np.nonzero(y_pred_label - y_true)[0]
     fail_xs = xs[fail_index]
     fail_ys = ys[fail_index]
     fail_ys_label = np.argmax(fail_ys, axis=1)
