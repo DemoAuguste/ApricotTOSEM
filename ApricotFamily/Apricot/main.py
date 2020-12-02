@@ -31,6 +31,8 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy):
                                  fill_mode='constant', cval=0.)
     datagen.fit(x_train)
 
+    fixed_model.load_weights(trained_weights_path)
+
     logger('---------------original model---------------', log_path)
     _, base_train_acc = fixed_model.evaluate(x_train_val, y_train_val)
     _, base_val_acc = fixed_model.evaluate(x_val, y_val)
