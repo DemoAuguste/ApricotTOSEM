@@ -54,10 +54,12 @@ def apricot_plus(model, model_weights_dir, dataset, adjustment_strategy):
 
     # Apricot Plus: iterates failing cases.
     sub_weights_list = get_weights_list(fixed_model, submodel_dir, num_submodels=NUM_SUBMODELS)
-    for _ in range(LOOP_COUNT):
+    for _ in range(LOOP_COUNT):  # iterate 3 times.
         np.random.shuffle(sub_correct_mat)
         for i in range(sub_correct_mat.shape[0]):
             curr_w = fixed_model.get_weights()
-            batch_corr_mat = sub_correct_mat[FIX_BATCH_SIZE*i: FIX_BATCH_SIZE*(i+1)]
+            batch_corr_mat = sub_correct_mat[FIX_BATCH_SIZE*i: FIX_BATCH_SIZE*(i+1)]  # 20 samples in one batch
+            corr_w, incorr_w = batch_get_adjustment_weights(batch_corr_mat, sub_weights_list, adjustment_strategy,
+                                                            curr_w)
 
 
