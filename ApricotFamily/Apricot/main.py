@@ -72,6 +72,9 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy):
     best_weights = fixed_model.get_weights()  # used for keeping the best weights of the model.
     best_train_acc = base_train_acc
 
+    if not os.path.exists(fixed_weights_path):
+        fixed_model.save_weights(fixed_weights_path)
+
     print('start the main iteration process...')
     for i in range(iter_num):  # iterates by batch.
         # check if the index is in the fail_index.
