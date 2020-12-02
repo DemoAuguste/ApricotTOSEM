@@ -20,7 +20,7 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy):
     submodel_dir = os.path.join(model_weights_dir, 'submodels')
     trained_weights_path = os.path.join(model_weights_dir, 'trained.h5')
     fixed_weights_path = os.path.join(model_weights_dir, 'apricot_fixed_{}.h5'.format(adjustment_strategy))
-    log_path = os.path.join(model_weights_dir, 'apricot_log_{}.log')
+    log_path = os.path.join(model_weights_dir, 'apricot_log_{}.log'.format(adjustment_strategy))
 
     if not os.path.join(fixed_weights_path):
         fixed_model.save_weights(fixed_weights_path)
