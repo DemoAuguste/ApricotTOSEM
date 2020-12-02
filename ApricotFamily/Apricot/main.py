@@ -135,6 +135,7 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy):
                 _, best_test_acc = fixed_model.evaluate(x_test, y_test)
                 # print(best_train_acc, best_val_acc)
                 logger('Improved. Train acc: {}, val acc: {}, test acc: {}'.format(best_train_acc, best_val_acc, best_test_acc), log_path)
+                # fixed_model.save_weights(fixed_weights_path)
             else:  # worse than the best, rollback to the best case.
                 fixed_model.load_weights(fixed_weights_path)
 
