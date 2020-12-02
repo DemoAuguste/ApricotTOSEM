@@ -118,7 +118,7 @@ def get_avg_weights(sub_corr_mat, weights_list):
     corr_list = []
     incorr_list = []
     for i in range(len(weights_list)):
-        if i in corr_idx:
+        if i in corr_idx.tolist():
             corr_list.append(weights_list[i])
         else:
             incorr_list.append(weights_list[i])
