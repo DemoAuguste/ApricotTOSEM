@@ -109,9 +109,8 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy):
                 fixed_model.save_weights(fixed_weights_path)
                 best_weights = fixed_model.get_weights()
                 # further training process.
-                # TODO: check if the monitor is correct.
                 checkpoint = ModelCheckpoint(fixed_weights_path, monitor='val_accuracy', verbose=1, save_best_only=True, mode='max')
-                checkpoint.best = best_train_acc
+                checkpoint.best = best_val_acc
                 hist = fixed_model.fit_generator(datagen.flow(x_train_val, y_train_val, batch_size=BATCH_SIZE),
                                                  steps_per_epoch=len(x_train_val) // BATCH_SIZE + 1,
                                                  validation_data=(x_val, y_val),
