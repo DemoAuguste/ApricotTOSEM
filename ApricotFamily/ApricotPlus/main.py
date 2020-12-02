@@ -79,9 +79,9 @@ def apricot_plus(model, model_weights_dir, dataset, adjustment_strategy):
             fixed_model.set_weights(adjust_w)
             x = int(count * sub_correct_mat.shape[0] + i + 1)
             y = int(LOOP_COUNT * sub_correct_mat.shape[0])
-            print('[iteration {}/{}]'.format(x, y))
-            _, curr_acc = fixed_model.evaluate(x_val, y_val)
 
+            _, curr_acc = fixed_model.evaluate(x_val, y_val)
+            print('[iteration {}/{}] current val acc: {:.4f}'.format(x, y, curr_acc))
             if curr_acc > best_val_acc:
                 best_val_acc = curr_acc
                 fixed_model.save_weights(fixed_weights_path)
