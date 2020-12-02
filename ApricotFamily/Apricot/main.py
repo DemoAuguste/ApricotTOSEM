@@ -63,6 +63,7 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy):
     fail_idx_seq = get_formatted_batch_sequence(fail_index, total_num=train_size)  # binary indicator
     print(fail_idx_seq)
     print(np.sum(fail_idx_seq))
+    print(fail_idx_seq[40], fail_idx_seq[56])
     print(fail_index)
 
     return
