@@ -103,6 +103,8 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy):
                                                  validation_data=(x_val, y_val),
                                                  epochs=FURTHER_ADJUSTMENT_EPOCHS, # 3 epochs
                                                  callbacks=[checkpoint])
+                for key in hist.history:
+                    print(key)
 
 
 
