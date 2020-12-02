@@ -115,7 +115,7 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy):
                 hist = fixed_model.fit_generator(datagen.flow(x_train_val, y_train_val, batch_size=BATCH_SIZE),
                                                  steps_per_epoch=len(x_train_val) // BATCH_SIZE + 1,
                                                  validation_data=(x_val, y_val),
-                                                 epochs=20,  # 3 epochs
+                                                 epochs=1,  # 3 epochs
                                                  callbacks=[checkpoint])
                 fixed_model.load_weights(fixed_weights_path)
             else:  # worse than the best, rollback to the best case.
