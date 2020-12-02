@@ -114,7 +114,7 @@ def cal_avg(weights_list):
 
 
 def get_avg_weights(sub_corr_mat, weights_list):
-    corr_idx = np.nonzero(sub_corr_mat)  # incorrect index
+    corr_idx = np.nonzero(sub_corr_mat)[0]  # incorrect index
     corr_list = []
     incorr_list = []
     for i in range(len(weights_list)):
