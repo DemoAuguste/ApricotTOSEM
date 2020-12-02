@@ -47,7 +47,6 @@ def train_model(model_name, num_classes=10, dataset='cifar10', ver=1, num_submod
 
     pretrained_path = os.path.join(model_weights_save_dir, 'pretrained.h5')
     trained_path = os.path.join(model_weights_save_dir, 'trained.h5')
-    log_path = os.path.join(model_weights_save_dir, 'log-train.txt')
 
     datagen = ImageDataGenerator(horizontal_flip=True,
                                  width_shift_range=0.125,
