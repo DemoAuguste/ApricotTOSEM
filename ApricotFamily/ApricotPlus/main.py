@@ -41,15 +41,20 @@ def apricot_plus(model, model_weights_dir, dataset, adjustment_strategy):
     _, base_val_acc = fixed_model.evaluate(x_val, y_val)
     _, base_test_acc = fixed_model.evaluate(x_test, y_test)
 
+    logger('train acc: {:.4f}, val acc: {:.4f}, test acc: {:.4f}'.format(base_train_acc, base_val_acc, base_test_acc),
+           log_path)
     # to simply the process, get the classification results of submodels first.
     # do not shuffle the training dataset.
     fail_xs, fail_ys, fail_ys_label, fail_num, fail_index = get_indexed_failing_cases(fixed_model, x_train, y_train)
 
+    print('getting sub correct matrix...')
     sub_correct_matrix_path = os.path.join(model_weights_dir, 'corr_mat_{}.npy'.format(NUM_SUBMODELS))
     if not os.path.exists(sub_correct_matrix_path):
+        print('generating matrix....')
         sub_correct_mat = apricot_cal_sub_corr_mat(fixed_model, submodel_dir, fail_xs, fail_ys, num_submodels=NUM_SUBMODELS)
         np.save(sub_correct_matrix_path, sub_correct_mat)
     else:
+        print('loading matrix...')
         sub_correct_mat = np.load(sub_correct_matrix_path)
 
     fixed_model.load_weights(trained_weights_path)
@@ -61,7 +66,8 @@ def apricot_plus(model, model_weights_dir, dataset, adjustment_strategy):
     best_test_acc = base_test_acc
 
     # Apricot Plus: iterates failing cases.
-    for _ in range(LOOP_COUNT):  # iterate 3 times.
+    print('start the main iteration process...')
+    for count in range(LOOP_COUNT):  # iterate 3 times.
         np.random.shuffle(sub_correct_mat)
         for i in range(sub_correct_mat.shape[0]):
             curr_w = fixed_model.get_weights()
@@ -69,6 +75,9 @@ def apricot_plus(model, model_weights_dir, dataset, adjustment_strategy):
             adjust_w = batch_get_adjust_w(curr_w, batch_corr_mat, weights_list, adjustment_strategy)
 
             fixed_model.set_weights(adjust_w)
+            x = int(count * sub_correct_mat.shape[0] + i + 1)
+            y = int(LOOP_COUNT * sub_correct_mat.shape[0])
+            print('[iteration {}/{}]'.format(x, y), end='')
             _, curr_acc = fixed_model.evaluate(x_val, y_val)
 
             if curr_acc > best_val_acc:
