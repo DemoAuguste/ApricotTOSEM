@@ -122,8 +122,12 @@ def get_avg_weights(sub_corr_mat, weights_list):
             corr_list.append(weights_list[i])
         else:
             incorr_list.append(weights_list[i])
-    corr_avg = cal_avg(corr_list)
-    incorr_avg = cal_avg(incorr_list)
+    corr_avg = []
+    incorr_avg = []
+    if len(corr_list) != 0:
+        corr_avg = cal_avg(corr_list)
+    if len(incorr_list) != 0:
+        incorr_avg = cal_avg(incorr_list)
     return corr_avg, incorr_avg
 
 
