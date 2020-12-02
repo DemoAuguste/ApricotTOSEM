@@ -131,7 +131,7 @@ def get_avg_weights(sub_corr_mat, weights_list):
     return corr_avg, incorr_avg
 
 
-def get_adjust_weights(curr_w, corr_avg, incorr_avg, strategy):
+def get_adjust_weights(curr_w, corr_avg, incorr_avg, strategy, lr=0.005):
     """
     adjust weights by a given strategy
     """
@@ -145,8 +145,8 @@ def get_adjust_weights(curr_w, corr_avg, incorr_avg, strategy):
     else:
         incorr_w = incorr_avg
 
-    diff_corr_w = [learning_rate * (item[0] - item[1]) for item in zip(curr_w, corr_w)]
-    diff_incorr_w = [learning_rate * (item[0] - item[1]) for item in zip(curr_w, incorr_w)]
+    diff_corr_w = [lr * (item[0] - item[1]) for item in zip(curr_w, corr_w)]
+    diff_incorr_w = [lr * (item[0] - item[1]) for item in zip(curr_w, incorr_w)]
     if strategy == 1:
         adjust_w = [item[0] - item[1] + item[2] for item in zip(curr_w, diff_corr_w, diff_incorr_w)]
     elif strategy == 2:
