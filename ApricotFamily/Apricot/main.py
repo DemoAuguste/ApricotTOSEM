@@ -35,11 +35,11 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy):
     fixed_model.load_weights(trained_weights_path)
 
     logger('---------------original model---------------', log_path)
-    # _, base_train_acc = fixed_model.evaluate(x_train_val, y_train_val)
-    # _, base_val_acc = fixed_model.evaluate(x_val, y_val)
-    # _, base_test_acc = fixed_model.evaluate(x_test, y_test)
+    _, base_train_acc = fixed_model.evaluate(x_train_val, y_train_val)
+    _, base_val_acc = fixed_model.evaluate(x_val, y_val)
+    _, base_test_acc = fixed_model.evaluate(x_test, y_test)
 
-    base_train_acc, base_val_acc, base_test_acc = (1,1,1)  # test
+    # base_train_acc, base_val_acc, base_test_acc = (1,1,1)  # test
 
     logger('train acc: {:.4f}, val acc: {:.4f}, test acc: {:.4f}'.format(base_train_acc, base_val_acc, base_test_acc), log_path)
 
@@ -61,11 +61,6 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy):
     iter_batch_size = 20  # TODO revise hard-coding
     iter_num, ret = divmod(train_size, iter_batch_size)
     fail_idx_seq = get_formatted_batch_sequence(fail_index, total_num=train_size)  # binary indicator
-    # print(fail_idx_seq)
-    # print(np.sum(fail_idx_seq))
-    # print(fail_idx_seq[40], fail_idx_seq[56])
-    # print(fail_index)
-    # return
 
     if ret != 0:
         iter_num += 1
@@ -128,6 +123,8 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy):
                                                  epochs=1,  # 3 epochs
                                                  callbacks=[checkpoint])
                 fixed_model.load_weights(fixed_weights_path)
+                best_train_acc = np.max(np.array(hist.history['accuracy']))
+                best_val_acc = np.max(np.array(hist.history['val_accuracy']))
             else:  # worse than the best, rollback to the best case.
                 fixed_model.load_weights(fixed_weights_path)
 
