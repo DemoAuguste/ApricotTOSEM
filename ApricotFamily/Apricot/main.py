@@ -89,10 +89,10 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy):
             # exists failing cases.
             # get the failing case index
             temp_fail_idx = temp_train_index[np.nonzero(temp_fail_idx_seq)[0]]
-            print(temp_fail_idx)
+            # print(temp_fail_idx)
             for idx in temp_fail_idx:
                 sub_correct_mat_idx = i*iter_batch_size + idx  # mapping the total idx back to sub mat idx.
-                print(sub_correct_mat_idx)
+                # print(sub_correct_mat_idx)
                 temp_sub_corr_mat = sub_correct_mat[sub_correct_mat_idx]
 
                 # adjust weights
