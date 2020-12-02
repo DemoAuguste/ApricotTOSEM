@@ -36,7 +36,7 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy):
     _, base_val_acc = fixed_model.evaluate(x_val, y_val)
     _, base_test_acc = fixed_model.evaluate(x_test, y_test)
 
-    logger('train acc: {:.4f}, val acc: {:.4f}, test acc: {:.4f}'.format(base_train_acc, base_val_acc, base_test_acc))
+    logger('train acc: {:.4f}, val acc: {:.4f}, test acc: {:.4f}'.format(base_train_acc, base_val_acc, base_test_acc), log_path)
 
     # to simply the process, get the classification results of submodels first.
     # do not shuffle the training dataset.
