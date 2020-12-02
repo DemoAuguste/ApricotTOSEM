@@ -61,12 +61,11 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy):
     iter_batch_size = 20  # TODO revise hard-coding
     iter_num, ret = divmod(train_size, iter_batch_size)
     fail_idx_seq = get_formatted_batch_sequence(fail_index, total_num=train_size)  # binary indicator
-    print(fail_idx_seq)
-    print(np.sum(fail_idx_seq))
-    print(fail_idx_seq[40], fail_idx_seq[56])
-    print(fail_index)
-
-    return
+    # print(fail_idx_seq)
+    # print(np.sum(fail_idx_seq))
+    # print(fail_idx_seq[40], fail_idx_seq[56])
+    # print(fail_index)
+    # return
 
     if ret != 0:
         iter_num += 1
@@ -103,7 +102,7 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy):
             temp_fail_idx = temp_train_index[np.nonzero(temp_fail_idx_seq)[0]]
             print('[iteration {}]'.format(i), temp_fail_idx)  # Absolute index in train dataset
             for idx in temp_fail_idx:
-                sub_correct_mat_idx = np.sum(fail_idx_seq[:idx])  # mapping the total idx back to sub mat idx.
+                sub_correct_mat_idx = np.sum(fail_idx_seq[:idx + 1])  # mapping the total idx back to sub mat idx.
                 print(sub_correct_mat_idx)
                 temp_sub_corr_mat = sub_correct_mat[sub_correct_mat_idx]
 
