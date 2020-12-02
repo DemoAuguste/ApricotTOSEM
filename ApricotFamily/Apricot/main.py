@@ -6,6 +6,7 @@ from utils import logger
 from settings import NUM_SUBMODELS
 from .func import *
 from settings import BATCH_SIZE, FURTHER_ADJUSTMENT_EPOCHS
+from keras import backend as K
 
 
 def apricot(model, model_weights_dir, dataset, adjustment_strategy):
@@ -89,7 +90,7 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy):
             # exists failing cases.
             # get the failing case index
             temp_fail_idx = temp_train_index[np.nonzero(temp_fail_idx_seq)[0]]
-            # print(temp_fail_idx)
+            print(temp_fail_idx)
             for idx in temp_fail_idx:
                 sub_correct_mat_idx = i*iter_batch_size + idx  # mapping the total idx back to sub mat idx.
                 # print(sub_correct_mat_idx)
@@ -114,10 +115,8 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy):
                 hist = fixed_model.fit_generator(datagen.flow(x_train_val, y_train_val, batch_size=BATCH_SIZE),
                                                  steps_per_epoch=len(x_train_val) // BATCH_SIZE + 1,
                                                  validation_data=(x_val, y_val),
-                                                 epochs=FURTHER_ADJUSTMENT_EPOCHS, # 3 epochs
+                                                 epochs=20,  # 3 epochs
                                                  callbacks=[checkpoint])
-                for key in hist.history:
-                    print(key)
                 fixed_model.load_weights(fixed_weights_path)
             else:  # worse than the best, rollback to the best case.
                 fixed_model.load_weights(fixed_weights_path)
