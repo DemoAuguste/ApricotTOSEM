@@ -95,12 +95,12 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy):
         else:
             # exists failing cases.
             # get the failing case index
-            print(np.nonzero(temp_fail_idx_seq)[0])
+            # print(np.nonzero(temp_fail_idx_seq)[0])
             temp_fail_idx = temp_train_index[np.nonzero(temp_fail_idx_seq)[0]]
-            print('[iteration {}]'.format(i), temp_fail_idx)  # Absolute index in train dataset
+            print('[iteration {}/{}]'.format(i, iter_num), temp_fail_idx)  # Absolute index in train dataset
             for idx in temp_fail_idx:
                 sub_correct_mat_idx = int(np.sum(fail_idx_seq[:idx + 1]))  # mapping the total idx back to sub mat idx.
-                print(sub_correct_mat_idx)
+                # print(sub_correct_mat_idx)
                 temp_sub_corr_mat = sub_correct_mat[sub_correct_mat_idx]
 
                 # adjust weights
@@ -134,7 +134,7 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy):
                     best_train_acc = temp_train_acc
                 _, best_test_acc = fixed_model.evaluate(x_test, y_test)
                 # print(best_train_acc, best_val_acc)
-                logger('Improved. Train acc: {}, val acc: {}, test acc: {}'.format(best_train_acc, best_val_acc, best_test_acc), log_path)
+                logger('Improved. Train acc: {:.4f}, val acc: {:.4f}, test acc: {:.4f}'.format(best_train_acc, best_val_acc, best_test_acc), log_path)
                 # fixed_model.save_weights(fixed_weights_path)
             else:  # worse than the best, rollback to the best case.
                 fixed_model.load_weights(fixed_weights_path)
