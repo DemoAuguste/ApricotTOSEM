@@ -1,8 +1,7 @@
 import sys
-
 sys.path.append('..')
 import argparse
-from ApricotFamily.ApricotPlus import *
+from ApricotFamily.ApricotLite import *
 from utils import *
 
 
@@ -32,7 +31,7 @@ def apricot_plus_process(args):
 
     model = build_networks(args.model, num_classes=num_classes, input_size=(img_rows, img_cols, img_channels))
 
-    apricot_plus(model, model_weights_save_dir, args.dataset, args.strategy)
+    apricot_lite(model, model_weights_save_dir, args.dataset, args.strategy)
 
 
 if __name__ == '__main__':
