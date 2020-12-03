@@ -30,9 +30,6 @@ def apricot_lite(model, model_weights_dir, dataset, adjustment_strategy=None):
     fixed_weights_path = os.path.join(model_weights_dir, 'apricot_lite_fixed.h5')
     log_path = os.path.join(model_weights_dir, 'apricot_lite.log')
 
-    if not os.path.exists(fixed_weights_path):
-        fixed_model.save_weights(fixed_weights_path)
-
     datagen = ImageDataGenerator(horizontal_flip=True,
                                  width_shift_range=0.125,
                                  height_shift_range=0.125,
@@ -70,8 +67,8 @@ def apricot_lite(model, model_weights_dir, dataset, adjustment_strategy=None):
     best_val_acc = base_val_acc
     best_test_acc = base_test_acc
 
-    if not os.path.exists(fixed_weights_path):
-        fixed_model.save_weights(fixed_weights_path)
+    # if not os.path.exists(fixed_weights_path):
+    fixed_model.save_weights(fixed_weights_path)
 
     # Apricot Plus: iterates failing cases.
     print('start the main iteration process...')
