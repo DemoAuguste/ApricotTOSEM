@@ -13,11 +13,11 @@ def batch_lite_get_adjust_w(curr_w, batch_corr_mat, weights_list, lr=0.0005):
         # randomly choose one.
         corr_w = adjust_w
         incorr_w = adjust_w
-        if temp_corr_mat != 0:
+        if len(temp_corr_mat) != 0:
             corr_idx = np.nonzero(temp_corr_mat)[0]
             corr_idx = corr_idx[np.random.randint(corr_idx.shape[0], size=1)]
             corr_w = weights_list[corr_idx]
-        if temp_incorr_mat != 0:
+        if len(temp_incorr_mat) != 0:
             incorr_idx = np.nonzero(temp_incorr_mat)[0]
             incorr_idx = incorr_idx[np.random.randint(incorr_idx.shape[0], size=1)]
             incorr_w = weights_list[incorr_idx]
