@@ -16,6 +16,7 @@ def batch_lite_get_adjust_w(curr_w, batch_corr_mat, weights_list, lr=0.0005):
         if len(temp_corr_mat) != 0:
             corr_idx = np.nonzero(temp_corr_mat)[0]
             corr_idx = corr_idx[np.random.randint(corr_idx.shape[0], size=1)]
+            print(corr_idx)
             corr_w = weights_list[corr_idx]
         if len(temp_incorr_mat) != 0:
             incorr_idx = np.nonzero(temp_incorr_mat)[0]
