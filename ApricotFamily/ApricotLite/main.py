@@ -70,6 +70,8 @@ def apricot_lite(model, model_weights_dir, dataset, adjustment_strategy=None):
     best_val_acc = base_val_acc
     best_test_acc = base_test_acc
 
+    fixed_model.save_weights(fixed_weights_path)
+
     # Apricot Plus: iterates failing cases.
     print('start the main iteration process...')
     for count in range(LOOP_COUNT):  # iterate 3 times.
