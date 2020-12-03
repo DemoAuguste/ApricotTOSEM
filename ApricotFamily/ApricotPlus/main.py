@@ -26,7 +26,7 @@ def apricot_plus(model, model_weights_dir, dataset, adjustment_strategy):
     fixed_weights_path = os.path.join(model_weights_dir, 'apricot_plus_fixed_{}.h5'.format(adjustment_strategy))
     log_path = os.path.join(model_weights_dir, 'apricot_plus_{}.log'.format(adjustment_strategy))
 
-    if not os.path.join(fixed_weights_path):
+    if not os.path.exists(fixed_weights_path):
         fixed_model.save_weights(fixed_weights_path)
 
     datagen = ImageDataGenerator(horizontal_flip=True,

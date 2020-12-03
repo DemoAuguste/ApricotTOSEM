@@ -30,7 +30,7 @@ def apricot_lite(model, model_weights_dir, dataset, adjustment_strategy=None):
     fixed_weights_path = os.path.join(model_weights_dir, 'apricot_lite_fixed.h5')
     log_path = os.path.join(model_weights_dir, 'apricot_lite.log')
 
-    if not os.path.join(fixed_weights_path):
+    if not os.path.exists(fixed_weights_path):
         fixed_model.save_weights(fixed_weights_path)
 
     datagen = ImageDataGenerator(horizontal_flip=True,
