@@ -9,7 +9,7 @@ def batch_lite_get_adjust_w(curr_w, batch_corr_mat, weights_list, lr=0.0005):
     adjust_w = curr_w
     for i in range(batch_corr_mat.shape[0]):
         temp_corr_mat = batch_corr_mat[i]
-        temp_incorr_mat = np.ones(temp_corr_mat) - temp_corr_mat
+        temp_incorr_mat = np.ones(temp_corr_mat.shape) - temp_corr_mat
         # randomly choose one.
         corr_w = adjust_w
         incorr_w = adjust_w
