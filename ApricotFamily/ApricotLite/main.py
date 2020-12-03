@@ -69,7 +69,7 @@ def apricot_lite(model, model_weights_dir, dataset, adjustment_strategy=None):
     best_train_acc = base_train_acc
     best_val_acc = base_val_acc
     best_test_acc = base_test_acc
-    
+
     # Apricot Plus: iterates failing cases.
     print('start the main iteration process...')
     for count in range(LOOP_COUNT):  # iterate 3 times.
