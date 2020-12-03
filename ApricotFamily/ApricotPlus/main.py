@@ -71,7 +71,11 @@ def apricot_plus(model, model_weights_dir, dataset, adjustment_strategy):
     print('start the main iteration process...')
     for count in range(LOOP_COUNT):  # iterate 3 times.
         np.random.shuffle(sub_correct_mat)
-        for i in range(sub_correct_mat.shape[0]):
+        # calculate the iteration number.
+        iter_count, res = divmod(sub_correct_mat.shape[0], FIX_BATCH_SIZE)
+        if res != 0:
+            iter_count += 1
+        for i in range(iter_count):
             curr_w = fixed_model.get_weights()
             batch_corr_mat = sub_correct_mat[FIX_BATCH_SIZE*i: FIX_BATCH_SIZE*(i+1)]  # 20 samples in one batch
             adjust_w = batch_get_adjust_w(curr_w, batch_corr_mat, weights_list, adjustment_strategy)
