@@ -70,7 +70,7 @@ def apricot_lite(model, model_weights_dir, dataset, adjustment_strategy=None):
     best_val_acc = base_val_acc
     best_test_acc = base_test_acc
 
-    if not os.path.join(fixed_weights_path):
+    if not os.path.exists(fixed_weights_path):
         fixed_model.save_weights(fixed_weights_path)
 
     # Apricot Plus: iterates failing cases.
