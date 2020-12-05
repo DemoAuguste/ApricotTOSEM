@@ -12,23 +12,23 @@ echo $train_path
 
 # script for training models
 
-# CIFAR-100
+# svhn
 for i in {11..15}
 do
-    CUDA_VISIBLE_DEVICES=3 python3 $train_path -m resnet20 -d cifar100 -v $i
-    CUDA_VISIBLE_DEVICES=3 python3 $train_path -m mobilenet -d cifar100 -v $i
-    CUDA_VISIBLE_DEVICES=3 python3 $train_path -m resnet32 -d cifar100 -v $i
-    CUDA_VISIBLE_DEVICES=3 python3 $train_path -m mobilenetv2 -d cifar100 -v $i
-    CUDA_VISIBLE_DEVICES=3 python3 $train_path -m densenet -d cifar100 -v $i
+    CUDA_VISIBLE_DEVICES=2 python3 $train_path -m resnet20 -d svhn -v $i -pre 2 -after 48 -st 18
+    CUDA_VISIBLE_DEVICES=2 python3 $train_path -m mobilenet -d svhn -v $i -pre 2 -after 48 -st 18
+    CUDA_VISIBLE_DEVICES=2 python3 $2rain_path -m resnet32 -d svhn -v $i -pre 2 -after 48 -st 18
+    CUDA_VISIBLE_DEVICES=2 python3 $train_path -m mobilenetv2 -d svhn -v $i -pre 2 -after 48 -st 18
+    CUDA_VISIBLE_DEVICES=2 python3 $train_path -m densenet -d svhn -v $i -pre 2 -after 48 -st 18
 done
 
-# CIFAR-10
+# fashion-mnist
 for i in {11..15}
 do
-    CUDA_VISIBLE_DEVICES=3 python3 $train_path -m resnet20 -d cifar10 -v $i
-    CUDA_VISIBLE_DEVICES=3 python3 $train_path -m mobilenet -d cifar10 -v $i
-    CUDA_VISIBLE_DEVICES=3 python3 $train_path -m resnet32 -d cifar10 -v $i
-    CUDA_VISIBLE_DEVICES=3 python3 $train_path -m mobilenetv2 -d cifar10 -v $i
-    CUDA_VISIBLE_DEVICES=3 python3 $train_path -m densenet -d cifar10 -v $i
+    CUDA_VISIBLE_DEVICES=2 python3 $train_path -m resnet20 -d cifar10 -v $i -pre 1 -after 49 -st 9
+    CUDA_VISIBLE_DEVICES=2 python3 $train_path -m mobilenet -d cifar10 -v $i -pre 1 -after 49 -st 9
+    CUDA_VISIBLE_DEVICES=2 python3 $train_path -m resnet32 -d cifar10 -v $i -pre 1 -after 49 -st 9
+    CUDA_VISIBLE_DEVICES=2 python3 $train_path -m mobilenetv2 -d cifar10 -v $i -pre 1 -after 49 -st 9
+    CUDA_VISIBLE_DEVICES=2 python3 $train_path -m densenet -d cifar10 -v $i -pre 1 -after 49 -st 9
 done
 
