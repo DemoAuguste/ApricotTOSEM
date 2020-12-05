@@ -92,16 +92,6 @@ def load_dataset(dataset='cifar10', preprocessing=True, shuffle=True):
         x_train /= 255
         x_test /= 255
 
-        # load test dataset
-        test_file_path = os.path.join(IMAGENET_DATASET_DIR, 'val_data')
-        test_data = np.load(test_file_path)
-
-        x_test = test_data['data'].reshape(-1, 3, 64, 64)
-        x_test = np.rollaxis(x_test, 1, 4)
-
-        y_test = np.array(test_data['labels']) -1
-        y_test = keras.utils.to_categorical(y_test, num_classes)
-
     elif dataset == 'svhn':
         # code from https://github.com/haseebtehsin/Neural-Network-using-Tensorflow-keras-and-SVHN-Dataset/blob/master/NN.py
         data_path = os.path.join(DATA_DIR, 'svhn')
