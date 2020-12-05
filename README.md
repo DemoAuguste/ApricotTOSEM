@@ -13,3 +13,8 @@
     * `plus_fixed_<strategy>.h5`使用`Apricot Plus`之后的模型
     * `lite_fixed.h5`使用`Apricot Lite`之后的模型
     * `sub_<sub model index>.h5`在`subset`上训练的模型
+
+### Experiments
+* [ ] 2020-12-05 正在跑`train.sh`.
+    * [x] `cifar10`, `cifar100`
+    * [ ] `SVHN`, `Fashion-MNIST`
