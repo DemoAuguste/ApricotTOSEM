@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # initialization
-working_dir=$(dirname "$PWD") 
+working_dir=$(dirname "$PWD")
 script_name="main_train.py"
 # echo $current_path
 # echo $working_dir
@@ -22,7 +22,7 @@ do
     CUDA_VISIBLE_DEVICES=3 python3 $train_path -m densenet -d cifar100 -v $i
 done
 
-# CIFAR-10 
+# CIFAR-10
 for i in {11..15}
 do
     CUDA_VISIBLE_DEVICES=3 python3 $train_path -m resnet20 -d cifar10 -v $i
