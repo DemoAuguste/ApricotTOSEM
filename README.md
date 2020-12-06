@@ -17,4 +17,5 @@
 ### Experiments
 * [ ] 2020-12-05 正在跑`train.sh`.
     * [x] `cifar10`, `cifar100`
-    * [ ] `SVHN`, `Fashion-MNIST`
+    * [x] `SVHN`
+    * [ ] `Fashion-MNIST`还差densenet，需要考虑换个模型
