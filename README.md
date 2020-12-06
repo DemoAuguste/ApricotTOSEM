@@ -19,3 +19,10 @@
     * [x] `cifar10`, `cifar100`
     * [x] `SVHN`
     * [ ] `Fashion-MNIST`还差densenet，需要考虑换个模型
+
+
+### New idea
+* 在training的过程中rDLMs也应该有更新和训练的。
+* 在一次更新之后，需要对rDLM也做一次更新。
+    * 考虑具体的更新算法。
+    
