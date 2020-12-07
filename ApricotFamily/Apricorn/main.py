@@ -104,6 +104,7 @@ def apricorn(model, model_weights_dir, dataset):
                                                  epochs=3,  # 3 epochs
                                                  callbacks=[checkpoint])
                 fixed_model.load_weights(fixed_weights_path)
+                curr_w = fixed_model.get_weights()
 
                 temp_val_acc = np.max(np.array(hist.history['val_accuracy']))
                 if temp_val_acc > best_val_acc:
