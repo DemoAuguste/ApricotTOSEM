@@ -93,7 +93,7 @@ def apricorn(model, model_weights_dir, dataset):
             x = int(count * sub_correct_mat.shape[0] + i + 1)
             y = int(LOOP_COUNT * sub_correct_mat.shape[0])
             _, curr_acc = fixed_model.evaluate(x_val, y_val)
-            print('[iteration {}/{}] current val acc: {:.4f}'.format(x, y, curr_acc))
+            print('[iteration {}/{}] current val acc: {:.4f}, best val acc: {:.4f}'.format(x, y, curr_acc, best_val_acc))
 
             if curr_acc > best_val_acc:
                 best_val_acc = curr_acc
