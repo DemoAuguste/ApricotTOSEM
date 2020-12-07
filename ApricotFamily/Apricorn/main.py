@@ -36,6 +36,10 @@ def apricorn(model, model_weights_dir, dataset):
 
     fixed_model.load_weights(trained_weights_path)
     start = datetime.now()
+
+    sep_num = 5
+    sep_count = 0
+
     logger('---------------original model---------------', log_path)
     # region initialization
     _, base_train_acc = fixed_model.evaluate(x_train_val, y_train_val)
@@ -94,19 +98,25 @@ def apricorn(model, model_weights_dir, dataset):
                 fixed_model.save_weights(fixed_weights_path)
                 logger('Improved. val acc: {:.4f}'.format(best_val_acc), log_path)
 
-                # train the fixed model.
-                checkpoint = ModelCheckpoint(fixed_weights_path, monitor='val_accuracy', verbose=1, save_best_only=True,
-                                             mode='max')
-                checkpoint.best = best_val_acc
-                hist = fixed_model.fit_generator(datagen.flow(x_train_val, y_train_val, batch_size=BATCH_SIZE),
-                                                 steps_per_epoch=len(x_train_val) // BATCH_SIZE + 1,
-                                                 validation_data=(x_val, y_val),
-                                                 epochs=3,  # 3 epochs
-                                                 callbacks=[checkpoint])
-                fixed_model.load_weights(fixed_weights_path)
+                sep_count += 1
+                if sep_count == sep_num:  # reduce the number of training.
+                    sep_count = 0
+                    # train the fixed model.
+                    checkpoint = ModelCheckpoint(fixed_weights_path, monitor='val_accuracy', verbose=1, save_best_only=True,
+                                                 mode='max')
+                    checkpoint.best = best_val_acc
+                    hist = fixed_model.fit_generator(datagen.flow(x_train_val, y_train_val, batch_size=BATCH_SIZE),
+                                                     steps_per_epoch=len(x_train_val) // BATCH_SIZE + 1,
+                                                     validation_data=(x_val, y_val),
+                                                     epochs=3,  # 3 epochs
+                                                     callbacks=[checkpoint])
+                    fixed_model.load_weights(fixed_weights_path)
+                    temp_val_acc = np.max(np.array(hist.history['val_accuracy']))
+                else:
+                    temp_val_acc = best_val_acc
+
                 curr_w = fixed_model.get_weights()
 
-                temp_val_acc = np.max(np.array(hist.history['val_accuracy']))
                 if temp_val_acc > best_val_acc:
                     # val acc improved.
                     best_val_acc = temp_val_acc
