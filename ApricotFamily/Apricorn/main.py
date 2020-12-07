@@ -9,6 +9,7 @@ import os
 import numpy as np
 from ApricotFamily.ApricotPlus.func import batch_get_adjust_w
 from ApricotFamily.Apricot.func import get_indexed_failing_cases, apricot_cal_sub_corr_mat, get_weights_list
+from ApricotFamily.ApricotPlus.func import batch_get_adjust_w
 from datetime import datetime
 
 def apricorn(model, model_weights_dir, dataset):
@@ -84,7 +85,8 @@ def apricorn(model, model_weights_dir, dataset):
         for i in range(iter_count):
             curr_w = fixed_model.get_weights()
             batch_corr_mat = sub_correct_mat[FIX_BATCH_SIZE * i: FIX_BATCH_SIZE * (i + 1)]
-            adjust_w = apricorn_batch_adjust_w(curr_w, batch_corr_mat, weights_list)  # update in lite way.
+            # adjust_w = apricorn_batch_adjust_w(curr_w, batch_corr_mat, weights_list)  # update in lite way.
+            adjust_w = batch_get_adjust_w(curr_w, batch_corr_mat, weights_list)  # update in plus way.
 
             fixed_model.set_weights(adjust_w)
 

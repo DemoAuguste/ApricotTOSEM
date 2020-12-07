@@ -2,7 +2,7 @@ import numpy as np
 from ApricotFamily.Apricot.main import get_avg_weights, get_adjust_weights
 
 
-def batch_get_adjust_w(curr_w, batch_corr_mat, weights_list, strategy, lr=0.0005):
+def batch_get_adjust_w(curr_w, batch_corr_mat, weights_list, strategy=2, lr=0.0005):
     """
     0 represents failing case, 1 represents correct case.
     """
