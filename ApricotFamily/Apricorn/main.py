@@ -37,7 +37,7 @@ def apricorn(model, model_weights_dir, dataset):
     fixed_model.load_weights(trained_weights_path)
     start = datetime.now()
 
-    sep_num = 1
+    sep_num = 5
     sep_count = 0
 
     logger('---------------original model---------------', log_path)
@@ -99,8 +99,8 @@ def apricorn(model, model_weights_dir, dataset):
                 logger('Improved. val acc: {:.4f}'.format(best_val_acc), log_path)
 
                 sep_count += 1
-                if sep_count == sep_num:  # reduce the number of training.
-                    sep_count = 0
+                if sep_count <= sep_num:  # reduce the number of training.
+                    # sep_count = 0
                     # train the fixed model.
                     checkpoint = ModelCheckpoint(fixed_weights_path, monitor='val_accuracy', verbose=1, save_best_only=True,
                                                  mode='max')
