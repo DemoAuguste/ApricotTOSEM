@@ -43,6 +43,8 @@ def apricorn_update_weights_list(curr_w, batch_corr_mat, weights_list, lr=0.01):
         if len(np.nonzero(temp_incorr_mat)[0]) != 0:
             # updates weights list
             incorr_idx = np.nonzero(temp_incorr_mat)[0]
+            print('index of updated weights: ', end='')
+            print(incorr_idx)
             for idx in incorr_idx:
                 temp_diff_w = [lr * (item[0] - item[1]) for item in zip(weights_list[idx], curr_w)]
                 weights_list[idx] = [item[0] - item[1] for item in zip( weights_list[idx], temp_diff_w)]
