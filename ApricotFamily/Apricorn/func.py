@@ -59,33 +59,33 @@ def apricorn_update_weights_list(model, curr_w, batch_corr_mat, weights_list, ad
             else:
                 continue
         else:
-            for bat_idx in adj_index_list:
-                incorr_idx = bat_idx[1]
-                print(incorr_idx)
-                if incorr_idx == -1:
-                    continue
+            bat_idx = adj_index_list[i]
+            incorr_idx = bat_idx[1]
+            print(incorr_idx)
+            if incorr_idx == -1:
+                continue
 
-                # prepare the data.
-                temp_idx = np.random.randint(kwargs['x_train_val'].shape[0], size=10000)
-                temp_x_train = kwargs['x_train_val'][temp_idx]
-                temp_y_train = kwargs['y_train_val'][temp_idx]
-                
-                # update
-                model.set_weights(weights_list[int(incorr_idx)])
-                model.fit_generator(kwargs['datagen'].flow(temp_x_train, temp_y_train, batch_size=BATCH_SIZE),
-                                    steps_per_epoch=len(temp_x_train) // BATCH_SIZE + 1,
-                                    validation_data=(kwargs['x_val'], kwargs['y_val']),
-                                    epochs=1)  # 3 epochs)
+            # prepare the data.
+            temp_idx = np.random.randint(kwargs['x_train_val'].shape[0], size=10000)
+            temp_x_train = kwargs['x_train_val'][temp_idx]
+            temp_y_train = kwargs['y_train_val'][temp_idx]
 
-                # update sub_correct_mat
-                pred_ys = model.predict(kwargs['fail_xs'])
-                pred_ys_label = np.argmax(pred_ys, axis=1)
-                fail_ys_label = np.argmax(kwargs['fail_ys'], axis=1)
-                temp_col = pred_ys_label == fail_ys_label
-                temp_col = np.array(temp_col, dtype=np.int)
-                # print(temp_col.shape)
-                # print(sub_mat.shape)
-                # print(incorr_idx)
-                sub_mat[:, int(incorr_idx)] = temp_col
+            # update
+            model.set_weights(weights_list[int(incorr_idx)])
+            model.fit_generator(kwargs['datagen'].flow(temp_x_train, temp_y_train, batch_size=BATCH_SIZE),
+                                steps_per_epoch=len(temp_x_train) // BATCH_SIZE + 1,
+                                validation_data=(kwargs['x_val'], kwargs['y_val']),
+                                epochs=1)  # 3 epochs)
+
+            # update sub_correct_mat
+            pred_ys = model.predict(kwargs['fail_xs'])
+            pred_ys_label = np.argmax(pred_ys, axis=1)
+            fail_ys_label = np.argmax(kwargs['fail_ys'], axis=1)
+            temp_col = pred_ys_label == fail_ys_label
+            temp_col = np.array(temp_col, dtype=np.int)
+            # print(temp_col.shape)
+            # print(sub_mat.shape)
+            # print(incorr_idx)
+            sub_mat[:, int(incorr_idx)] = temp_col
 
     return weights_list, sub_mat
