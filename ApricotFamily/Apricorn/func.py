@@ -42,6 +42,7 @@ def apricorn_batch_adjust_w(curr_w, batch_corr_mat, weights_list, lr=0.01):
 
 def apricorn_update_weights_list(model, curr_w, batch_corr_mat, weights_list, adj_index_list=None, lr=0.01, **kwargs):
     sub_mat = kwargs['sub_correct_mat']
+    flag = False
     for i in range(batch_corr_mat.shape[0]):
         temp_corr_mat = batch_corr_mat[i]
         temp_incorr_mat = np.ones(temp_corr_mat.shape) - temp_corr_mat
@@ -59,7 +60,8 @@ def apricorn_update_weights_list(model, curr_w, batch_corr_mat, weights_list, ad
             else:
                 continue
         else:
-            bat_idx = adj_index_list[i]
+            idx = np.random.randint(batch_corr_mat.shape[0], size=1)
+            bat_idx = adj_index_list[int(idx)]
             incorr_idx = bat_idx[1]
             print(incorr_idx)
             if incorr_idx == -1:
@@ -87,5 +89,6 @@ def apricorn_update_weights_list(model, curr_w, batch_corr_mat, weights_list, ad
             # print(sub_mat.shape)
             # print(incorr_idx)
             sub_mat[:, int(incorr_idx)] = temp_col
+            break
 
     return weights_list, sub_mat
