@@ -71,7 +71,7 @@ def apricorn_update_weights_list(model, curr_w, batch_corr_mat, weights_list, ad
                 temp_y_train = kwargs['y_train_val'][temp_idx]
                 
                 # update
-                model.set_weights(weights_list[incorr_idx])
+                model.set_weights(weights_list[int(incorr_idx)])
                 model.fit_generator(kwargs['datagen'].flow(temp_x_train, temp_y_train, batch_size=BATCH_SIZE),
                                     steps_per_epoch=len(temp_x_train) // BATCH_SIZE + 1,
                                     validation_data=(kwargs['x_val'], kwargs['y_val']),
