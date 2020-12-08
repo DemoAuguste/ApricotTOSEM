@@ -61,6 +61,7 @@ def apricorn_update_weights_list(model, curr_w, batch_corr_mat, weights_list, ad
         else:
             for bat_idx in adj_index_list:
                 incorr_idx = bat_idx[1]
+                print(incorr_idx)
                 if incorr_idx == -1:
                     continue
 
