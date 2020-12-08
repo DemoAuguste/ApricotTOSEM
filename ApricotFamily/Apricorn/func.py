@@ -83,6 +83,9 @@ def apricorn_update_weights_list(model, curr_w, batch_corr_mat, weights_list, ad
                 fail_ys_label = np.argmax(kwargs['fail_ys'], axis=1)
                 temp_col = pred_ys_label == fail_ys_label
                 temp_col = np.array(temp_col, dtype=np.int)
-                sub_mat[incorr_idx] = temp_col
+                print(temp_col.shape)
+                print(sub_mat.shape)
+                print(incorr_idx)
+                sub_mat[int(incorr_idx)] = temp_col
 
     return weights_list, sub_mat
