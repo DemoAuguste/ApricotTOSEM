@@ -83,10 +83,11 @@ def apricorn(model, model_weights_dir, dataset):
         if res != 0:
             iter_count += 1
         for i in range(iter_count):
+            fixed_model.load_weights(fixed_weights_path)
             curr_w = fixed_model.get_weights()
             batch_corr_mat = sub_correct_mat[FIX_BATCH_SIZE * i: FIX_BATCH_SIZE * (i + 1)]
-            # adjust_w = apricorn_batch_adjust_w(curr_w, batch_corr_mat, weights_list)  # update in lite way.
-            adjust_w = batch_get_adjust_w(curr_w, batch_corr_mat, weights_list)  # update in plus way.
+            adjust_w, adj_index_list = apricorn_batch_adjust_w(curr_w, batch_corr_mat, weights_list)  # update in lite way.
+            # adjust_w = batch_get_adjust_w(curr_w, batch_corr_mat, weights_list)  # update in plus way.
 
             fixed_model.set_weights(adjust_w)
 
@@ -124,7 +125,17 @@ def apricorn(model, model_weights_dir, dataset):
                     best_val_acc = temp_val_acc
                 # Apricorn: update weights list.
                 print('update weights list...')
-                weights_list = apricorn_update_weights_list(curr_w, batch_corr_mat, weights_list)  # lr=0.01
+                # prepare the train
+                weights_list, sub_correct_mat = apricorn_update_weights_list(fixed_model, curr_w, batch_corr_mat, weights_list,
+                                                                             adj_index_list=adj_index_list,
+                                                                             datagen=datagen,
+                                                                             x_val=x_val,
+                                                                             y_val=y_val,
+                                                                             x_train_val=x_train_val,
+                                                                             y_train_val=y_train_val,
+                                                                             sub_correct_mat=sub_correct_mat,
+                                                                             fail_xs=fail_xs,
+                                                                             fail_ys=fail_ys)  # lr=0.01
             else:
                 fixed_model.load_weights(fixed_weights_path)
 
