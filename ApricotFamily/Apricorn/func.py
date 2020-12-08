@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def apricorn_batch_adjust_w(curr_w, batch_corr_mat, weights_list, lr=0.01):
     """
     same as apricot lite.
