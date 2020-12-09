@@ -76,6 +76,7 @@ def apricorn(model, model_weights_dir, dataset):
     # endregion
 
     # Apricorn: iterates all failing cases.
+    start = datetime.now()
     for count in range(3):
         np.random.shuffle(sub_correct_mat)
         # for i in range()
@@ -139,3 +140,5 @@ def apricorn(model, model_weights_dir, dataset):
             else:
                 fixed_model.load_weights(fixed_weights_path)
 
+    end = datetime.now()
+    logger('Spend time: {}'.format(end - start), log_path)
