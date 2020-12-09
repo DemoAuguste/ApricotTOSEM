@@ -8,7 +8,7 @@ script_name="apricorn_main.py"
 
 file_path=$working_dir"/"$script_name
 
-echo file_path
+echo $file_path
 
 # CIFAR-100 strategy 2
 for i in {11..15}
