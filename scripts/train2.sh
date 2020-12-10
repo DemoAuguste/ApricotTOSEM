@@ -29,6 +29,6 @@ do
     # CUDA_VISIBLE_DEVICES=2 python3 $train_path -m mobilenet -d fashion-mnist -v $i -pre 1 -after 49 -st 9
     # CUDA_VISIBLE_DEVICES=2 python3 $train_path -m resnet32 -d fashion-mnist -v $i -pre 1 -after 49 -st 9
     # CUDA_VISIBLE_DEVICES=2 python3 $train_path -m mobilenetv2 -d fashion-mnist -v $i -pre 1 -after 49 -st 9
-    CUDA_VISIBLE_DEVICES=2 python3 $train_path -m densenet -d fashion-mnist -v $i -pre 1 -after 49 -st 9
+    CUDA_VISIBLE_DEVICES=0 python3 $train_path -m densenet -d fashion-mnist -v $i -pre 1 -after 49 -st 9
 done
 
