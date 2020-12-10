@@ -159,15 +159,13 @@ def build_networks(model_name, num_classes=None, input_size=None):
     elif model_name == 'mobilenetv2':
         input_tensor = Input(shape=input_size)
         model = build_mobilenet_v2(input_tensor, num_classes, k=top_k)
-    elif model_name == 'densenet':
+    elif model_name == 'densenet' and input_size[-1] != 1:
         input_tensor = Input(shape=input_size)
         model = build_densenet(input_tensor, num_classes, k=top_k)
-    # elif model_name == 'lstm':
-    #     max_features = 20000
-    #     model = lstm(max_features)
-    # elif model_name == 'bilstm':
-    #     max_features = 20000
-    #     model = bilistm(max_features)
+    elif model_name == 'densenet' and input_size[-1] == 1:
+        input_tensor = Input(shape=input_size)
+        model = build_densenet_mnist(input_tensor, num_classes)
+
     return model
 
 
