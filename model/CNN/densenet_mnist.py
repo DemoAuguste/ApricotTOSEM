@@ -4,9 +4,6 @@ from keras.layers import Input, GlobalAveragePooling2D, Dense, concatenate, Aver
 from keras.layers.convolutional import Conv2D
 from keras.layers.core import Activation, Dropout
 from keras.layers.normalization import BatchNormalization
-import numpy as np
-from keras.optimizers import Adam
-from tensorflow.contrib.learn.python.learn.datasets.mnist import extract_images, extract_labels
 
 
 class DenseNet:
