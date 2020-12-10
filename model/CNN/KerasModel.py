@@ -68,7 +68,8 @@ def build_densenet(input_tensor, num_classses, k=1, weights=None, gpus=None):
         return model
 
 def build_densenet_mnist(input_tensor, num_classes):
-    densenet = DenseNet(input_tensor, nb_classes=num_classes)
+    print(input_tensor, num_classes)
+    densenet = DenseNet(input_tensor, nb_classes=num_classes, depth=25)
     model = densenet.build_model()
     model_optimizer = optimizers.SGD(lr=.01, momentum=0.9, nesterov=True)
     model.compile(loss='categorical_crossentropy', optimizer=model_optimizer, metrics=['accuracy'])
