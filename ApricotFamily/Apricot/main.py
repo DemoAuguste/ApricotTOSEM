@@ -112,10 +112,10 @@ def apricot(model, model_weights_dir, dataset, adjustment_strategy):
             # evaluation.
             fixed_model.set_weights(adjust_w)
             _, curr_acc = fixed_model.evaluate(x_val, y_val)
-            print('After adjustment, the val acc: {:.4f}'.format(curr_acc))
+            print('After adjustment, the val acc: {:.4f}, best val acc: {:.4f}'.format(curr_acc, best_val_acc))
 
             if curr_acc > best_val_acc:
-                best_val_acc = curr_acc
+                best_val_acc = curr_accS
                 fixed_model.save_weights(fixed_weights_path)
                 # further training process.
                 checkpoint = ModelCheckpoint(fixed_weights_path, monitor='val_accuracy', verbose=1, save_best_only=True, mode='max')
