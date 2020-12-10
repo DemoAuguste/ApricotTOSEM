@@ -5,6 +5,7 @@ from keras.applications.densenet import DenseNet121
 from keras import optimizers
 from keras.utils import multi_gpu_model
 from keras.metrics import top_k_categorical_accuracy
+from .densenet_mnist import DenseNet
 import functools
 
 def top_k_acc(y_true, y_pred):
@@ -65,6 +66,13 @@ def build_densenet(input_tensor, num_classses, k=1, weights=None, gpus=None):
         else:
             model.compile(loss='categorical_crossentropy', optimizer=sgd, metrics=['accuracy', top_k_acc])
         return model
+
+def build_densenet_mnist(input_tensor, num_classes):
+    densenet = DenseNet(input_tensor, nb_classes=num_classes)
+    model = densenet.build_model()
+    model_optimizer = optimizers.SGD(lr=.01, momentum=0.9, nesterov=True)
+    model.compile(loss='categorical_crossentropy', optimizer=model_optimizer, metrics=['accuracy'])
+    return model
 
 
 if __name__ == '__main__':
