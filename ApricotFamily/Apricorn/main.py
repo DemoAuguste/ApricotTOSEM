@@ -75,6 +75,9 @@ def apricorn(model, model_weights_dir, dataset):
     fixed_model.save_weights(fixed_weights_path)
     # endregion
 
+    # reduce the sub_correct_mat
+    sub_correct_mat = reduce_sub_corr_mat(sub_correct_mat, rate=0.01)
+
     # Apricorn: iterates all failing cases.
     start = datetime.now()
     for count in range(1):
