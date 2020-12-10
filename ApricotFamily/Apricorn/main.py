@@ -77,7 +77,7 @@ def apricorn(model, model_weights_dir, dataset):
 
     # Apricorn: iterates all failing cases.
     start = datetime.now()
-    for count in range(3):
+    for count in range(1):
         np.random.shuffle(sub_correct_mat)
         # for i in range()
         iter_count, res = divmod(sub_correct_mat.shape[0], FIX_BATCH_SIZE)
