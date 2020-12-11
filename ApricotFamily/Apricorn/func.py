@@ -99,6 +99,9 @@ def apricorn_update_weights_list(model, curr_w, batch_corr_mat, weights_list, ad
             # print(sub_mat.shape)
             # print(incorr_idx)
             temp_col = temp_col[kwargs['index']]
+            print(kwargs['index'])
+            print(temp_col.shape)
+            print(sub_mat.shape)
             sub_mat[:, int(incorr_idx)] = temp_col[:kwargs['num'], :]
             break
 
