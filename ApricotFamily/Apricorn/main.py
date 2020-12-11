@@ -82,6 +82,7 @@ def apricorn(model, model_weights_dir, dataset):
     origin_sub_correct_mat = copy.deepcopy(sub_correct_mat)
 
     # Apricorn: iterates all failing cases.
+    FIX_BATCH_SIZE = 1
     start = datetime.now()
     for count in range(1):
         # for i in range()
