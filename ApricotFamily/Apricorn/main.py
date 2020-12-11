@@ -77,7 +77,7 @@ def apricorn(model, model_weights_dir, dataset):
     # endregion
 
     # reduce the sub_correct_mat
-    sub_correct_mat, sorted_idx, select_num = reduce_sub_corr_mat(sub_correct_mat, rate=0.01)
+    sub_correct_mat, sorted_idx, select_num = reduce_sub_corr_mat(sub_correct_mat, rate=0.1)
 
     origin_sub_correct_mat = copy.deepcopy(sub_correct_mat)
 
