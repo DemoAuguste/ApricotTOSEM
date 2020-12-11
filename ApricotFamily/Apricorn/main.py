@@ -88,6 +88,7 @@ def apricorn(model, model_weights_dir, dataset):
         iter_count, res = divmod(sub_correct_mat.shape[0], FIX_BATCH_SIZE)
         if res != 0:
             iter_count += 1
+        print(iter_count)
         for i in range(iter_count):
             fixed_model.load_weights(fixed_weights_path)
             curr_w = fixed_model.get_weights()
@@ -98,7 +99,7 @@ def apricorn(model, model_weights_dir, dataset):
             fixed_model.set_weights(adjust_w)
 
             x = int(count * sub_correct_mat.shape[0] + i + 1)
-            y = int(LOOP_COUNT * sub_correct_mat.shape[0])
+            y = int(sub_correct_mat.shape[0])
             _, curr_acc = fixed_model.evaluate(x_val, y_val)
             print('[iteration {}/{}] current val acc: {:.4f}, best val acc: {:.4f}'.format(x, y, curr_acc, best_val_acc))
 
