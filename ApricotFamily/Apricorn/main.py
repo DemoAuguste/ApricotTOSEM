@@ -39,7 +39,7 @@ def apricorn(model, model_weights_dir, dataset):
     fixed_model.load_weights(trained_weights_path)
     start = datetime.now()
 
-    sep_num = 99999999
+    sep_num = 5
     sep_count = 0
 
     logger('---------------original model---------------', log_path)
