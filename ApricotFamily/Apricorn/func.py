@@ -74,10 +74,10 @@ def apricorn_update_weights_list(model, curr_w, batch_corr_mat, weights_list, ad
         else:
             idx = np.random.randint(batch_corr_mat.shape[0], size=1)
             bat_idx = adj_index_list[int(idx)]
-            # incorr_idx = bat_idx[1]
-            # print(incorr_idx)
-            # if incorr_idx == -1:
-            #     continue
+            incorr_idx = bat_idx[1]
+            print(incorr_idx)
+            if incorr_idx == -1:
+                continue
 
             # prepare the data.
             temp_idx = np.random.randint(kwargs['x_train_val'].shape[0], size=10000)
@@ -85,8 +85,8 @@ def apricorn_update_weights_list(model, curr_w, batch_corr_mat, weights_list, ad
             temp_y_train = kwargs['y_train_val'][temp_idx]
 
             # update
-            incorr_idx = int(np.random.randint(0, 20, size=1))
-            print(incorr_idx)
+            # incorr_idx = int(np.random.randint(0, 20, size=1))
+            # print(incorr_idx)
             model.set_weights(weights_list[int(incorr_idx)])
             model.fit_generator(kwargs['datagen'].flow(temp_x_train, temp_y_train, batch_size=BATCH_SIZE),
                                 steps_per_epoch=len(temp_x_train) // BATCH_SIZE + 1,
