@@ -4,11 +4,13 @@ from settings import BATCH_SIZE
 
 def reduce_sub_corr_mat(sub_corr_mat, rate=0.01):
     # sub_corr_mat[sub_corr_mat == 0] = -1
-    sum_idx = np.argsort(np.sum(sub_corr_mat, axis=1))[::-1]
-    sorted_sub_corr_mat = sub_corr_mat[sum_idx]
     total_num = int(sub_corr_mat.shape[0] * rate)
-    sorted_sub_corr_mat = sorted_sub_corr_mat[:total_num, :]
+    sum_idx = np.argsort(np.sum(sub_corr_mat, axis=1))[::-1]
     sorted_idx = sum_idx[:total_num]
+    sorted_idx = sorted_idx[::-1]
+    sorted_sub_corr_mat = sub_corr_mat[sorted_idx]
+    # sorted_sub_corr_mat = sorted_sub_corr_mat[:total_num, :]
+
     return sorted_sub_corr_mat, sorted_idx, total_num
 
 
