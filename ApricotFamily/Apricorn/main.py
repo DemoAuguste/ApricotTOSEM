@@ -11,6 +11,7 @@ from ApricotFamily.ApricotPlus.func import batch_get_adjust_w
 from ApricotFamily.Apricot.func import get_indexed_failing_cases, apricot_cal_sub_corr_mat, get_weights_list
 from ApricotFamily.ApricotPlus.func import batch_get_adjust_w
 from datetime import datetime
+import copy
 
 def apricorn(model, model_weights_dir, dataset):
     """
@@ -76,12 +77,13 @@ def apricorn(model, model_weights_dir, dataset):
     # endregion
 
     # reduce the sub_correct_mat
-    sub_correct_mat = reduce_sub_corr_mat(sub_correct_mat, rate=0.01)
+    sub_correct_mat, sorted_idx = reduce_sub_corr_mat(sub_correct_mat, rate=0.01)
+
+    origin_sub_correct_mat = copy.deepcopy(sub_correct_mat)
 
     # Apricorn: iterates all failing cases.
     start = datetime.now()
     for count in range(1):
-        np.random.shuffle(sub_correct_mat)
         # for i in range()
         iter_count, res = divmod(sub_correct_mat.shape[0], FIX_BATCH_SIZE)
         if res != 0:
@@ -139,9 +141,13 @@ def apricorn(model, model_weights_dir, dataset):
                                                                              y_train_val=y_train_val,
                                                                              sub_correct_mat=sub_correct_mat,
                                                                              fail_xs=fail_xs,
-                                                                             fail_ys=fail_ys)  # lr=0.01
+                                                                             fail_ys=fail_ys,
+                                                                             index=sorted_idx)  # lr=0.01
             else:
                 fixed_model.load_weights(fixed_weights_path)
+
+        # sub_correct_mat = copy.deepcopy(origin_sub_correct_mat)
+        # np.random.shuffle(sub_correct_mat)
 
     end = datetime.now()
     logger('Spend time: {}'.format(end - start), log_path)
