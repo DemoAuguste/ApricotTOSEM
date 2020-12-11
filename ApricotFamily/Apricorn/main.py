@@ -134,21 +134,21 @@ def apricorn(model, model_weights_dir, dataset):
                     # val acc improved.
                     best_val_acc = temp_val_acc
                 # Apricorn: update weights list.
-                # print('update weights list...')
-                # # prepare the train
-                # weights_list, sub_correct_mat = apricorn_update_weights_list(fixed_model, curr_w, batch_corr_mat, weights_list,
-                #                                                              adj_index_list=adj_index_list,
-                #                                                              datagen=datagen,
-                #                                                              x_val=x_val,
-                #                                                              y_val=y_val,
-                #                                                              x_train_val=x_train_val,
-                #                                                              y_train_val=y_train_val,
-                #                                                              sub_correct_mat=sub_correct_mat,
-                #                                                              fail_xs=fail_xs,
-                #                                                              fail_ys=fail_ys,
-                #                                                              index=sorted_idx,
-                #                                                              num=select_num,
-                #                                                              update_all=update_all)  # lr=0.01
+                print('update weights list...')
+                # prepare the train
+                weights_list, sub_correct_mat = apricorn_update_weights_list(fixed_model, curr_w, batch_corr_mat, weights_list,
+                                                                             adj_index_list=adj_index_list,
+                                                                             datagen=datagen,
+                                                                             x_val=x_val,
+                                                                             y_val=y_val,
+                                                                             x_train_val=x_train_val,
+                                                                             y_train_val=y_train_val,
+                                                                             sub_correct_mat=sub_correct_mat,
+                                                                             fail_xs=fail_xs,
+                                                                             fail_ys=fail_ys,
+                                                                             index=sorted_idx,
+                                                                             num=select_num,
+                                                                             update_all=update_all)  # lr=0.01
 
             else:
                 impr_count += 1
@@ -157,21 +157,21 @@ def apricorn(model, model_weights_dir, dataset):
                     update_all = True
                 fixed_model.load_weights(fixed_weights_path)
 
-            print('update weights list...')
-            # prepare the train
-            weights_list, sub_correct_mat = apricorn_update_weights_list(fixed_model, curr_w, batch_corr_mat,
-                                                                         weights_list,
-                                                                         adj_index_list=adj_index_list,
-                                                                         datagen=datagen,
-                                                                         x_val=x_val,
-                                                                         y_val=y_val,
-                                                                         x_train_val=x_train_val,
-                                                                         y_train_val=y_train_val,
-                                                                         sub_correct_mat=sub_correct_mat,
-                                                                         fail_xs=fail_xs,
-                                                                         fail_ys=fail_ys,
-                                                                         index=sorted_idx,
-                                                                         num=select_num)  # lr=0.01
+            # print('update weights list...')
+            # # prepare the train
+            # weights_list, sub_correct_mat = apricorn_update_weights_list(fixed_model, curr_w, batch_corr_mat,
+            #                                                              weights_list,
+            #                                                              adj_index_list=adj_index_list,
+            #                                                              datagen=datagen,
+            #                                                              x_val=x_val,
+            #                                                              y_val=y_val,
+            #                                                              x_train_val=x_train_val,
+            #                                                              y_train_val=y_train_val,
+            #                                                              sub_correct_mat=sub_correct_mat,
+            #                                                              fail_xs=fail_xs,
+            #                                                              fail_ys=fail_ys,
+            #                                                              index=sorted_idx,
+            #                                                              num=select_num)  # lr=0.01
 
         # sub_correct_mat = copy.deepcopy(origin_sub_correct_mat)
         # np.random.shuffle(sub_correct_mat)
