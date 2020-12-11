@@ -7,7 +7,7 @@ def reduce_sub_corr_mat(sub_corr_mat, rate=0.01):
     total_num = int(sub_corr_mat.shape[0] * rate)
     sum_idx = np.argsort(np.sum(sub_corr_mat, axis=1))[::-1]
     sorted_idx = sum_idx[:total_num]
-    sorted_idx = sorted_idx[::-1]
+    # sorted_idx = sorted_idx[::-1]
     sorted_sub_corr_mat = sub_corr_mat[sorted_idx]
     # sorted_sub_corr_mat = sorted_sub_corr_mat[:total_num, :]
 
