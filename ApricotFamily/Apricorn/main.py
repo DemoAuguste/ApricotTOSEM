@@ -39,7 +39,7 @@ def apricorn(model, model_weights_dir, dataset):
     fixed_model.load_weights(trained_weights_path)
     start = datetime.now()
 
-    sep_num = 5
+    sep_num = 99999999
     sep_count = 0
 
     logger('---------------original model---------------', log_path)
@@ -121,7 +121,7 @@ def apricorn(model, model_weights_dir, dataset):
                     hist = fixed_model.fit_generator(datagen.flow(x_train_val, y_train_val, batch_size=BATCH_SIZE),
                                                      steps_per_epoch=len(x_train_val) // BATCH_SIZE + 1,
                                                      validation_data=(x_val, y_val),
-                                                     epochs=3,  # 3 epochs
+                                                     epochs=20,  # 3 epochs
                                                      callbacks=[checkpoint])
                     fixed_model.load_weights(fixed_weights_path)
                     temp_val_acc = np.max(np.array(hist.history['val_accuracy']))
