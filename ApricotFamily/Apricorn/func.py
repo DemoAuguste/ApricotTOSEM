@@ -9,7 +9,7 @@ def reduce_sub_corr_mat(sub_corr_mat, rate=0.01):
     total_num = int(sub_corr_mat.shape[0] * rate)
     sorted_sub_corr_mat = sorted_sub_corr_mat[:total_num, :]
     sorted_idx = sum_idx[:total_num]
-    return sorted_sub_corr_mat, sorted_idx
+    return sorted_sub_corr_mat, sorted_idx, total_num
 
 
 def apricorn_batch_adjust_w(curr_w, batch_corr_mat, weights_list, lr=0.01):
@@ -98,7 +98,8 @@ def apricorn_update_weights_list(model, curr_w, batch_corr_mat, weights_list, ad
             # print(temp_col.shape)
             # print(sub_mat.shape)
             # print(incorr_idx)
-            sub_mat[:, int(incorr_idx)] = temp_col
+            temp_col = temp_col[kwargs['index']]
+            sub_mat[:, int(incorr_idx)] = temp_col[:kwargs['num'], :]
             break
 
     return weights_list, sub_mat
