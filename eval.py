@@ -54,22 +54,22 @@ if __name__ == '__main__':
         temp_path = os.path.join(sub_dir, 'sub_{}.h5'.format(i))
         model.load_weights(temp_path)
         print('train acc:')
-        model.evaluate(x_train_val, y_train_val)
+        print(model.evaluate(x_train_val, y_train_val))
         print('validation acc:')
-        model.evaluate(x_val, y_val)
+        print(model.evaluate(x_val, y_val))
         print('test acc:')
-        model.evaluate(x_test, y_test)
+        print(model.evaluate(x_test, y_test))
 
     # apricorn
     print('------ fixed by apricorn -----')
     temp_path = os.path.join(model_weights_dir, 'apricorn_fixed.h5')
     model.load_weights(temp_path)
     print('train acc:')
-    model.evaluate(x_train_val, y_train_val)
+    print(model.evaluate(x_train_val, y_train_val))
     print('validation acc:')
-    model.evaluate(x_val, y_val)
+    print(model.evaluate(x_val, y_val))
     print('test acc:')
-    model.evaluate(x_test, y_test)
+    print(model.evaluate(x_test, y_test))
 
     
 
