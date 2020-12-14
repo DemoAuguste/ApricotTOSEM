@@ -55,7 +55,7 @@ if __name__ == '__main__':
     avg_train_acc = []
     avg_val_acc = []
     avg_test_acc = []
-    for i in range(1):
+    for i in range(20):
         print('[sub {}] '.format(i))
         temp_path = os.path.join(sub_dir, 'sub_{}.h5'.format(i))
         model.load_weights(temp_path)
