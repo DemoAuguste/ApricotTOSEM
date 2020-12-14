@@ -3,6 +3,9 @@ from model import *
 from utils import *
 import argparse
 
+def cal_mean_and_std(input_list):
+    print('mean: {:.4f}, std: {.4f}'.format(np.mean(input_list), np.std(input_list)))
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Settings of Apricot+.')
@@ -49,16 +52,27 @@ if __name__ == '__main__':
     x_train_val, x_val, y_train_val, y_val = split_validation_dataset(x_train, y_train)
 
     # evaluate submodels
+    avg_train_acc = []
+    avg_val_acc = []
+    avg_test_acc = []
     for i in range(20):
         print('[sub {}] '.format(i))
         temp_path = os.path.join(sub_dir, 'sub_{}.h5'.format(i))
         model.load_weights(temp_path)
-        print('train acc:')
-        print(model.evaluate(x_train_val, y_train_val))
-        print('validation acc:')
-        print(model.evaluate(x_val, y_val))
-        print('test acc:')
-        print(model.evaluate(x_test, y_test))
+        ret = model.evaluate(x_train_val, y_train_val)
+        avg_train_acc.append(float(ret[1]))
+        ret = model.evaluate(x_val, y_val)
+        avg_val_acc.append(float(ret[1]))
+        ret = model.evaluate(x_test, y_test)
+        avg_test_acc.append(float(ret[1]))
+
+    # mean and std
+    avg_train_acc = np.array(avg_train_acc).flatten()
+    avg_val_acc = np.array(avg_val_acc).flatten()
+    avg_test_acc = np.array(avg_test_acc).flatten()
+    cal_mean_and_std(avg_train_acc)
+    cal_mean_and_std(avg_val_acc)
+    cal_mean_and_std(avg_test_acc)
 
     # apricorn
     print('------ fixed by apricorn -----')
