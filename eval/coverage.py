@@ -67,3 +67,22 @@ if __name__ == '__main__':
     sum_vec[sum_vec > 0] = 1
     print('submodel train data coverage: {} / {} = {:.4f}'.format(np.sum(sum_vec), x_train_val.shape[0],
                                                                   np.sum(sum_vec) / x_train_val.shape[0]))
+
+    # original model prediction
+    trained_path = os.path.join(model_weights_dir, 'trained.h5')
+    model.load_weights(trained_path)
+    ret = model.predict(x_train_val)
+    temp = np.argmax(ret)
+    trained_pred_label = temp == y_label
+    xor = trained_pred_label ^ sum_vec
+    # rDLM correct part
+    sub_correct = sum_vec & xor
+    # original correct part
+    origin_correct = trained_pred_label & xor
+    print('submodel correct part: {} / {} = {:.4f}'.format(np.sum(sub_correct), x_train_val.shape[0],
+                                                           np.sum(sub_correct) / x_train_val.shape[0]))
+    print('original correct part: {} / {} = {:.4f}'.format(np.sum(origin_correct), x_train_val.shape[0],
+                                                           np.sum(origin_correct) / x_train_val.shape[0]))
+
+
+
