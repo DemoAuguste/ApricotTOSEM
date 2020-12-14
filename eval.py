@@ -4,7 +4,7 @@ from utils import *
 import argparse
 
 def cal_mean_and_std(input_list):
-    print('mean: {:.4f}, std: {.4f}'.format(np.mean(input_list), np.std(input_list)))
+    print('mean: {:.4f}, std: {.4f}'.format(float(np.mean(input_list)), float(np.std(input_list))))
 
 
 if __name__ == '__main__':
@@ -55,7 +55,7 @@ if __name__ == '__main__':
     avg_train_acc = []
     avg_val_acc = []
     avg_test_acc = []
-    for i in range(20):
+    for i in range(1):
         print('[sub {}] '.format(i))
         temp_path = os.path.join(sub_dir, 'sub_{}.h5'.format(i))
         model.load_weights(temp_path)
