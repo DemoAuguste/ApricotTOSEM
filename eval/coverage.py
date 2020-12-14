@@ -59,12 +59,12 @@ if __name__ == '__main__':
         preds = model.predict(x_train_val)
         preds_label = np.argmax(preds)
         temp_ind = preds_label == y_label
-        temp_ind = np.array(temp_ind, dtype=np.int)
+        # temp_ind = np.array(temp_ind, dtype=np.int)
         if sum_vec is None:
             sum_vec = copy.deepcopy(temp_ind)
         else:
-            sum_vec = sum_vec + temp_ind
-    sum_vec[sum_vec > 0] = 1
+            sum_vec = sum_vec | temp_ind
+    # sum_vec[sum_vec > 0] = 1
     print('submodel train data coverage: {} / {} = {:.4f}'.format(np.sum(sum_vec), x_train_val.shape[0],
                                                                   np.sum(sum_vec) / x_train_val.shape[0]))
 
