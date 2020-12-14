@@ -4,10 +4,6 @@ from utils import *
 import argparse
 
 
-def adaptation_process():
-    apricot(model, model_weights_dir, dataset, adjustment_strategy, activation='binary')
-
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Settings of Apricot+.')
     parser.add_argument('-m', '--model', help='model to be fixed.', type=str)
@@ -19,9 +15,6 @@ if __name__ == '__main__':
     model_name = args.model
     dataset = args.dataset
     ver = args.version
-    adjustment_strategy = args.strategy
-    
-    activation = args.activation
 
     # initialization.
     num_classes = 10
@@ -47,11 +40,36 @@ if __name__ == '__main__':
     model_weights_dir = os.path.join(model_weights_dir, dataset)
     model_weights_dir = os.path.join(model_weights_dir, str(ver))
     # model.summary()
-    model.load_weights(os.path.join(model_weights_dir, 'trained.h5'))
+    # model.load_weights(os.path.join(model_weights_dir, 'trained.h5'))
+    sub_dir = os.path.join(model_weights_dir, 'submodels')
 
-    # the main process of Apricot
-    print('adjustment strategy: {}, type: {}'.format(adjustment_strategy, type(adjustment_strategy)))
-    # adjustment_strategy -= 1 # for s2
-    apricot(model, model_weights_dir, dataset, adjustment_strategy, activation)
+    x_train, x_test, y_train, y_test = load_dataset(dataset)
+    print("x_train shape: {}".format(x_train.shape))
+    print("y_train shape: {}".format(y_train.shape))
+    x_train_val, x_val, y_train_val, y_val = split_validation_dataset(x_train, y_train)
+
+    # evaluate submodels
+    for i in range(20):
+        print('[sub {}] '.format(i))
+        temp_path = os.path.join(sub_dir, 'sub_{}.h5'.format(i))
+        model.load_weights(temp_path)
+        print('train acc:')
+        model.evaluate(x_train_val, y_train_val)
+        print('validation acc:')
+        model.evaluate(x_val, y_val)
+        print('test acc:')
+        model.evaluate(x_test, y_test)
+
+    # apricorn
+    print('------ fixed by apricorn -----')
+    temp_path = os.path.join(model_weights_dir, 'apricorn_fixed.h5')
+    model.load_weights(temp_path)
+    print('train acc:')
+    model.evaluate(x_train_val, y_train_val)
+    print('validation acc:')
+    model.evaluate(x_val, y_val)
+    print('test acc:')
+    model.evaluate(x_test, y_test)
+
     
 
