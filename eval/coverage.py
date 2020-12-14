@@ -56,6 +56,7 @@ if __name__ == '__main__':
     for i in range(20):
         temp_path = os.path.join(sub_dir, 'sub_{}.h5'.format(i))
         model.load_weights(temp_path)
+        print(model.evaluate(x_train_val, y_train_val))
         preds = model.predict(x_train_val)
         preds_label = np.argmax(preds)
         temp_ind = preds_label == y_label
