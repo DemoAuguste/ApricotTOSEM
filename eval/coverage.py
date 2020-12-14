@@ -59,6 +59,7 @@ if __name__ == '__main__':
         preds = model.predict(x_train_val)
         preds_label = np.argmax(preds)
         temp_ind = preds_label == y_label
+        print(np.sum(temp_ind))
         # temp_ind = np.array(temp_ind, dtype=np.int)
         if sum_vec is None:
             sum_vec = copy.deepcopy(temp_ind)
