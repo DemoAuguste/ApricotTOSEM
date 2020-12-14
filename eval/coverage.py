@@ -60,7 +60,7 @@ if __name__ == '__main__':
         preds_label = np.argmax(preds)
         temp_ind = preds_label == y_label
         temp_ind = np.array(temp_ind, dtype=np.int)
-        if sum_vec == 0:
+        if sum_vec is None:
             sum_vec = copy.deepcopy(temp_ind)
         else:
             sum_vec = sum_vec + temp_ind
