@@ -4,7 +4,7 @@ from utils import *
 import argparse
 
 def cal_mean_and_std(input_list):
-    print('mean: {:.4f}, std: {.4f}'.format(float(np.mean(input_list)), float(np.std(input_list))))
+    print('mean: {:.4f}, std: {:.4f}'.format(float(np.mean(input_list)), float(np.std(input_list))))
 
 
 if __name__ == '__main__':
