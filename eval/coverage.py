@@ -51,14 +51,14 @@ if __name__ == '__main__':
     x_train_val, x_val, y_train_val, y_val = split_validation_dataset(x_train, y_train)
 
     sum_vec = None
-    y_label = np.argmax(y_train_val)
+    y_label = np.argmax(y_train_val, axis=1)
 
     for i in range(20):
         temp_path = os.path.join(sub_dir, 'sub_{}.h5'.format(i))
         model.load_weights(temp_path)
         print(model.evaluate(x_train_val, y_train_val))
         preds = model.predict(x_train_val)
-        preds_label = np.argmax(preds)
+        preds_label = np.argmax(preds, axis=1)
         temp_ind = preds_label == y_label
         print(np.sum(temp_ind))
         # temp_ind = np.array(temp_ind, dtype=np.int)
@@ -74,7 +74,7 @@ if __name__ == '__main__':
     trained_path = os.path.join(model_weights_dir, 'trained.h5')
     model.load_weights(trained_path)
     ret = model.predict(x_train_val)
-    temp = np.argmax(ret)
+    temp = np.argmax(ret, axis=1)
     trained_pred_label = temp == y_label
     xor = trained_pred_label ^ sum_vec
     # rDLM correct part
