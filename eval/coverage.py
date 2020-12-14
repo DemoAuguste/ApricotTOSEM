@@ -58,7 +58,7 @@ if __name__ == '__main__':
         model.load_weights(temp_path)
         preds = model.predict(x_train_val)
         preds_label = np.argmax(preds)
-        temp_ind = preds_label == y_label
+        temp_ind = preds_label == y_train_val
         print(np.sum(temp_ind))
         # temp_ind = np.array(temp_ind, dtype=np.int)
         if sum_vec is None:
