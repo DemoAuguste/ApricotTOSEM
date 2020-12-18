@@ -37,6 +37,6 @@ do
 #  CUDA_VISIBLE_DEVICES=1 python3 $file_path -m resnet32 -d fashion-mnist -v $i
 #  CUDA_VISIBLE_DEVICES=1 python3 $file_path -m mobilenet -d fashion-mnist -v $i
 #  CUDA_VISIBLE_DEVICES=1 python3 $file_path -m mobilenetv2 -d fashion-mnist -v $i
-  CUDA_VISIBLE_DEVICES=1 python3 $file_path -m densenet -d fashion-mnist -v $i  # NOT TRAINED!
+  CUDA_VISIBLE_DEVICES=3 python3 $file_path -m densenet -d fashion-mnist -v $i  # NOT TRAINED!
 done
 
