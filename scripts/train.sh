@@ -32,3 +32,5 @@ do
     CUDA_VISIBLE_DEVICES=3 python3 $train_path -m densenet -d cifar10 -v $i
 done
 
+
+

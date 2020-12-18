@@ -23,12 +23,20 @@ echo $train_path
 # done
 
 # fashion-mnist
+#for i in {11..15}
+#do
+#    # CUDA_VISIBLE_DEVICES=2 python3 $train_path -m resnet20 -d fashion-mnist -v $i -pre 1 -after 49 -st 9
+#    # CUDA_VISIBLE_DEVICES=2 python3 $train_path -m mobilenet -d fashion-mnist -v $i -pre 1 -after 49 -st 9
+#    # CUDA_VISIBLE_DEVICES=2 python3 $train_path -m resnet32 -d fashion-mnist -v $i -pre 1 -after 49 -st 9
+#    # CUDA_VISIBLE_DEVICES=2 python3 $train_path -m mobilenetv2 -d fashion-mnist -v $i -pre 1 -after 49 -st 9
+#    CUDA_VISIBLE_DEVICES=0 python3 $train_path -m densenet -d fashion-mnist -v $i -pre 1 -after 49 -st 9
+#done
+
+
+# some remaining model training.
 for i in {11..15}
 do
-    # CUDA_VISIBLE_DEVICES=2 python3 $train_path -m resnet20 -d fashion-mnist -v $i -pre 1 -after 49 -st 9
-    # CUDA_VISIBLE_DEVICES=2 python3 $train_path -m mobilenet -d fashion-mnist -v $i -pre 1 -after 49 -st 9
-    # CUDA_VISIBLE_DEVICES=2 python3 $train_path -m resnet32 -d fashion-mnist -v $i -pre 1 -after 49 -st 9
-    # CUDA_VISIBLE_DEVICES=2 python3 $train_path -m mobilenetv2 -d fashion-mnist -v $i -pre 1 -after 49 -st 9
-    CUDA_VISIBLE_DEVICES=0 python3 $train_path -m densenet -d fashion-mnist -v $i -pre 1 -after 49 -st 9
+    CUDA_VISIBLE_DEVICES=2 python3 $train_path -m mobilenet -d fashion-mnist -v $i -pre 1 -after 49 -st 9
+    CUDA_VISIBLE_DEVICES=2 python3 $train_path -m resnet32 -d svhn -v $i -pre 2 -after 48 -st 18
 done
 
