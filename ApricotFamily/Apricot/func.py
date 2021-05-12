@@ -29,7 +29,14 @@ def get_indexed_failing_cases(model, xs, ys):
     fail_ys_label = np.argmax(fail_ys, axis=1)
     fail_num = int(np.size(fail_index))
 
-    return fail_xs, fail_ys, fail_ys_label, fail_num, fail_index
+    temp = y_pred_label - y_true
+    correct_index = np.where(temp == 0)[0]
+    correct_xs = xs[correct_index]
+    correct_ys = ys[correct_index]
+    correct_ys_label = np.argmax(correct_ys, axis=1)
+    correct_num = int(np.size(correct_index))
+
+    return fail_xs, fail_ys, fail_ys_label, fail_num, fail_index, correct_xs, correct_ys, correct_ys_label, correct_num, correct_index
 
 
 def get_class_prob_mat(model, xs, ys):
