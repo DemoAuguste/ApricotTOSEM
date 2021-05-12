@@ -21,6 +21,16 @@ do
   CUDA_VISIBLE_DEVICES=3 python3 $file_path -m densenet -d cifar10 -v $i
 done
 
+
+for i in {11..15}
+do
+  CUDA_VISIBLE_DEVICES=3 python3 $file_path -m resnet20 -d cifar100 -v $i
+  CUDA_VISIBLE_DEVICES=3 python3 $file_path -m resnet32 -d cifar100 -v $i
+  CUDA_VISIBLE_DEVICES=3 python3 $file_path -m mobilenet -d cifar100 -v $i
+  CUDA_VISIBLE_DEVICES=3 python3 $file_path -m mobilenetv2 -d cifar100 -v $i
+  CUDA_VISIBLE_DEVICES=3 python3 $file_path -m densenet -d cifar100 -v $i
+done
+
 # CIFAR-100 strategy 2
 #for i in {11..15}
 #do
